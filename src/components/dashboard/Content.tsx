@@ -1,7 +1,9 @@
 'use client'
 
 import { useElectricityData } from '@/hooks/useElectricityData.simple'
-import { DataStatus } from '@/components/ui/dataStatus'
+
+
+
 import { ErrorDisplay } from '@/components/ui/errorDisplay'
 import { Loading } from '@/components/ui/loading'
 import Hero from './Hero'

@@ -1,9 +1,9 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { BarChart3, RefreshCw, Zap, TrendingUp as TrendIcon } from 'lucide-react'
+import { BarChart3, RefreshCw, Zap } from 'lucide-react'
 import { usePriceAnalysis, useWeekPrices, useMonthPrices } from '@/hooks/useElectricityData.simple'
 
 // Componentes separados
@@ -59,7 +59,7 @@ export function PriceChart() {
       setLastUpdated(new Date())
       // Simular pequeño delay para feedback visual
       setTimeout(() => setIsRefreshing(false), 500)
-    } catch (error) {
+    } catch {
       setIsRefreshing(false)
     }
   }

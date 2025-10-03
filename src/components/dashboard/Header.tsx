@@ -10,6 +10,7 @@ const TABS = [
   { id: 'precios', label: 'Precios' },
   { id: 'ahorro', label: 'Ahorro' },
   { id: 'dispositivos', label: 'Dispositivos' },
+  { id: 'contact', label: 'Subscribete' },
 ] as const
 
 export function DashboardHeader() {

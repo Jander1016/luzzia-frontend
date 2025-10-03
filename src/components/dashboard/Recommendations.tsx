@@ -1,7 +1,6 @@
 'use client'
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
 import { CheckCircle2, AlertTriangle, Clock, Lightbulb } from 'lucide-react'
 import { PriceRecommendation } from '@/types/api'
 
@@ -21,7 +20,7 @@ interface RecommendationCard {
   borderColor: string
 }
 
-export function Recommendations({ recommendations }: RecommendationsProps) {
+export function Recommendations({ recommendations: _recommendations }: RecommendationsProps) {
   // Datos predeterminados para coincidir con la imagen
   const defaultRecommendations: RecommendationCard[] = [
     {
