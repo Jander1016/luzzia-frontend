@@ -25,7 +25,7 @@ export function PieChart({ prices, period }: PieChartProps) {
     )
   }
 
-  // Agrupar datos por clasificación de precio con mejores estadísticas
+  // Agrupar datos por clasificación con estadísticas mejoradas para móvil
   const groupedData = prices.reduce((acc, price) => {
     const classification = classifyPrice(price.price, prices)
     if (!acc[classification]) {
@@ -33,7 +33,10 @@ export function PieChart({ prices, period }: PieChartProps) {
         count: 0, 
         totalPrice: 0, 
         label: classification,
-        prices: []
+        prices: [],
+        emoji: classification === 'bajo' ? '🟢' : 
+               classification === 'medio' ? '🟡' : 
+               classification === 'alto' ? '🟠' : '🔴'
       }
     }
     acc[classification].count++
@@ -45,6 +48,7 @@ export function PieChart({ prices, period }: PieChartProps) {
     totalPrice: number
     label: string
     prices: number[]
+    emoji: string
   }>)
 
   const pieData = Object.values(groupedData).map(group => ({
