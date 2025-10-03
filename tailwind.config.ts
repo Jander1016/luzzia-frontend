@@ -1,92 +1,47 @@
-// import type { Config } from "tailwindcss";
+import type { Config } from "tailwindcss";
 
-// const config: Config = {
-//   content: [
-//     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
-//     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
-//     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
-//   ],
-//   theme: {
-//     extend: {
-//       colors: {
-//         brand: {
-//           DEFAULT: "#00E0FF",
-//           dark: "#0090A8",
-//         },
-//         border: "hsl(var(--border))",
-//         background: "hsl(var(--background))",
-//         foreground: "hsl(var(--foreground))",
-//         primary: {
-//           DEFAULT: "hsl(var(--primary))",
-//           foreground: "hsl(var(--primary-foreground))",
-//         },
-//         secondary: {
-//           DEFAULT: "hsl(var(--secondary))",
-//           foreground: "hsl(var(--secondary-foreground))",
-//         },
-//         card: {
-//           DEFAULT: "hsl(var(--card))",
-//           foreground: "hsl(var(--card-foreground))",
-//         },
-//       },
-//     },
-//   },
-//   plugins: [],
-// };
-
-// export default config;
-
-// tailwind.config.js
-/** @type {import('tailwindcss').Config} */
-module.exports = {
+const config: Config = {
   content: [
-    './pages/**/*.{js,ts,jsx,tsx,mdx}',
-    './components/**/*.{js,ts,jsx,tsx,mdx}',
-    './app/**/*.{js,ts,jsx,tsx,mdx}',
+    "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
     extend: {
       colors: {
-        // Colores basados en la imagen de Luzzia
+        brand: {
+          DEFAULT: "#00E0FF",
+          dark: "#0090A8",
+        },
+        border: "hsl(var(--border))",
+        background: "hsl(var(--background))",
+        foreground: "hsl(var(--foreground))",
         primary: {
-          50: '#f0f9ff',
-          100: '#e0f2fe',
-          500: '#0ea5e9', // Azul principal de Luzzia
-          600: '#0284c7', // Azul más oscuro
-          700: '#0369a1',
+          DEFAULT: "hsl(var(--primary))",
+          foreground: "hsl(var(--primary-foreground))",
         },
-        gray: {
-          50: '#f9fafb',
-          100: '#f3f4f6',
-          500: '#6b7280', // Gris texto secundario
-          600: '#4b5563', // Gris texto principal
-          700: '#374151', // Gris más oscuro
-          900: '#111827', // Negro texto principal
+        secondary: {
+          DEFAULT: "hsl(var(--secondary))",
+          foreground: "hsl(var(--secondary-foreground))",
         },
-        green: {
-          50: '#f0fdf4',
-          100: '#dcfce7',
-          500: '#22c55e', // Verde para precios bajos
-          600: '#16a34a',
+        card: {
+          DEFAULT: "hsl(var(--card))",
+          foreground: "hsl(var(--card-foreground))",
         },
-        blue: {
-          50: '#eff6ff',
-          100: '#dbeafe',
-          500: '#3b82f6', // Azul para ahorro
-          600: '#2563eb',
-        },
-        // Colores específicos de la imagen
+        // Colores específicos para gráficos
         luzzia: {
-          blue: '#0ea5e9', // Azul Luzzia exacto
-          dark: '#111827', // Negro texto
-          gray: '#6b7280', // Gris texto secundario
-          light: '#f9fafb', // Fondo claro
+          blue: '#0ea5e9',
+          dark: '#111827',
+          gray: '#6b7280',
+          light: '#f9fafb',
         }
       },
       backgroundColor: {
-        'app': '#f8fafc', // Fondo de la aplicación
+        'app': '#f8fafc',
       }
     },
   },
   plugins: [],
-}
+};
+
+export default config;
