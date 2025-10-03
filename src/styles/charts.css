@@ -1,4 +1,4 @@
-/* Estilos personalizados para gráficos UX mejorados */
+/* Estilos personalizados para gráficos UX mejorados y responsive */
 
 /* Scrollbar personalizada */
 .scrollbar-hide {
@@ -8,6 +8,42 @@
 
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
+}
+
+/* Optimizaciones para móvil */
+@media (max-width: 768px) {
+  .chart-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+  }
+  
+  .chart-bar {
+    scroll-snap-align: center;
+    min-width: 20px;
+    max-width: 28px;
+  }
+  
+  .chart-tooltip {
+    font-size: 10px;
+    line-height: 12px;
+    max-width: 120px;
+  }
+  
+  .chart-legend {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 16px;
+  }
+}
+
+/* Optimizaciones para tablet */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .chart-bar {
+    min-width: 24px;
+    max-width: 32px;
+  }
 }
 
 /* Animaciones personalizadas */
