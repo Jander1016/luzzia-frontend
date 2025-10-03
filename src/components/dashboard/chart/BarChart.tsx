@@ -1,5 +1,5 @@
 import { PriceData, PeriodType } from './types'
-import { classifyPrice, getBarColor, formatHour, formatPrice } from './types'
+import { classifyPrice, formatHour, formatPrice } from './types'
 import { useState } from 'react'
 
 interface BarChartProps {

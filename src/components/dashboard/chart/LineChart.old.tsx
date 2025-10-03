@@ -1,6 +1,6 @@
 import { PriceData, PeriodType } from './types'
 import { classifyPrice, getChartColors, formatHour, formatPrice } from './types'
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef } from 'react'
 
 interface LineChartProps {
   prices: PriceData[]
@@ -8,10 +8,10 @@ interface LineChartProps {
 }
 
 export function LineChart({ prices, period }: LineChartProps) {
-  const [hoveredPoint, setHoveredPoint] = useState<number | null>(null)
-  const [selectedPoint, setSelectedPoint] = useState<number | null>(null)
-  const [showArea, setShowArea] = useState(true)
-  const svgRef = useRef<SVGSVGElement>(null)
+  const [_hoveredPoint, _setHoveredPoint] = useState<number | null>(null)
+  const [_selectedPoint, _setSelectedPoint] = useState<number | null>(null)
+  const [_showArea, _setShowArea] = useState(true)
+  const _svgRef = useRef<SVGSVGElement>(null)
   const currentHour = new Date().getHours()
 
   if (!prices.length) {
@@ -30,7 +30,7 @@ export function LineChart({ prices, period }: LineChartProps) {
 
   const maxPrice = Math.max(...prices.map(p => p.price))
   const minPrice = Math.min(...prices.map(p => p.price))
-  const currentPrice = prices.find(p => p.hour === currentHour)?.price
+  const _currentPrice = prices.find(p => p.hour === currentHour)?.price
   
   // Configurar dimensiones responsive
   const chartWidth = 800
@@ -38,8 +38,8 @@ export function LineChart({ prices, period }: LineChartProps) {
   const padding = { top: 20, right: 40, bottom: 40, left: 60 }
   
   // Calcular escalas
-  const xScale = (index: number) => (index / (prices.length - 1)) * (chartWidth - padding.left - padding.right) + padding.left
-  const yScale = (price: number) => chartHeight - padding.bottom - ((price - minPrice) / (maxPrice - minPrice)) * (chartHeight - padding.top - padding.bottom)
+  const _xScale = (index: number) => (index / (prices.length - 1)) * (chartWidth - padding.left - padding.right) + padding.left
+  const _yScale = (price: number) => chartHeight - padding.bottom - ((price - minPrice) / (maxPrice - minPrice)) * (chartHeight - padding.top - padding.bottom)
   
   // Configurar eje Y con valores fijos desde 0.0
   const yAxisMax = Math.ceil(maxPrice * 10) / 10

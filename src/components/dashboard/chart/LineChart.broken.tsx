@@ -15,7 +15,7 @@ export function LineChart({ prices, period }: LineChartProps) {
   const currentHour = new Date().getHours()
 
   // Función para obtener colores según el nivel
-  const getChartColors = () => ({
+  const _getChartColors = () => ({
     green: 'rgb(34, 197, 94)',
     yellow: 'rgb(251, 191, 36)', 
     red: 'rgb(239, 68, 68)'
@@ -90,7 +90,7 @@ export function LineChart({ prices, period }: LineChartProps) {
     vertical: prices.filter((_, i) => {
       const step = Math.max(1, Math.ceil(prices.length / 8))
       return i % step === 0
-    }).map((price, index, filtered) => {
+    }).map((price, _index, _filtered) => {
       const originalIndex = prices.indexOf(price)
       return { x: xScale(originalIndex), label: getLabel(price) }
     })

@@ -5,7 +5,7 @@ import { formatPrice } from './types'
 export function generateDynamicLegend(
   prices: PriceData[], 
   period: PeriodType,
-  chartType: ChartType = 'bar'
+  _chartType: ChartType = 'bar'
 ): LegendItem[] {
   if (!prices.length) return []
   

@@ -1,4 +1,4 @@
-import { PriceData, PeriodType } from './types'
+import { PriceData } from './types'
 
 // Funciones de agregación de datos
 export function aggregateDataByWeeks(prices: PriceData[]): PriceData[] {

@@ -1,5 +1,5 @@
 import { PriceData, PeriodType } from './types'
-import { classifyPrice, getChartColors, formatPrice } from './types'
+import { classifyPrice, formatPrice } from './types'
 import { useState } from 'react'
 
 interface PieChartProps {
@@ -107,7 +107,7 @@ export function PieChart({ prices, period }: PieChartProps) {
   }
 
   // Obtener colores modernos con gradientes
-  const getSegmentColor = (label: string, isHovered: boolean, isSelected: boolean) => {
+  const getSegmentColor = (label: string, _isHovered: boolean, _isSelected: boolean) => {
     const baseGradients = {
       'bajo': 'url(#gradientGreen)',
       'medio': 'url(#gradientYellow)', 
@@ -192,7 +192,7 @@ Rango: ${formatPrice(segment.minPrice)} - ${formatPrice(segment.maxPrice)}`
             </defs>
 
             {/* Segmentos del donut */}
-            {segments.map((segment, index) => {
+            {segments.map((segment, _index) => {
               const isHovered = hoveredSegment === segment.label
               const isSelected = selectedSegment === segment.label
               const segmentColor = getSegmentColor(segment.label, isHovered, isSelected)
@@ -269,7 +269,7 @@ Rango: ${formatPrice(segment.minPrice)} - ${formatPrice(segment.maxPrice)}`
         {/* Leyenda moderna optimizada */}
         <div className="flex-1 lg:max-w-sm">
           <h4 className="text-lg font-semibold text-white mb-4 text-center lg:text-left">Desglose Detallado</h4>
-          {segments.map((segment, index) => {
+          {segments.map((segment, _index) => {
             const isHovered = hoveredSegment === segment.label
             const isSelected = selectedSegment === segment.label
             const levelEmoji = segment.label === 'bajo' ? '🟢' : 
