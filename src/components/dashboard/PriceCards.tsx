@@ -10,7 +10,6 @@ interface PriceCardsProps {
 }
 
 export const PriceCards = memo(function PriceCards({ stats }: PriceCardsProps) {
-  // Validación robusta con valores por defecto
   const safeStats = stats ? {
     currentPrice: Math.max(0, stats.currentPrice || 0.12),
     nextHourPrice: Math.max(0, stats.nextHourPrice || 0.08),
@@ -36,27 +35,30 @@ export const PriceCards = memo(function PriceCards({ stats }: PriceCardsProps) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
       <PriceCard
-        icon={<Euro className="w-6 h-6 text-white" />}
-        iconBgColor="bg-gradient-to-br from-emerald-400 to-teal-500"
+        icon={<Euro className="w-8 h-8 text-white" />}
+        iconBgColor="bg-gradient-to-br from-cyan-400 to-teal-500 shadow-cyan-500/25"
         title="Precio actual"
         price={`${currentPrice.toFixed(2)}€/kWh`}
         description="Momento ideal para usar electrodomésticos"
+        isGreenPrice={true}
       />
       
       <PriceCard
-        icon={<Clock className="w-6 h-6 text-white" />}
-        iconBgColor="bg-gradient-to-br from-amber-400 to-orange-500"
+        icon={<Clock className="w-8 h-8 text-white" />}
+        iconBgColor="bg-gradient-to-br from-amber-400 to-orange-500 shadow-orange-500/25"
         title="Próxima hora"
         price={`${nextHourPrice.toFixed(2)}€/kWh`}
         description={`Precio bajará un ${Math.abs(priceChangePercentage)}%`}
+        isGreenPrice={true}
       />
       
       <PriceCard
-        icon={<TrendingUp className="w-6 h-6 text-white" />}
-        iconBgColor="bg-gradient-to-br from-purple-400 to-pink-500"
+        icon={<TrendingUp className="w-8 h-8 text-white" />}
+        iconBgColor="bg-gradient-to-br from-fuchsia-400 to-pink-500 shadow-pink-500/25"
         title="Ahorro este mes"
         price={`${monthlySavings}%`}
         description={`Comparado con ${comparisonType}`}
+        isGreenPrice={false}
       />
     </div>
   )
@@ -68,29 +70,30 @@ interface PriceCardProps {
   title: string
   price: string
   description: string
+  isGreenPrice?: boolean
 }
 
-const PriceCard = memo(function PriceCard({ icon, iconBgColor, title, price, description }: PriceCardProps) {
+const PriceCard = memo(function PriceCard({ icon, iconBgColor, title, price, description, isGreenPrice = false }: PriceCardProps) {
   return (
-    <Card className="bg-white/5 backdrop-blur-sm border border-white/10 hover:border-white/20 transition-all duration-300 hover:bg-white/10">
-      <CardContent className="p-6">
-        {/* Icon */}
-        <div className={`w-12 h-12 rounded-full ${iconBgColor} flex items-center justify-center mb-4 shadow-lg`}>
+    <Card className="bg-gradient-to-br from-slate-800/80 to-slate-900/90 backdrop-blur-sm border text-center border-slate-700/50 hover:border-slate-600/70 transition-all duration-300 hover:bg-gradient-to-br hover:from-slate-700/90 hover:to-slate-800/95 hover:transform hover:scale-105 hover:shadow-xl hover:shadow-slate-900/25 group">
+      <CardContent className="p-6 items-center align-middle">
+        <div className={`w-16 h-16 rounded-full ${iconBgColor} flex items-center justify-center mb-6 shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-110 mx-auto`}>
           {icon}
         </div>
         
-        {/* Price */}
-        <div className="text-3xl font-bold text-white mb-1">
+        <div className={`text-2xl font-bold mb-2 transition-colors duration-300 ${
+          isGreenPrice 
+            ? 'text-green-400 group-hover:text-green-300' 
+            : 'text-white group-hover:text-green-300'
+        }`}>
           {price}
         </div>
         
-        {/* Title */}
-        <div className="text-white/90 font-medium mb-2">
+        <div className="text-white/90 font-medium mb-2 text-sm group-hover:text-white transition-colors duration-300">
           {title}
         </div>
         
-        {/* Description */}
-        <div className="text-white/70 text-sm">
+        <div className="text-white/70 text-xs leading-relaxed group-hover:text-white/80 transition-colors duration-300">
           {description}
         </div>
       </CardContent>
