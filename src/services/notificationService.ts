@@ -1,6 +1,5 @@
 import { 
   Notification, 
-  NotificationType, 
   PriceRecommendationData, 
   CreateNotificationPayload,
   NotificationPriority 
@@ -213,7 +212,7 @@ export class NotificationRecommendationService {
   /**
    * Genera consejo del día
    */
-  private generateTipOfDay(analysis: PriceRecommendationData): CreateNotificationPayload[] {
+  private generateTipOfDay(_analysis: PriceRecommendationData): CreateNotificationPayload[] {
     const tips = [
       {
         title: 'Consejo del día',

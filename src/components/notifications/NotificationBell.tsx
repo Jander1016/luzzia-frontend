@@ -13,7 +13,7 @@ interface NotificationBellProps {
 
 export function NotificationBell({ 
   className,
-  size = 'md',
+  size = 'lg',
   showBadge = true,
   onClick
 }: NotificationBellProps) {

@@ -15,6 +15,7 @@ const navLinks = [
   { name: "Ahorro", href: "/ahorro" },
   { name: "Precios", href: "/precios" },
   { name: "Dispositivos", href: "/dispositivos" },
+  { name: "Subscribete", href: "/contact" },
 ];
 
 export default function Header() {
