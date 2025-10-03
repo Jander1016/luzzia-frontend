@@ -23,8 +23,9 @@ export default function DiagnosticPage() {
       const dashboardStats = await apiClient.get('/prices/dashboard-stats')
       addResult(`✅ Dashboard stats: ${JSON.stringify(dashboardStats)}`)
       
-    } catch (error: any) {
-      addResult(`❌ Error en apiClient: ${error.message}`)
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : String(error)
+      addResult(`❌ Error en apiClient: ${errorMessage}`)
     }
     setLoading(false)
   }
@@ -40,8 +41,9 @@ export default function DiagnosticPage() {
       const dashboardStats = await electricityService.getDashboardStats()
       addResult(`✅ getDashboardStats: ${JSON.stringify(dashboardStats)}`)
       
-    } catch (error: any) {
-      addResult(`❌ Error en electricityService: ${error.message}`)
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : String(error)
+      addResult(`❌ Error en electricityService: ${errorMessage}`)
     }
     setLoading(false)
   }
@@ -59,8 +61,9 @@ export default function DiagnosticPage() {
       const statsData = await statsResponse.json()
       addResult(`✅ Dashboard stats fetch: ${JSON.stringify(statsData)}`)
       
-    } catch (error: any) {
-      addResult(`❌ Error en fetch: ${error.message}`)
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : String(error)
+      addResult(`❌ Error en fetch: ${errorMessage}`)
     }
     setLoading(false)
   }

@@ -178,13 +178,16 @@ class ElectricityService {
       }
 
       return recommendations
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error obteniendo recomendaciones:', error)
       
       // Manejo específico para errores de throttling
-      if (error?.response?.status === 429) {
-        console.warn('Límite de tasa excedido - esperando antes de reintentar')
-        return []
+      if (error && typeof error === 'object' && 'response' in error) {
+        const axiosError = error as { response?: { status?: number } }
+        if (axiosError.response?.status === 429) {
+          console.warn('Límite de tasa excedido - esperando antes de reintentar')
+          return []
+        }
       }
       
       // Return empty array instead of throwing for non-critical features
