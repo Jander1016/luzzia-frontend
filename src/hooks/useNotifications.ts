@@ -5,7 +5,7 @@ import {
   Notification, 
   NotificationState, 
   NotificationConfig, 
-  CreateNotificationPayload 
+  CreateNotificationPayload
 } from '@/types/notifications'
 import { notificationService } from '@/services/notificationService'
 import { usePriceAnalysis } from './useElectricityData.simple'
@@ -42,48 +42,6 @@ export function useNotifications() {
   // Refs para timers
   const intervalRef = useRef<NodeJS.Timeout | null>(null)
   const { data: priceData, isLoading: isPriceLoading } = usePriceAnalysis()
-
-  // Cargar datos del localStorage al inicializar
-  useEffect(() => {
-    loadFromStorage()
-  }, [])
-
-  // Generar recomendaciones iniciales si no hay notificaciones
-  useEffect(() => {
-    const shouldGenerateInitial = 
-      !state.isLoading && 
-      state.notifications.length === 0 && 
-      priceData?.prices && 
-      priceData.prices.length > 0 && 
-      !isPriceLoading
-
-    if (shouldGenerateInitial) {
-      generateRecommendations()
-    }
-  }, [priceData?.prices, isPriceLoading, state.notifications.length, state.isLoading])
-
-  // Configurar intervalo de generación automática
-  useEffect(() => {
-    if (state.config.intervalMinutes > 0) {
-      setupAutoGeneration()
-    }
-    
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current)
-      }
-    }
-  }, [state.config.intervalMinutes])
-
-  // Guardar en localStorage cuando cambie el estado
-  useEffect(() => {
-    saveToStorage()
-  }, [state.notifications, state.config, state.lastGenerated])
-
-  // Limpiar notificaciones expiradas
-  useEffect(() => {
-    cleanupExpiredNotifications()
-  }, [state.notifications])
 
   /**
    * Carga datos del localStorage
@@ -135,6 +93,109 @@ export function useNotifications() {
   }, [state.notifications, state.config, state.lastGenerated])
 
   /**
+   * Limpia notificaciones expiradas
+   */
+  const cleanupExpiredNotifications = useCallback(() => {
+    const now = new Date()
+    setState(prev => ({
+      ...prev,
+      notifications: prev.notifications.filter(notification => 
+        !notification.expiresAt || notification.expiresAt > now
+      )
+    }))
+  }, [])
+
+  /**
+   * Verifica si estamos en horario silencioso
+   */
+  const isInQuietHours = useCallback((): boolean => {
+    if (!state.config.quietHours) return false
+
+    const now = new Date()
+    const currentHour = now.getHours()
+    const currentMinute = now.getMinutes()
+    const currentTime = currentHour * 60 + currentMinute
+
+    const startParts = state.config.quietHours.start.split(':')
+    const endParts = state.config.quietHours.end.split(':')
+    
+    const startTime = parseInt(startParts[0]) * 60 + parseInt(startParts[1])
+    const endTime = parseInt(endParts[0]) * 60 + parseInt(endParts[1])
+
+    if (startTime <= endTime) {
+      return currentTime >= startTime && currentTime <= endTime
+    } else {
+      return currentTime >= startTime || currentTime <= endTime
+    }
+  }, [state.config.quietHours])
+
+  /**
+   * Genera recomendaciones de precios
+   */
+  const generateRecommendations = useCallback(async () => {
+    if (!priceData?.prices || priceData.prices.length === 0) {
+      console.warn('No hay datos de precios disponibles para generar recomendaciones')
+      return
+    }
+
+    if (isInQuietHours()) {
+      console.log('En horario silencioso, omitiendo generación de notificaciones')
+      return
+    }
+
+    setState(prev => ({ ...prev, isLoading: true }))
+
+    try {
+      const recommendations = await notificationService.generateRecommendations(priceData.prices)
+      
+      const newNotifications: Notification[] = recommendations
+        .slice(0, state.config.maxNotifications)
+        .map((rec: CreateNotificationPayload) => {
+          // Mapear tipo de notificación a icono
+          const getIconForType = (type: string) => {
+            switch (type) {
+              case 'optimal_time': return 'check-circle'
+              case 'avoid_usage': return 'alert-triangle'
+              case 'schedule_device': return 'clock'
+              case 'tip_of_day': return 'lightbulb'
+              case 'price_alert': return 'trending-up'
+              default: return 'lightbulb'
+            }
+          }
+          
+          return {
+            id: generateNotificationId(),
+            title: rec.title,
+            message: rec.message,
+            type: rec.type,
+            icon: getIconForType(rec.type),
+            priority: rec.priority,
+            timestamp: new Date(),
+            isRead: false,
+            expiresAt: new Date(Date.now() + (state.config.autoExpireHours || 24) * 60 * 60 * 1000),
+            actionData: rec.actionData
+          }
+        })
+
+      if (newNotifications.length > 0) {
+        setState(prev => ({
+          ...prev,
+          notifications: [...newNotifications, ...prev.notifications]
+            .slice(0, state.config.maxNotifications),
+          unreadCount: prev.unreadCount + newNotifications.length,
+          lastGenerated: new Date(),
+          isLoading: false
+        }))
+      } else {
+        setState(prev => ({ ...prev, isLoading: false }))
+      }
+    } catch (error) {
+      console.error('Error generando recomendaciones:', error)
+      setState(prev => ({ ...prev, isLoading: false }))
+    }
+  }, [priceData, isInQuietHours, state.config.maxNotifications, state.config.autoExpireHours])
+
+  /**
    * Configura la generación automática de notificaciones
    */
   const setupAutoGeneration = useCallback(() => {
@@ -149,91 +210,7 @@ export function useNotifications() {
         generateRecommendations()
       }
     }, intervalMs)
-  }, [state.config.intervalMinutes, priceData])
-
-  /**
-   * Verifica si estamos en horario silencioso
-   */
-  const isInQuietHours = useCallback((): boolean => {
-    if (!state.config.quietHours) return false
-
-    const now = new Date()
-    const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`
-    const { start, end } = state.config.quietHours
-
-    if (start <= end) {
-      return currentTime >= start && currentTime <= end
-    } else {
-      // Cruzando medianoche
-      return currentTime >= start || currentTime <= end
-    }
-  }, [state.config.quietHours])
-
-  /**
-   * Genera nuevas recomendaciones
-   */
-  const generateRecommendations = useCallback(async () => {
-    if (!priceData?.prices || isPriceLoading) return
-
-    setState(prev => ({ ...prev, isLoading: true }))
-
-    try {
-      // Generar nuevas recomendaciones
-      const newRecommendations = notificationService.generateRecommendations(priceData.prices)
-      
-      // Filtrar duplicados
-      const filtered = notificationService.filterDuplicates(newRecommendations, state.notifications)
-      
-      // Convertir a Notification objects
-      const notifications: Notification[] = filtered.map(rec => ({
-        ...rec,
-        id: generateNotificationId(),
-        timestamp: new Date(),
-        isRead: false,
-        expiresAt: state.config.autoExpireHours 
-          ? new Date(Date.now() + state.config.autoExpireHours * 60 * 60 * 1000)
-          : undefined
-      }))
-
-      if (notifications.length > 0) {
-        setState(prev => {
-          const allNotifications = [...notifications, ...prev.notifications]
-            .slice(0, prev.config.maxNotifications) // Limitar cantidad
-          
-          return {
-            ...prev,
-            notifications: allNotifications,
-            unreadCount: allNotifications.filter(n => !n.isRead).length,
-            lastGenerated: new Date(),
-            isLoading: false
-          }
-        })
-      } else {
-        setState(prev => ({ ...prev, isLoading: false }))
-      }
-    } catch (error) {
-      console.error('Error generating recommendations:', error)
-      setState(prev => ({ ...prev, isLoading: false }))
-    }
-  }, [priceData, isPriceLoading, state.notifications, state.config])
-
-  /**
-   * Limpia notificaciones expiradas
-   */
-  const cleanupExpiredNotifications = useCallback(() => {
-    const now = new Date()
-    const validNotifications = state.notifications.filter(
-      n => !n.expiresAt || n.expiresAt > now
-    )
-
-    if (validNotifications.length !== state.notifications.length) {
-      setState(prev => ({
-        ...prev,
-        notifications: validNotifications,
-        unreadCount: validNotifications.filter(n => !n.isRead).length
-      }))
-    }
-  }, [state.notifications])
+  }, [state.config.intervalMinutes, isInQuietHours, generateRecommendations, priceData])
 
   /**
    * Marca una notificación como leída
@@ -263,7 +240,7 @@ export function useNotifications() {
   }, [])
 
   /**
-   * Elimina una notificación
+   * Remueve una notificación específica
    */
   const removeNotification = useCallback((id: string) => {
     setState(prev => {
@@ -303,6 +280,48 @@ export function useNotifications() {
   const generateNotificationId = (): string => {
     return `notif_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
   }
+
+  // Cargar datos del localStorage al inicializar
+  useEffect(() => {
+    loadFromStorage()
+  }, [loadFromStorage])
+
+  // Generar recomendaciones iniciales si no hay notificaciones
+  useEffect(() => {
+    const shouldGenerateInitial = 
+      !state.isLoading && 
+      state.notifications.length === 0 && 
+      priceData?.prices && 
+      priceData.prices.length > 0 && 
+      !isPriceLoading
+
+    if (shouldGenerateInitial) {
+      generateRecommendations()
+    }
+  }, [priceData?.prices, isPriceLoading, state.notifications.length, state.isLoading, generateRecommendations])
+
+  // Configurar intervalo de generación automática
+  useEffect(() => {
+    if (state.config.intervalMinutes > 0) {
+      setupAutoGeneration()
+    }
+    
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current)
+      }
+    }
+  }, [state.config.intervalMinutes, setupAutoGeneration])
+
+  // Guardar en localStorage cuando cambie el estado
+  useEffect(() => {
+    saveToStorage()
+  }, [saveToStorage])
+
+  // Limpiar notificaciones expiradas
+  useEffect(() => {
+    cleanupExpiredNotifications()
+  }, [cleanupExpiredNotifications])
 
   return {
     // State

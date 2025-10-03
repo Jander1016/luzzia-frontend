@@ -3,7 +3,6 @@
 import { useAsyncData, useRealtimeData } from './useAsyncData.optimized'
 import { electricityService } from '@/services/electricityService'
 import { 
-  DashboardStats,
   PriceLevel 
 } from '@/types/api'
 

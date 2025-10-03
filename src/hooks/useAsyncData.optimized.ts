@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef, use } from 'react'
+import { useState, useEffect, useRef, useCallback, use } from 'react'
 
 interface UseAsyncDataOptions<T> {
   initialData?: T
@@ -42,7 +42,7 @@ export function useAsyncData<T>(
   const retryTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   // React Compiler optimizará esta función automáticamente
-  const fetchData = async (attempt: number = 1): Promise<void> => {
+  const fetchData = useCallback(async (attempt: number = 1): Promise<void> => {
     if (!enabled) return
 
     // Cancelar request anterior
@@ -84,7 +84,7 @@ export function useAsyncData<T>(
         setIsLoading(false)
       }
     }
-  }
+  }, [enabled, fetcher, retryCount])
 
   // React Compiler optimizará esta función automáticamente  
   const refetch = () => {
