@@ -1,7 +1,6 @@
 'use client'
 
 import { useElectricityData } from '@/hooks/useElectricityData.simple'
-import { PriceChart } from './PriceChart'
 
 import { ErrorDisplay } from '@/components/ui/errorDisplay'
 import { Loading } from '@/components/ui/loading'
