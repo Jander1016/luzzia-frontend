@@ -66,8 +66,6 @@ class ElectricityService {
     try {
       const stats = await apiClient.get<DashboardStats>(this.endpoints.pricesStats)
 
-      console.log('Dashboard stats obtenidas:', stats)
-      
       if (!isValidDashboardStats(stats)) {
         throw new Error('Estructura de datos de estadísticas del dashboard inválida')
       }

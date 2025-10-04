@@ -41,8 +41,6 @@ export function useElectricityData(): UseElectricityDataReturn {
       setIsLoading(true)
       setError(null)
 
-      console.log('📊 Obteniendo datos de electricidad...')
-
       // Hacer todas las llamadas en paralelo
       const [statsResult, pricesResult, recommendationsResult] = await Promise.all([
         electricityService.getDashboardStats().catch(err => {
@@ -66,7 +64,6 @@ export function useElectricityData(): UseElectricityDataReturn {
       })
       
       setLastUpdated(new Date())
-      console.log('✅ Datos actualizados correctamente')
       
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Error desconocido'
@@ -84,12 +81,10 @@ export function useElectricityData(): UseElectricityDataReturn {
 
   // Actualizar cuando cambia la hora (ya que la API se actualiza cada hora)
   useHourlyEffect(() => {
-    console.log('🕐 Nueva hora detectada, actualizando datos de electricidad...')
     fetchData()
   })
 
   const refetch = useCallback(() => {
-    console.log('🔄 Refetch manual solicitado')
     fetchData()
   }, [fetchData])
 
@@ -221,7 +216,6 @@ export function useWeekPrices() {
     try {
       setIsLoading(true)
       setError(null)
-      console.log('📈 Obteniendo precios de la semana...')
       
       const result = await electricityService.getHourlyPrices('week')
       setData(result || [])
@@ -260,7 +254,6 @@ export function useMonthPrices() {
     try {
       setIsLoading(true)
       setError(null)
-      console.log('📅 Obteniendo precios del mes...')
       
       const result = await electricityService.getHourlyPrices('month')
       setData(result || [])

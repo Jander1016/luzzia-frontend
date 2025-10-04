@@ -1,14 +1,13 @@
 'use client'
 
 import { useElectricityData } from '@/hooks/useElectricityData.simple'
-
-
+import { PriceChart } from './PriceChart'
 
 import { ErrorDisplay } from '@/components/ui/errorDisplay'
 import { Loading } from '@/components/ui/loading'
 import Hero from './Hero'
 
-function LastUpdated({ lastUpdated }: { lastUpdated: Date | null }) {
+function _LastUpdated({ lastUpdated }: { lastUpdated: Date | null }) {
   if (!lastUpdated) return null
 
   return (
@@ -21,7 +20,7 @@ function LastUpdated({ lastUpdated }: { lastUpdated: Date | null }) {
 }
 
 export function DashboardContent() {
-  const { stats, isLoading, error, refetch, lastUpdated } = useElectricityData()
+  const { stats, isLoading, error, refetch } = useElectricityData()
 
   // Solo mostrar loading en la carga inicial
   if (isLoading && !stats) {
@@ -64,27 +63,7 @@ export function DashboardContent() {
           />
         )}
 
-        <LastUpdated lastUpdated={lastUpdated} />
-
-        {/* Comentarios para futuras funcionalidades */}
-        {/* <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-12">
-          <PriceChart />
-          <Recommendations recommendations={recommendations} />
-        </div> */}
-        
-        {/* Información adicional */}
-        {/* {stats && (
-          <div className="mt-8 p-4 bg-blue-50 rounded-lg">
-            <h3 className="text-sm font-medium text-blue-900 mb-2">
-              ℹ️ Información del sistema
-            </h3>
-            <ul className="text-sm text-blue-700 space-y-1">
-              <li>• Los precios se actualizan automáticamente cada hora</li>
-              <li>• Los datos provienen del sistema REE (Red Eléctrica de España)</li>
-              <li>• Puedes refrescar manualmente en cualquier momento</li>
-            </ul>
-          </div>
-        )} */}
+ 
       </div>
     </div>
   )

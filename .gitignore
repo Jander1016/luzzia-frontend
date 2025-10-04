@@ -44,6 +44,7 @@ next-env.d.ts
 REFACTORING_*.md
 *.summary.md
 *.notes.md
+/docs
 
 # Test files (temporary)
 test-*.js

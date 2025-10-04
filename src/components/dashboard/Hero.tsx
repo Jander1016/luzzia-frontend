@@ -9,12 +9,13 @@ interface HeroProps {
 
 export default function Hero({ stats }: HeroProps) {
   return (
-    <section className="bg-gradient-to-br from-[#1a237e] via-[#283593] to-[#7b1fa2] py-16 rounded-xl px-8 mb-8">
-      <div className="max-w-6xl mx-auto">
+    // <section className="bg-gradient-to-br from-[#1a237e] via-[#283593] to-[#7b1fa2] py-16 rounded-xl px-8 mb-8">
+      // <div className="max-w-6xl mx-auto">
+      <>
         {/* Hero Text */}
         <div className="text-center mb-12">
           <h1 className="text-5xl font-bold tracking-tight text-white mb-4">
-            <span className="text-cyan-300">Ahorra</span> en tu
+            <span className="text-green-300 -to-blue-500">Ahorra</span> en tu
           </h1>
           <h1 className="text-5xl font-bold tracking-tight text-white mb-6">
             factura eléctrica
@@ -27,7 +28,7 @@ export default function Hero({ stats }: HeroProps) {
         
         {/* Price Cards */}
         <PriceCards stats={stats || null} />
-      </div>
-    </section>
+      </>
+    // </section>
   )
 }
