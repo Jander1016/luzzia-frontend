@@ -20,7 +20,7 @@ export function ChartTypeSelector({ activeType, onTypeChange }: ChartTypeSelecto
       {/* Mobile-first: Selector horizontal compacto */}
       <div className="flex sm:hidden">
         <div className="flex w-full bg-slate-800/50 backdrop-blur-sm rounded-lg p-1 gap-1 shadow-lg border border-slate-700/30">
-          {chartTypes.map(({ type, label, icon: Icon, emoji }) => (
+          {chartTypes.map(({ type, label, emoji }) => (
             <button
               key={type}
               onClick={() => onTypeChange(type)}
@@ -42,7 +42,7 @@ export function ChartTypeSelector({ activeType, onTypeChange }: ChartTypeSelecto
       {/* Desktop: Selector horizontal mejorado */}
       <div className="hidden sm:flex">
         <div className="flex bg-slate-800/40 backdrop-blur-md rounded-xl p-1 border border-slate-600/30 shadow-lg gap-1">
-          {chartTypes.map(({ type, label, icon: Icon, emoji }) => (
+          {chartTypes.map(({ type, label, emoji }) => (
             <button
               key={type}
               onClick={() => onTypeChange(type)}
@@ -55,7 +55,6 @@ export function ChartTypeSelector({ activeType, onTypeChange }: ChartTypeSelecto
               `}
             >
               <span className="text-base">{emoji}</span>
-              <Icon className="w-4 h-4" />
               <span className="hidden md:inline">{label}</span>
             </button>
           ))}

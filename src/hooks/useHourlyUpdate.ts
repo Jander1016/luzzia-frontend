@@ -22,7 +22,6 @@ export function useHourlyEffect(callback: () => void, enabled: boolean = true) {
       const currentHour = new Date().getHours()
       if (currentHour !== lastHourRef.current) {
         lastHourRef.current = currentHour
-        console.log(`🕐 Nueva hora detectada: ${currentHour}:00`)
         callbackRef.current()
       }
     }

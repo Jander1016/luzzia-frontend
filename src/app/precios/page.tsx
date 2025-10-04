@@ -13,7 +13,7 @@ export default function PreciosPage() {
   }
   
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 p-6">
+    <>
       {error && (
         <ErrorDisplay
           title="Error de conexión"
@@ -31,6 +31,6 @@ export default function PreciosPage() {
 
       {/* Gráfico principal de precio de la luz */}
       <PriceChart />
-    </div>
+    </>
   )
 }

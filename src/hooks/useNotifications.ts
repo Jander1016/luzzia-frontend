@@ -139,7 +139,6 @@ export function useNotifications() {
     }
 
     if (isInQuietHours()) {
-      console.log('En horario silencioso, omitiendo generación de notificaciones')
       return
     }
 

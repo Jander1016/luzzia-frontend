@@ -5,12 +5,13 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { BarChart3, RefreshCw, Zap } from 'lucide-react'
 import { usePriceAnalysis, useWeekPrices, useMonthPrices } from '@/hooks/useElectricityData.simple'
+import '@/styles/charts-dark.css'
 
 // Componentes separados
 import { PeriodFilter } from './chart/PeriodFilter'
-import { BarChart } from './chart/BarChart'
-import { LineChart } from './chart/LineChart'
-import { PieChart } from './chart/PieChart'
+import { BarChart } from './chart/BarChartRecharts'
+import { LineChart } from './chart/LineChartRecharts'
+import { PieChart } from './chart/PieChartRecharts'
 import { ChartTypeSelector } from './chart/ChartTypeSelector'
 import { ChartLegend } from './chart/ChartLegend'
 import { PriceChartSkeleton, PriceChartError } from './chart/ChartStates'
@@ -160,20 +161,20 @@ export function PriceChart() {
   }
 
   return (
-    <Card className="bg-slate-800/50 backdrop-blur-sm border-slate-700/50">
-      <CardHeader>
-        <div className="flex justify-between items-center mb-6">
+    <Card className="bg-gradient-to-br from-slate-800 via-slate-900 to-gray-900 border-slate-700/50 shadow-2xl w-full">
+      <CardHeader className="p-4 sm:p-6">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 space-y-4 sm:space-y-0">
           <div className="flex items-center space-x-3">
-            <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center animate-pulse-glow">
-              <BarChart3 className="w-6 h-6 text-white" />
+            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center animate-pulse-glow">
+              <BarChart3 className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
             </div>
             <div>
-              <CardTitle className="text-white text-xl flex items-center space-x-2">
+              <CardTitle className="text-white text-lg sm:text-xl flex items-center space-x-2">
                 <span>{getTitle()}</span>
-                {activePeriod === 'hoy' && <Zap className="w-5 h-5 text-yellow-400" />}
+                {activePeriod === 'hoy' && <Zap className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-400" />}
               </CardTitle>
-              <div className="flex items-center space-x-4">
-                <p className="text-slate-400 text-sm">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4 space-y-1 sm:space-y-0">
+                <p className="text-slate-300 text-xs sm:text-sm">
                   {getDescription()}
                 </p>
                 {getStatusIndicator()}
@@ -185,9 +186,9 @@ export function PriceChart() {
             size="sm"
             onClick={handleRefresh}
             disabled={isRefreshing}
-            className={`border-slate-600 hover:bg-slate-700 transition-smooth ${
+            className={`border-slate-600 hover:bg-slate-700 text-white transition-smooth ${
               isRefreshing ? 'animate-spin' : 'hover-scale-105'
-            }`}
+            } self-start sm:self-auto`}
           >
             <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
           </Button>
@@ -212,18 +213,20 @@ export function PriceChart() {
         </div>
       </CardHeader>
       
-      <CardContent>
+      <CardContent className="p-4 sm:p-6">
         {/* Gráfico dinámico con animaciones */}
-        <div className="chart-container mb-8 p-4 bg-gradient-chart rounded-lg glass-effect transition-smooth">
+        <div className="chart-container chart-glass-effect transition-smooth p-4 mb-6">
           {renderChart()}
         </div>
 
         {/* Leyenda dinámica */}
-        <ChartLegend 
-          legend={dynamicLegend} 
-          prices={prices} 
-          activePeriod={activePeriod} 
-        />
+        <div className="mt-4">
+          <ChartLegend 
+            legend={dynamicLegend} 
+            prices={prices} 
+            activePeriod={activePeriod} 
+          />
+        </div>
       </CardContent>
     </Card>
   )

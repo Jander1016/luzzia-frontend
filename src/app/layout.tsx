@@ -19,7 +19,7 @@ export default function RootLayout({
     <html lang="es">
       <body className={`${inter.className} bg-gradient-to-br from-[#09121a] via-[#1b2c62] to-[#471581] py-1 rounded-lg p-2 text-white`}>
         <Header />
-        <main className="container mx-auto px-4 py-6">{children}</main>
+        <main className="container mx-auto p-4">{children}</main>
       </body>
     </html>
   );
