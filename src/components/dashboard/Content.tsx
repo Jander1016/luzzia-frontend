@@ -1,22 +1,21 @@
 'use client'
 
 import { useElectricityData } from '@/hooks/useElectricityData.simple'
-
 import { ErrorDisplay } from '@/components/ui/errorDisplay'
 import { Loading } from '@/components/ui/loading'
 import Hero from './Hero'
 
-function _LastUpdated({ lastUpdated }: { lastUpdated: Date | null }) {
-  if (!lastUpdated) return null
+// function _LastUpdated({ lastUpdated }: { lastUpdated: Date | null }) {
+//   if (!lastUpdated) return null
 
-  return (
-    <div className="text-center mb-6">
-      <p className="text-sm text-gray-500">
-        Datos del sistema REE • Actualización automática cada hora
-      </p>
-    </div>
-  )
-}
+//   return (
+//     <div className="text-center mb-6">
+//       <p className="text-sm text-gray-500">
+//         Datos del sistema REE • Actualización automática cada hora
+//       </p>
+//     </div>
+//   )
+// }
 
 export function DashboardContent() {
   const { stats, isLoading, error, refetch } = useElectricityData()
@@ -27,17 +26,8 @@ export function DashboardContent() {
   }
 
   return (
-    <div className="min-h-screen">
+    <>
       <div className="container mx-auto px-4 py-8">
-        {/* Estado de los datos */}
-        {/* <DataStatus 
-          lastUpdated={lastUpdated}
-          isLoading={isLoading}
-          error={error}
-          onRefresh={refetch}
-        /> */}
-
-        {/* Contenido principal */}
         <Hero stats={stats} />
         
         {/* Error no crítico - mostrar pero no bloquear */}
@@ -64,6 +54,6 @@ export function DashboardContent() {
 
  
       </div>
-    </div>
+    </>
   )
 }
