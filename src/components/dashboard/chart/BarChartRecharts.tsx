@@ -77,15 +77,13 @@ export function BarChart({ prices, period }: BarChartProps) {
   })
 
   // Colores por nivel de precio
-  const getLevelColor = (level: string, isCurrentHour: boolean) => {
-    if (isCurrentHour) return 'hsl(217 91% 60%)' // Blue for current hour
-    
+  const getLevelColor = (level: string) => {
     switch (level) {
       case 'bajo': return 'hsl(142 71% 45%)' // Green
       case 'medio': return 'hsl(43 89% 58%)' // Amber
       case 'alto': return 'hsl(25 95% 58%)' // Orange
       case 'muy-alto': return 'hsl(0 84% 60%)' // Red
-      default: return 'hsl(142 71% 45%)'
+      default: return 'hsl(43 89% 58%)' // Default to amber
     }
   }
 
@@ -118,7 +116,7 @@ export function BarChart({ prices, period }: BarChartProps) {
       return (
         <div className="bg-background/95 backdrop-blur-sm border rounded-lg shadow-lg p-3">
           <p className="font-medium">{label}:00h</p>
-          <p className="text-lg font-bold" style={{ color: getLevelColor(data.level, data.isCurrentHour) }}>
+          <p className="text-lg font-bold" style={{ color: getLevelColor(data.level) }}>
             {data.formattedPrice}
           </p>
           <p className="text-sm text-muted-foreground">
@@ -249,7 +247,9 @@ export function BarChart({ prices, period }: BarChartProps) {
                   {chartData.map((entry, index) => (
                     <Cell 
                       key={`cell-${index}`} 
-                      fill={getLevelColor(entry.level, entry.isCurrentHour)}
+                      fill={getLevelColor(entry.level)}
+                      // stroke={entry.isCurrentHour ? 'hsl(217 91% 60%)' : 'hsl(var(--border))'}
+                      // strokeWidth={entry.isCurrentHour ? 3 : 1}
                     />
                   ))}
                 </Bar>
