@@ -52,11 +52,15 @@ export function getChartColors(level: string): { bg: string; border: string; fil
 export function classifyPrice(price: number, allPrices: PriceData[]): string {
   if (!allPrices.length) return 'medio'
   
-  const prices = allPrices.map(p => p.price)
-  const avg = prices.reduce((sum, p) => sum + p, 0) / prices.length
+  const priceValues = allPrices.map(p => p.price)
+  const min = Math.min(...priceValues)
+  const max = Math.max(...priceValues)
+  const range = max - min
+  const quarter = range / 4
   
-  if (price <= avg * 0.7) return 'bajo'
-  if (price <= avg * 1.1) return 'medio'
-  if (price <= avg * 1.3) return 'alto'
+  // Usar el mismo sistema de cuartiles que la leyenda
+  if (price <= min + quarter) return 'bajo'
+  if (price <= min + (quarter * 2)) return 'medio'
+  if (price <= min + (quarter * 3)) return 'alto'
   return 'muy-alto'
 }
