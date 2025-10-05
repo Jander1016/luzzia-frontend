@@ -167,9 +167,6 @@ export function useTomorrowPrices() {
   }
 }
 
-/**
- * Hook simplificado para estadísticas del dashboard
- */
 export function useDashboardStats() {
   const [stats, setStats] = useState<DashboardStats | null>(null)
   const [isLoading, setIsLoading] = useState(true)
@@ -201,12 +198,6 @@ export function useDashboardStats() {
   }
 }
 
-/**
- * Hook para análisis de precios basado en los precios de hoy
- */
-/**
- * Hook para obtener precios de la semana
- */
 export function useWeekPrices() {
   const [data, setData] = useState<ElectricityPrice[] | null>(null)
   const [isLoading, setIsLoading] = useState(true)
