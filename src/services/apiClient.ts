@@ -1,3 +1,5 @@
+import { ContactFormData } from "@/app/contact/validate.contact";
+
 export class HTTPError extends Error {
   status: number;
   constructor(message: string, status: number) {
@@ -23,4 +25,24 @@ export async function safeFetchJson<T>(
   } finally {
     clearTimeout(id);
   }
+}
+
+export async function postJson<T>(
+  url: string,
+  data: ContactFormData,
+  options?: RequestInit
+): Promise<T> {
+  const res = await fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      ...(options?.headers || {}),
+    },
+    body: JSON.stringify(data),
+    ...options,
+  });
+  if (!res.ok) {
+    throw new HTTPError(`Error HTTP ${res.status}`, res.status);
+  }
+  return (await res.json()) as T;
 }

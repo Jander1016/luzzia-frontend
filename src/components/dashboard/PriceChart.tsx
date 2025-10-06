@@ -2,9 +2,10 @@
 
 import { useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { BarChart3, RefreshCw, Zap } from 'lucide-react'
+// import { Button } from '@/components/ui/button'
+import { BarChart3, Zap } from 'lucide-react'
 import { usePriceAnalysis, useWeekPrices, useMonthPrices } from '@/hooks/useElectricityData.simple'
+import { useResponsive } from '@/hooks/useResponsive'
 import '@/styles/charts-dark.css'
 
 // Componentes separados
@@ -26,6 +27,12 @@ export function PriceChart() {
   const [activeChartType, setActiveChartType] = useState<ChartType>('bar')
   const [isRefreshing, setIsRefreshing] = useState(false)
   const [lastUpdated, setLastUpdated] = useState<Date>(new Date())
+  
+  // Hook para detectar dispositivos móviles
+  const { isMobile } = useResponsive()
+  
+  // En móvil, forzar el tipo de gráfico a 'line'
+  const effectiveChartType = isMobile ? 'line' : activeChartType
   
   // Hooks para diferentes períodos
   const todayAnalysis = usePriceAnalysis()
@@ -125,16 +132,16 @@ export function PriceChart() {
   }
   
   // Generar leyendas dinámicas
-  const dynamicLegend = generateDynamicLegend(prices, activePeriod, activeChartType)
+  const dynamicLegend = generateDynamicLegend(prices, activePeriod, effectiveChartType)
 
   // Renderizar el tipo de gráfico correcto
   const renderChart = () => {
-    switch (activeChartType) {
+    switch (effectiveChartType) {
       case 'bar':
         return <BarChart prices={prices} period={activePeriod} />
       case 'line':
         return <LineChart prices={prices} period={activePeriod} />
-      case 'pie':
+        case 'pie':
         return <PieChart prices={prices} period={activePeriod} />
       default:
         return <BarChart prices={prices} period={activePeriod} />
@@ -162,8 +169,8 @@ export function PriceChart() {
 
   return (
     <Card className="bg-gradient-to-br from-slate-800 via-slate-900 to-gray-900 border-slate-700/50 shadow-2xl w-full">
-      <CardHeader className="p-4 sm:p-6">
-        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 space-y-4 sm:space-y-0">
+      <CardHeader className={`${isMobile ? 'p-3' : 'p-4 sm:p-6'}`}>
+        <div className={`flex flex-col sm:flex-row sm:justify-between sm:items-center ${isMobile ? 'mb-3' : 'mb-6'} space-y-4 sm:space-y-0`}>
           <div className="flex items-center space-x-3">
             <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center animate-pulse-glow">
               <BarChart3 className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
@@ -181,7 +188,7 @@ export function PriceChart() {
               </div>
             </div>
           </div>
-          <Button
+          {/* <Button
             variant="outline"
             size="sm"
             onClick={handleRefresh}
@@ -191,7 +198,7 @@ export function PriceChart() {
             } self-start sm:self-auto`}
           >
             <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
-          </Button>
+          </Button> */}
         </div>
         
         <div className="flex flex-col md:flex-row md:items-start md:justify-between space-y-4 md:space-y-0 md:space-x-6">
@@ -203,30 +210,43 @@ export function PriceChart() {
             />
           </div>
           
-          {/* Selector de tipo de gráfico */}
-          <div className="w-full md:w-auto md:flex-shrink-0">
-            <ChartTypeSelector 
-              activeType={activeChartType}
-              onTypeChange={handleChartTypeChange}
-            />
-          </div>
+          {/* Selector de tipo de gráfico - Oculto en móvil */}
+          {!isMobile && (
+            <div className="w-full md:w-auto md:flex-shrink-0">
+              <ChartTypeSelector 
+                activeType={activeChartType}
+                onTypeChange={handleChartTypeChange}
+              />
+            </div>
+          )}
+          
+          {/* Indicador de gráfico lineal en móvil */}
+          {isMobile && (
+            <div className="flex items-center justify-center space-x-2 py-2 px-4 bg-blue-900/30 border border-blue-500/30 rounded-lg">
+              <div className="w-3 h-3 bg-blue-400 rounded-full"></div>
+              <span className="text-blue-300 text-sm font-medium">Vista Lineal (Móvil)</span>
+            </div>
+          )}
         </div>
       </CardHeader>
       
-      <CardContent className="p-4 sm:p-6">
+      <CardContent className={`${isMobile ? 'p-2' : 'p-4 sm:p-2'}`}>
         {/* Gráfico dinámico con animaciones */}
-        <div className="chart-container chart-glass-effect transition-smooth p-4 mb-6">
+        <div className={`chart-container chart-glass-effect transition-smooth ${isMobile ? 'p-1 mb-4' : 'p-2 mb-6'}`}>
           {renderChart()}
         </div>
 
         {/* Leyenda dinámica */}
-        <div className="mt-4">
-          <ChartLegend 
-            legend={dynamicLegend} 
-            prices={prices} 
-            activePeriod={activePeriod} 
-          />
-        </div>
+        {/* Leyenda dinámica - Oculta en móvil para dar más espacio al gráfico */}
+        {!isMobile && (
+          <div className="mt-4">
+            <ChartLegend 
+              legend={dynamicLegend} 
+              prices={prices} 
+              activePeriod={activePeriod} 
+            />
+          </div>
+        )}
       </CardContent>
     </Card>
   )

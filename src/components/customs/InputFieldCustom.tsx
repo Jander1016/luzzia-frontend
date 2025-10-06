@@ -10,7 +10,7 @@ type InputFieldProps = {
   className?: string;
 };
 
-const InputFieldUpdate = ({
+const InputField = ({
   label,
   type = "text",
   name,
@@ -37,4 +37,4 @@ const InputFieldUpdate = ({
   );
 };
 
-export default InputFieldUpdate;
+export default InputField;

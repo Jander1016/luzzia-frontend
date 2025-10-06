@@ -11,7 +11,7 @@ import { notificationService } from '@/services/notificationService'
 import { usePriceAnalysis } from './useElectricityData.simple'
 
 const DEFAULT_CONFIG: NotificationConfig = {
-  intervalMinutes: 60, // 1 hora por defecto
+  intervalMinutes: 180, // 3 horas por defecto
   maxNotifications: 10,
   enabledTypes: ['optimal_time', 'avoid_usage', 'schedule_device', 'tip_of_day'],
   autoExpireHours: 24,

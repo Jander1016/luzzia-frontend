@@ -2,7 +2,6 @@
 
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
-import { toast } from "sonner"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -15,35 +14,44 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { ContactFormData, ContactSchema } from "@/app/contact/validate.contact"
+import { safeContactForm } from "@/services/contactService"
+import { useState } from "react"
 
-// const FormSchema = z.object({
-//   username: z.string().min(2, {
-//     message: "Username must be at least 2 characters.",
-//   }),
-// })
+export function SubscribeForm() {
 
-export function Subscribe() {
+  const [message, setMessage] = useState('');
+
   const form = useForm<ContactFormData>({
     resolver: zodResolver(ContactSchema),
     defaultValues: {
       name: "",
-      email: "email@mail.com",
+      email: "",
     },
   })
 
-  function onSubmit(data: ContactFormData) {
-    toast("You submitted the following values", {
-      description: (
-        <pre className="mt-2 w-[320px] rounded-md bg-neutral-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
-    })
+  async function onSubmit(data: ContactFormData) {
+    setMessage('');
+    try {
+      await safeContactForm(data)
+      form.reset(); 
+      setMessage('success::¡Gracias! Te contactaremos pronto.');
+    } catch (error: unknown) {
+      let errorMsg = 'Error al enviar. Intenta nuevamente.';
+      
+      if (error instanceof Error) {
+        errorMsg = error.message;
+      }
+      
+      setMessage(`error::${errorMsg}`);
+    }
   }
+  const [type, text] = message.split('::');
+  const isError = type === 'error';
+  const isSuccess = type === 'success';
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="w-2/3 space-y-6">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="w-full sm:w-2/3 space-y-6">
         <FormField
           control={form.control}
           name="name"
@@ -53,14 +61,11 @@ export function Subscribe() {
               <FormControl>
                 <Input placeholder="Ingresa tu nombre" {...field} />
               </FormControl>
-              {/* <FormDescription>
-                Ingresa tu Nombre y correo para que recibas los precios actualizados de Luz al día y por hora.
-              </FormDescription> */}
               <FormMessage />
             </FormItem>
           )}
         />
-         <FormField
+        <FormField
           control={form.control}
           name="email"
           render={({ field }) => (
@@ -69,13 +74,18 @@ export function Subscribe() {
               <FormControl>
                 <Input placeholder="Ingresa tu email" {...field} />
               </FormControl>
-              {/* <FormDescription>
-                Ingresa tu Nombre y correo para que recibas los precios actualizados de Luz al día y por hora.
-              </FormDescription> */}
               <FormMessage />
             </FormItem>
           )}
         />
+        {message && (
+          <p className={`text-sm p-2 rounded ${isError ? 'bg-red-50 text-red-800 border border-red-200' :
+              isSuccess ? 'bg-green-50 text-green-800 border border-green-200' :
+                'bg-gray-50 text-gray-800'
+            }`}>
+            {text}
+          </p>
+        )}
         <Button type="submit">Submit</Button>
       </form>
     </Form>

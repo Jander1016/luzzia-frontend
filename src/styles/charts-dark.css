@@ -127,3 +127,54 @@
   background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(220, 38, 38, 0.1));
   border-color: rgba(239, 68, 68, 0.3);
 }
+
+/* Disable white bar selection highlight in charts - AGGRESSIVE APPROACH */
+.recharts-bar-rectangle,
+.recharts-bar-rectangle:hover,
+.recharts-bar-rectangle:focus,
+.recharts-bar-rectangle:active,
+.recharts-bar-rectangle.recharts-active-bar {
+  cursor: default !important;
+  pointer-events: none !important;
+  opacity: 1 !important;
+  fill-opacity: 1 !important;
+  filter: none !important;
+  stroke-opacity: 1 !important;
+  transform: none !important;
+}
+
+.recharts-active-bar {
+  filter: none !important;
+  opacity: 1 !important;
+  fill-opacity: 1 !important;
+}
+
+.recharts-bar {
+  cursor: default !important;
+  pointer-events: none !important;
+}
+
+/* Override any Recharts default styles that might add white backgrounds */
+.recharts-bar * {
+  pointer-events: none !important;
+}
+
+/* Completely disable any hover effects on the entire bar chart */
+.recharts-wrapper .recharts-bar,
+.recharts-wrapper .recharts-bar *,
+.recharts-wrapper .recharts-bar-rectangle {
+  pointer-events: none !important;
+}
+
+/* Re-enable pointer events only for tooltip at the container level */
+.recharts-wrapper {
+  pointer-events: auto !important;
+}
+
+.recharts-wrapper > * {
+  pointer-events: none !important;
+}
+
+.recharts-tooltip-wrapper {
+  pointer-events: auto !important;
+}

@@ -212,7 +212,7 @@ export function BarChart({ prices, period }: BarChartProps) {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <ChartContainer config={chartConfig} className={`${isMobile ? 'h-[300px]' : isTablet ? 'h-[350px]' : 'h-[400px]'} w-full`}>
+          <ChartContainer config={chartConfig} className={`${isMobile ? 'h-[300px] w-full' : isTablet ? 'h-[350px] w-full' : 'h-[400px] w-full'} no-bar-selection`}>
             <ResponsiveContainer width="100%" height="100%">
               <RechartsBarChart 
                 data={chartData} 
@@ -221,7 +221,9 @@ export function BarChart({ prices, period }: BarChartProps) {
                   right: isMobile ? 10 : 30, 
                   left: isMobile ? 10 : 20, 
                   bottom: isMobile ? 20 : 5 
-                }}>
+                }}
+                style={{ cursor: 'default' }}
+              >
                 <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                 <XAxis 
                   dataKey="hour" 
@@ -237,12 +239,17 @@ export function BarChart({ prices, period }: BarChartProps) {
                   tickFormatter={(value) => isMobile ? `${value.toFixed(2)}€` : `${value.toFixed(3)}€`}
                   width={isMobile ? 50 : 60}
                 />
-                <Tooltip content={<CustomTooltip />} />
+                <Tooltip 
+                  content={<CustomTooltip />}
+                  cursor={false}
+                  wrapperStyle={{ pointerEvents: 'auto' }}
+                />
                 <Bar 
                   dataKey="price" 
                   radius={[4, 4, 0, 0]}
                   stroke="hsl(var(--border))"
                   strokeWidth={1}
+                  isAnimationActive={false}
                 >
                   {chartData.map((entry, index) => (
                     <Cell 

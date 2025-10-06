@@ -28,7 +28,7 @@ export default function Header() {
         <div className="container mx-auto flex items-center justify-between px-4 py-3">
           <Link href="/" className="text-xl font-bold text-brand">
             <Image
-              src="/logo2.png"
+              src="/logo1.webp"
               alt="Luzzia Logo"
               width={180}
               height={180}
