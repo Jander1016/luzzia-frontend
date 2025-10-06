@@ -102,13 +102,13 @@ export function LineChart({ prices, period, showArea = false }: LineChartProps) 
           {data.isCurrentHour && (
             <p className="text-xs text-blue-600 font-medium">⏰ Hora actual</p>
           )}
-          <div className="text-xs text-muted-foreground mt-2 space-y-1">
+          {/* <div className="text-xs text-muted-foreground mt-2 space-y-1">
             <div>📊 Promedio: {formatPrice(avgPrice)}</div>
             <div className="flex justify-between gap-4">
               <span>📉 Mín: {formatPrice(minPrice)}</span>
               <span>📈 Máx: {formatPrice(maxPrice)}</span>
             </div>
-          </div>
+          </div> */}
         </div>
       )
     }
