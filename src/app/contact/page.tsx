@@ -16,7 +16,7 @@ export default function page() {
   return (
     <>
       <section className="mb-8 pt-6 text-center">
-        <h2 className="text-4xl font-bold text-white mb-2">Suscribete a Nuestra Newsletter</h2>
+        <h2 className="text-4xl font-bold text-white mb-2">Suscríbete a Nuestra Newsletter</h2>
         <p className="text-slate-400">Recibirás los precios de la Luz actualizados del día, semanal, mensual tú eliges </p>
       </section>
       <section

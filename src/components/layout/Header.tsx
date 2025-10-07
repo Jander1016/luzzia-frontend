@@ -15,7 +15,7 @@ const navLinks = [
   { name: "¿Qué es Luzzia?", href: "/aboutme" },
   // { name: "Precios", href: "/precios" },
   { name: "Blog", href: "/blog" },
-  { name: "Suscribete", href: "/contact" },
+  { name: "Suscríbete", href: "/contact" },
 ];
 
 export default function Header() {
