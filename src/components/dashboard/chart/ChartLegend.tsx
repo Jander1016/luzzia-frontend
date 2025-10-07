@@ -1,5 +1,5 @@
 import { LegendItem, PriceData } from './types'
-import { formatPrice } from './types'
+// import { formatPrice } from './types'
 
 interface ChartLegendProps {
   legend: LegendItem[]
@@ -7,20 +7,21 @@ interface ChartLegendProps {
   activePeriod: string
 }
 
-export function ChartLegend({ legend, prices, activePeriod }: ChartLegendProps) {
-  const getPeriodTitle = () => {
-    switch (activePeriod) {
-      case 'hoy': return 'Precios por Hora'
-      case 'semana': return 'Promedios Semanales'
-      case 'mes': return 'Promedios Mensuales'
-      default: return 'Precios'
-    }
-  }
+export function ChartLegend({ legend }: ChartLegendProps) {
+// export function ChartLegend({ legend, prices, activePeriod }: ChartLegendProps) {
+  // const getPeriodTitle = () => {
+  //   switch (activePeriod) {
+  //     case 'hoy': return 'Precios por Hora'
+  //     case 'semana': return 'Promedios Semanales'
+  //     case 'mes': return 'Promedios Mensuales'
+  //     default: return 'Precios'
+  //   }
+  // }
 
   return (
     <div className="mt-8">
       {/* Información del período actual */}
-      <div className="mb-4 p-3 bg-slate-700/30 rounded-lg">
+      {/* <div className="mb-4 p-3 bg-slate-700/30 rounded-lg">
         <div className="text-white text-sm font-medium mb-1">
           {getPeriodTitle()}
         </div>
@@ -32,7 +33,7 @@ export function ChartLegend({ legend, prices, activePeriod }: ChartLegendProps) 
             </>
           )}
         </div>
-      </div>
+      </div> */}
       
       {/* Leyenda de colores */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
