@@ -5,6 +5,9 @@ import { ErrorDisplay } from "@/components/ui/errorDisplay";
 import { Loading } from "@/components/ui/loading";
 import { useElectricityData } from "@/hooks/useElectricityData.simple";
 
+// Note: metadata debe estar en un archivo separado para client components
+// o usar un layout específico para esta página
+
 export default function PreciosPage() {
   const { isLoading, error, refetch } = useElectricityData()
   
