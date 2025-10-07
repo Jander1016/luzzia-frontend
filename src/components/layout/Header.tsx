@@ -11,10 +11,10 @@ import { NotificationPanel } from "@/components/notifications/NotificationPanel"
 import { useNotifications } from "@/hooks/useNotifications";
 
 const navLinks = [
-  { name: "Dashboard", href: "/" },
-  { name: "Ahorro", href: "/ahorro" },
-  { name: "Precios", href: "/precios" },
-  { name: "Dispositivos", href: "/dispositivos" },
+  { name: "Inicio", href: "/" },
+  { name: "¿Qué es Luzzia?", href: "/ahorro" },
+  // { name: "Precios", href: "/precios" },
+  { name: "Blog", href: "/dispositivos" },
   { name: "Subscribete", href: "/contact" },
 ];
 
