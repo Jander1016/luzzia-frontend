@@ -39,10 +39,12 @@ export function SubscribeForm() {
       let errorMsg = 'Error al enviar. Intenta nuevamente.';
       
       if (error instanceof Error) {
-        errorMsg = error.message;
+        errorMsg = error.message.split(':')[1];
       }
       
+      
       setMessage(`error::${errorMsg}`);
+      return
     }
   }
   const [type, text] = message.split('::');
@@ -51,7 +53,7 @@ export function SubscribeForm() {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="w-full sm:w-2/3 space-y-6">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="w-full sm:w-1/3 space-y-6">
         <FormField
           control={form.control}
           name="name"
@@ -70,7 +72,7 @@ export function SubscribeForm() {
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>email</FormLabel>
+              <FormLabel>Email</FormLabel>
               <FormControl>
                 <Input placeholder="Ingresa tu email" {...field} />
               </FormControl>
