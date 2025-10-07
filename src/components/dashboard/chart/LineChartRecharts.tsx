@@ -137,7 +137,7 @@ export function LineChart({ prices, period, showArea = false }: LineChartProps) 
           r={isCurrentHour ? 6 : 4}
           fill={color}
           stroke="white"
-          strokeWidth={2}
+          strokeWidth={1}
           className="transition-all duration-200"
         />
         
@@ -150,7 +150,7 @@ export function LineChart({ prices, period, showArea = false }: LineChartProps) 
               r={8}
               fill="none"
               stroke={color}
-              strokeWidth={2}
+              strokeWidth={1}
               opacity={0.6}
               className="animate-ping"
             />
@@ -192,20 +192,20 @@ export function LineChart({ prices, period, showArea = false }: LineChartProps) 
           <circle
             cx={cx}
             cy={cy}
-            r={isCurrentHour ? 8 : 6}
+            r={isCurrentHour ? 4 : 2}
             fill={color}
             stroke="white"
-            strokeWidth={2}
+            strokeWidth={1}
             className="transition-all duration-200"
           />
           {isCurrentHour && (
             <circle
               cx={cx}
               cy={cy}
-              r={10}
+              r={6}
               fill="none"
               stroke={color}
-              strokeWidth={2}
+              strokeWidth={1}
               opacity={0.6}
               className="animate-ping"
             />
@@ -240,7 +240,7 @@ export function LineChart({ prices, period, showArea = false }: LineChartProps) 
                 top: isMobile ? 20 : 20, 
                 right: isMobile ? 5 : 30, 
                 left: isMobile ? 5 : 20, 
-                bottom: isMobile ? 80 : 5 
+                bottom: isMobile ? 40 : 5 
               }}>
               <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
               <XAxis 
@@ -249,7 +249,7 @@ export function LineChart({ prices, period, showArea = false }: LineChartProps) 
                 stroke="hsl(var(--muted-foreground))"
                 angle={isMobile ? -45 : 0}
                 textAnchor={isMobile ? 'end' : 'middle'}
-                height={isMobile ? 80 : 30}
+                height={isMobile ? 50 : 30}
                 interval={isMobile ? 2 : 'preserveStartEnd'}
                 tickMargin={isMobile ? 8 : 5}
               />
@@ -314,22 +314,22 @@ export function LineChart({ prices, period, showArea = false }: LineChartProps) 
         {/* Estadísticas adicionales - Ocultas en móvil para más espacio */}
         {/* {!isMobile && ( */}
         { (
-          <div className={`mt-4 grid ${isMobile ? 'grid-cols-2' : 'grid-cols-2 md:grid-cols-4'} gap-4 text-sm`}>
-            <div className="bg-slate-800/60 rounded-lg p-3 text-center border border-slate-700/30">
+          <div className={`${isMobile ? 'mt-2' : 'mt-4'} grid ${isMobile ? 'grid-cols-2' : 'grid-cols-2 md:grid-cols-4'} gap-4 text-sm`}>
+            <div className={`bg-slate-800/60 rounded-lg ${isMobile ? 'p-2' : 'p-3'} text-center border border-slate-700/30`}>
               <div className="text-xs text-slate-400">Precio Actual</div>
               <div className="font-bold text-blue-400">
                 {period === 'hoy' && chartData.find(d => d.isCurrentHour)?.formattedPrice || 'N/A'}
               </div>
             </div>
-            <div className="bg-slate-800/60 rounded-lg p-3 text-center border border-slate-700/30">
+            <div className={`bg-slate-800/60 rounded-lg ${isMobile ? 'p-2' : 'p-3'} text-center border border-slate-700/30`}>
               <div className="text-xs text-slate-400">Promedio</div>
               <div className="font-bold text-white">{formatPrice(avgPrice)}</div>
             </div>
-            <div className="bg-slate-800/60 rounded-lg p-3 text-center border border-slate-700/30">
+            <div className={`bg-slate-800/60 rounded-lg ${isMobile ? 'p-2' : 'p-3'} text-center border border-slate-700/30`}>
               <div className="text-xs text-slate-400">Mínimo</div>
               <div className="font-bold text-green-400">{formatPrice(minPrice)}</div>
             </div>
-            <div className="bg-slate-800/60 rounded-lg p-3 text-center border border-slate-700/30">
+            <div className={`bg-slate-800/60 rounded-lg ${isMobile ? 'p-2' : 'p-3'} text-center border border-slate-700/30`}>
               <div className="text-xs text-slate-400">Máximo</div>
               <div className="font-bold text-red-400">{formatPrice(maxPrice)}</div>
             </div>
