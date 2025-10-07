@@ -1,0 +1,46 @@
+# Robots.txt for Luzzia - Energy Intelligence Platform
+# Last updated: 2025
+
+# Allow all crawlers access to public content
+User-agent: *
+Allow: /
+
+# Block access to private/admin areas
+Disallow: /api/
+Disallow: /_next/
+Disallow: /admin/
+Disallow: /dashboard/private/
+Disallow: /*.json$
+
+# Allow specific bots full access
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Slurp
+Allow: /
+
+User-agent: DuckDuckBot
+Allow: /
+
+# Block problematic bots
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+# Crawl delay for heavy crawlers
+User-agent: *
+Crawl-delay: 1
+
+# Sitemap location
+Sitemap: https://luzzia.es/sitemap.xml
+
+# Host preference (if applicable)
+# Host: https://luzzia.es
