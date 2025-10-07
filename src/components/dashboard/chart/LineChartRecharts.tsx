@@ -299,7 +299,9 @@ export function LineChart({ prices, period, showArea = false }: LineChartProps) 
                 <Line
                   type="monotone"
                   dataKey="price"
-                  stroke="hsl(var(--chart-1))"
+                  // stroke="hsl(var(--chart-1))"
+                  // stroke="#FFFFFF" 
+                  stroke="#4f46e5" 
                   strokeWidth={isMobile ? 4 : 2}
                   dot={isMobile ? <CustomDotEvery3Hours />: <CustomDot />}
                   activeDot={{ r: isMobile ? 8 : 6, stroke: "hsl(var(--chart-1))", strokeWidth: 3 }}
@@ -310,7 +312,8 @@ export function LineChart({ prices, period, showArea = false }: LineChartProps) 
         </ChartContainer>
         
         {/* Estadísticas adicionales - Ocultas en móvil para más espacio */}
-        {!isMobile && (
+        {/* {!isMobile && ( */}
+        { (
           <div className={`mt-4 grid ${isMobile ? 'grid-cols-2' : 'grid-cols-2 md:grid-cols-4'} gap-4 text-sm`}>
             <div className="bg-slate-800/60 rounded-lg p-3 text-center border border-slate-700/30">
               <div className="text-xs text-slate-400">Precio Actual</div>
