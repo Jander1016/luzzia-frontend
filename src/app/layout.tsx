@@ -23,9 +23,9 @@ export const metadata: Metadata = {
     'Red Eléctrica España',
     'electricidad barata España'
   ],
-  authors: [{ name: 'Luzzia Team' }],
-  creator: 'Luzzia',
-  publisher: 'Luzzia',
+  authors: [{ name: 'Jander Gomez' }],
+  creator: 'Jander',
+  publisher: 'Jander',
   formatDetection: {
     email: false,
     address: false,

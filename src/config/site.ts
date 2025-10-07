@@ -20,11 +20,11 @@ export const siteConfig = {
   ],
   authors: [
     {
-      name: "Luzzia Team",
+      name: "Jander Gomez",
       url: "https://luzzia.es",
     },
   ],
-  creator: "Luzzia",
+  creator: "Jander Gomez",
   themeColor: "#1e40af",
   manifest: "/manifest.json",
 }

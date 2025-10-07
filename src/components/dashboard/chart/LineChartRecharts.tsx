@@ -302,7 +302,7 @@ export function LineChart({ prices, period, showArea = false }: LineChartProps) 
                   // stroke="hsl(var(--chart-1))"
                   // stroke="#FFFFFF" 
                   stroke="#4f46e5" 
-                  strokeWidth={isMobile ? 4 : 2}
+                  strokeWidth={isMobile ? 2 : 1}
                   dot={isMobile ? <CustomDotEvery3Hours />: <CustomDot />}
                   activeDot={{ r: isMobile ? 8 : 6, stroke: "hsl(var(--chart-1))", strokeWidth: 3 }}
                 />

@@ -14,11 +14,16 @@ export const metadata: Metadata = {
 
 export default function page() {
   return (
-    //centra el formulario siempre al medio con tailwind
-    <section 
-      className="min-h-screen flex flex-col items-center justify-baseline bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 p-12"
+    <>
+      <section className="mb-8 pt-6 text-center">
+        <h2 className="text-4xl font-bold text-white mb-2">Suscribete a Nuestra Newsletter</h2>
+        <p className="text-slate-400">Recibirás los precios de la Luz actualizados del día, semanal, mensual tú eliges </p>
+      </section>
+      <section
+        className="min-h-screen flex flex-col items-center justify-baseline bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 p-12"
       >
-      <SubscribeForm />
-    </section>
+        <SubscribeForm />
+      </section>
+    </>
   )
 }
