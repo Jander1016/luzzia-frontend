@@ -12,9 +12,9 @@ import { useNotifications } from "@/hooks/useNotifications";
 
 const navLinks = [
   { name: "Inicio", href: "/" },
-  { name: "¿Qué es Luzzia?", href: "/ahorro" },
+  { name: "¿Qué es Luzzia?", href: "/aboutme" },
   // { name: "Precios", href: "/precios" },
-  { name: "Blog", href: "/dispositivos" },
+  { name: "Blog", href: "/blog" },
   { name: "Subscribete", href: "/contact" },
 ];
 
@@ -28,7 +28,7 @@ export default function Header() {
         <div className="container mx-auto flex items-center justify-between px-4 py-3">
           <Link href="/" className="text-xl font-bold text-brand">
             <Image
-              src="/logo1.webp"
+              src="/logo.webp"
               alt="Luzzia Logo"
               width={180}
               height={180}
