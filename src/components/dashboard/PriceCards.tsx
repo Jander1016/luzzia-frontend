@@ -7,9 +7,10 @@ import { DashboardStats } from '@/types/api'
 
 interface PriceCardsProps {
   stats: DashboardStats | null
+  isLoading?: boolean
 }
 
-export const PriceCards = memo(function PriceCards({ stats }: PriceCardsProps) {
+export const PriceCards = memo(function PriceCards({ stats, isLoading = false }: PriceCardsProps) {
   const safeStats = stats ? {
     currentPrice: Math.max(0, stats.currentPrice || 0.12),
     nextHourPrice: Math.max(0, stats.nextHourPrice || 0.08),
@@ -38,9 +39,10 @@ export const PriceCards = memo(function PriceCards({ stats }: PriceCardsProps) {
         icon={<Euro className="w-8 h-8 text-white" />}
         iconBgColor="bg-gradient-to-br from-cyan-400 to-teal-500 shadow-cyan-500/25"
         title="Precio actual"
-        price={`${currentPrice.toFixed(4)}€/kWh`}
+        price={isLoading ? "..." : `${currentPrice.toFixed(4)}€/kWh`}
         description="Momento ideal para usar electrodomésticos"
         isGreenPrice={true}
+        isLoading={isLoading}
       />
       
       <PriceCard
@@ -71,13 +73,14 @@ interface PriceCardProps {
   price: string
   description: string
   isGreenPrice?: boolean
+  isLoading?: boolean
 }
 
-const PriceCard = memo(function PriceCard({ icon, iconBgColor, title, price, description, isGreenPrice = false }: PriceCardProps) {
+const PriceCard = memo(function PriceCard({ icon, iconBgColor, title, price, description, isGreenPrice = false, isLoading = false }: PriceCardProps) {
   return (
-    <Card className="bg-gradient-to-br from-slate-800/80 to-slate-900/90 backdrop-blur-sm border text-center border-slate-700/50 hover:border-slate-600/70 transition-all duration-300 hover:bg-gradient-to-br hover:from-slate-700/90 hover:to-slate-800/95 hover:transform hover:scale-105 hover:shadow-xl hover:shadow-slate-900/25 group">
+    <Card className={`bg-gradient-to-br from-slate-800/80 to-slate-900/90 backdrop-blur-sm border text-center border-slate-700/50 hover:border-slate-600/70 transition-all duration-300 hover:bg-gradient-to-br hover:from-slate-700/90 hover:to-slate-800/95 hover:transform hover:scale-105 hover:shadow-xl hover:shadow-slate-900/25 group ${isLoading ? 'animate-pulse' : ''}`}>
       <CardContent className="p-6 items-center align-middle">
-        <div className={`w-16 h-16 rounded-full ${iconBgColor} flex items-center justify-center mb-6 shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-110 mx-auto`}>
+        <div className={`w-16 h-16 rounded-full ${iconBgColor} flex items-center justify-center mb-6 shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-110 mx-auto ${isLoading ? 'opacity-50' : ''}`}>
           {icon}
         </div>
         
@@ -85,15 +88,15 @@ const PriceCard = memo(function PriceCard({ icon, iconBgColor, title, price, des
           isGreenPrice 
             ? 'text-green-400 group-hover:text-green-300' 
             : 'text-white group-hover:text-green-300'
-        }`}>
+        } ${isLoading ? 'opacity-50' : ''}`}>
           {price}
         </div>
         
-        <div className="text-white/90 font-medium mb-2 text-sm group-hover:text-white transition-colors duration-300">
+        <div className={`text-white/90 font-medium mb-2 text-sm group-hover:text-white transition-colors duration-300 ${isLoading ? 'opacity-50' : ''}`}>
           {title}
         </div>
         
-        <div className="text-white/70 text-xs leading-relaxed group-hover:text-white/80 transition-colors duration-300">
+        <div className={`text-white/70 text-xs leading-relaxed group-hover:text-white/80 transition-colors duration-300 ${isLoading ? 'opacity-50' : ''}`}>
           {description}
         </div>
       </CardContent>
