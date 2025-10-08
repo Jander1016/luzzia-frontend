@@ -2,7 +2,6 @@
 
 import { useElectricityData } from '@/hooks/useElectricityData.simple'
 import { ErrorDisplay } from '@/components/ui/errorDisplay'
-import { Loading } from '@/components/ui/loading'
 import Hero from './Hero'
 import { PriceChart } from './PriceChart'
 import { SubscribeForm } from '../forms/SubscribeForm'
@@ -11,19 +10,17 @@ import { TrendingUp, Zap, Users } from 'lucide-react'
 export function DashboardContent() {
   const { stats, isLoading, error, refetch } = useElectricityData()
 
-  // Solo mostrar loading en la carga inicial
-  if (isLoading && !stats) {
-    return <Loading />
-  }
+  // Mostrar contenido inmediatamente, solo loading en secciones específicas
+  // NO bloquear toda la página por datos de API
 
   return (
     <div className="min-h-screen">
       <div className="container">
       {/* <div className="container mx-auto px-4 py-8 space-y-16"> */}
         
-        {/* Hero Section */}
+        {/* Hero Section - Siempre visible, datos opcionales */}
         <section>
-          <Hero stats={stats} />
+          <Hero stats={stats} isLoading={isLoading} />
         </section>
 
         {/* Error handling - UX mejorado */}
