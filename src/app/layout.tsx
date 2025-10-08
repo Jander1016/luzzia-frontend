@@ -56,7 +56,12 @@ export const metadata: Metadata = {
     title: 'Luzzia - Ahorra en tu Factura de Luz',
     description: 'Descubre cuándo es más barato usar tus electrodomésticos con datos en tiempo real.',
     images: ['/logo.webp'],
-    creator: '@luzzia_es',
+  },
+  other: {
+    'linkedin:title': 'Luzzia - Ahorra en tu Factura de Luz con Precios en Tiempo Real',
+    'linkedin:description': 'Descubre cuándo es más barato usar tus electrodomésticos con datos en tiempo real del mercado eléctrico español. Reduce tu factura hasta un 30%.',
+    'linkedin:image': '/logo.webp',
+    'linkedin:url': '/',
   },
   robots: {
     index: true,
