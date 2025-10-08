@@ -238,9 +238,9 @@ export function PriceChart() {
 
         {/* Leyenda dinámica */}
         {/* Leyenda dinámica - Oculta en móvil para dar más espacio al gráfico */}
-        {/* {!isMobile && ( */}
-        {(
-          <div className="mt-4">
+        {/* {( */}
+        {!isMobile && (
+        <div className="flex justify-center items-center p-3">
             <ChartLegend 
               legend={dynamicLegend} 
               prices={prices} 
