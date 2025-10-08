@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/layout/Header";
+import { ThemeProvider } from "@/components/theme/ThemeProvider";
+import { CookieBanner } from "@/components/legal/CookieBanner";
+import { StartupBanner } from "@/components/marketing/StartupBanner";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -85,10 +88,28 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="es">
-      <body className={`${inter.className} bg-gradient-to-br from-[#09121a] via-[#1b2c62] to-[#471581] py-1 rounded-lg text-white`}>
-        <Header />
-        <main className="container mx-auto p-4 sm: max-w-full">{children}</main>
+    <html lang="es" suppressHydrationWarning>
+      <body className={`${inter.className} min-h-screen transition-colors duration-300`}>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem
+          disableTransitionOnChange={false}
+        >
+          {/* Startup Banner */}
+          <StartupBanner />
+          
+          {/* Main Layout */}
+          <div className="bg-gradient-to-br from-background via-background/95 to-background dark:from-slate-950 dark:via-slate-900 dark:to-slate-800">
+            <Header />
+            <main className="container mx-auto p-4 min-h-screen">
+              {children}
+            </main>
+          </div>
+          
+          {/* RGPD Cookie Banner */}
+          <CookieBanner />
+        </ThemeProvider>
       </body>
     </html>
   );
