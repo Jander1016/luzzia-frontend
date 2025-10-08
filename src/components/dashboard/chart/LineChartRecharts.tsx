@@ -216,6 +216,32 @@ export function LineChart({ prices, period, showArea = false }: LineChartProps) 
     return null
   }
 
+  // Custom activeDot que mantiene el color original
+  const CustomActiveDot = (props: {
+    cx?: number;
+    cy?: number;
+    payload?: {
+      level: string;
+      isCurrentHour: boolean;
+    };
+  }) => {
+    const { cx, cy, payload } = props
+    if (!payload) return <circle cx={cx} cy={cy} r={0} />
+    
+    const color = getLevelColor(payload.level)
+    return (
+      <circle
+        cx={cx}
+        cy={cy}
+        r={isMobile ? 8 : 6}
+        fill={color}
+        stroke="white"
+        strokeWidth={2}
+        className="transition-all duration-200"
+      />
+    )
+  }
+
   const ChartComponent = showArea ? AreaChart : RechartsLineChart
 
   return (
@@ -293,7 +319,7 @@ export function LineChart({ prices, period, showArea = false }: LineChartProps) 
                   fill="hsl(var(--chart-1))"
                   fillOpacity={0.2}
                   dot={isMobile ? <CustomDotEvery3Hours />: <CustomDot />}
-                  activeDot={{ r: isMobile ? 8 : 6, stroke: "hsl(var(--chart-1))", strokeWidth: 3 }}
+                  activeDot={<CustomActiveDot />}
                 />
               ) : (
                 <Line
@@ -304,7 +330,7 @@ export function LineChart({ prices, period, showArea = false }: LineChartProps) 
                   stroke="#4f46e5" 
                   strokeWidth={isMobile ? 2 : 1}
                   dot={isMobile ? <CustomDotEvery3Hours />: <CustomDot />}
-                  activeDot={{ r: isMobile ? 8 : 6, stroke: "hsl(var(--chart-1))", strokeWidth: 3 }}
+                  activeDot={<CustomActiveDot />}
                 />
               )}
             </ChartComponent>
