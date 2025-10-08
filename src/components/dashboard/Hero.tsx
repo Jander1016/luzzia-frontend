@@ -5,9 +5,10 @@ import { DashboardStats } from '@/types/api'
 
 interface HeroProps {
   stats?: DashboardStats | null
+  isLoading?: boolean
 }
 
-export default function Hero({ stats }: HeroProps) {
+export default function Hero({ stats, isLoading = false }: HeroProps) {
   return (
     // <section className="bg-gradient-to-br from-[#1a237e] via-[#283593] to-[#7b1fa2] py-16 rounded-xl px-8 mb-8">
       // <div className="max-w-6xl mx-auto">
@@ -27,7 +28,7 @@ export default function Hero({ stats }: HeroProps) {
         </div>
         
         {/* Price Cards */}
-        <PriceCards stats={stats || null} />
+        <PriceCards stats={stats || null} isLoading={isLoading} />
       </>
     // </section>
   )
