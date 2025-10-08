@@ -13,8 +13,8 @@ import { useNotifications } from "@/hooks/useNotifications";
 const navLinks = [
   { name: "Inicio", href: "/" },
   { name: "¿Qué es Luzzia?", href: "/aboutme" },
-  { name: "Precios", href: "/prices" },
-  { name: "Diagnóstico", href: "/health" },
+  // { name: "Precios", href: "/prices" },
+  // { name: "Diagnóstico", href: "/health" },
   { name: "Blog", href: "/blog" },
   { name: "Suscríbete", href: "/contact" },
 ];
