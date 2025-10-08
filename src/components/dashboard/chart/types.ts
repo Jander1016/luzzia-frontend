@@ -22,7 +22,7 @@ export interface LegendItem {
 
 // Funciones de utilidad
 export function formatPrice(price: number): string {
-  return `${price.toFixed(3)}€/kWh `
+  return `${price.toFixed(4)} €/kWh`
 }
 
 export function formatHour(hour: number): string {

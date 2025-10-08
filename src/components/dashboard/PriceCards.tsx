@@ -38,7 +38,7 @@ export const PriceCards = memo(function PriceCards({ stats }: PriceCardsProps) {
         icon={<Euro className="w-8 h-8 text-white" />}
         iconBgColor="bg-gradient-to-br from-cyan-400 to-teal-500 shadow-cyan-500/25"
         title="Precio actual"
-        price={`${currentPrice.toFixed(2)}€/kWh`}
+        price={`${currentPrice.toFixed(4)}€/kWh`}
         description="Momento ideal para usar electrodomésticos"
         isGreenPrice={true}
       />
@@ -47,7 +47,7 @@ export const PriceCards = memo(function PriceCards({ stats }: PriceCardsProps) {
         icon={<Clock className="w-8 h-8 text-white" />}
         iconBgColor="bg-gradient-to-br from-amber-400 to-orange-500 shadow-orange-500/25"
         title="Próxima hora"
-        price={`${nextHourPrice.toFixed(2)}€/kWh`}
+        price={`${nextHourPrice.toFixed(4)}€/kWh`}
         description={`Precio bajará un ${Math.abs(priceChangePercentage)}%`}
         isGreenPrice={true}
       />
