@@ -4,7 +4,6 @@ import "./globals.css";
 import Header from "@/components/layout/Header";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import { CookieBanner } from "@/components/legal/CookieBanner";
-import { StartupBanner } from "@/components/marketing/StartupBanner";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -96,9 +95,6 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange={false}
         >
-          {/* Startup Banner */}
-          <StartupBanner />
-          
           {/* Main Layout */}
           <div className="bg-gradient-to-br from-background via-background/95 to-background dark:from-slate-950 dark:via-slate-900 dark:to-slate-800">
             <Header />
