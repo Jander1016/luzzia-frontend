@@ -150,6 +150,7 @@ export function SubscribeForm() {
             
             <FormField
               control={form.control}
+              
               name="email"
               render={({ field, fieldState }) => (
                 <FormItem>
@@ -202,6 +203,7 @@ export function SubscribeForm() {
                   : 'bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white shadow-lg hover:shadow-emerald-500/25'
               }`}
               disabled={formState === 'loading' || formState === 'success'}
+              aria-label={`${formState === 'loading' ? 'Enviando formulario de suscripción' : 'Suscribirse gratis a alertas de precios de electricidad'}`}
             >
               {getButtonContent()}
             </Button>

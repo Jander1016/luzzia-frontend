@@ -32,9 +32,8 @@ export function CookieBanner() {
     // Verificar si ya se han aceptado las cookies
     const consent = localStorage.getItem('luzzia-cookie-consent')
     if (!consent) {
-      // Mostrar banner después de 2 segundos para mejor UX
-      const timer = setTimeout(() => setShowBanner(true), 2000)
-      return () => clearTimeout(timer)
+      // Mostrar banner inmediatamente para evitar layout shift
+      setShowBanner(true)
     } else {
       // El usuario ya ha dado consentimiento
       setHasConsent(true)
@@ -120,7 +119,6 @@ export function CookieBanner() {
 
   return (
     <>
-      {/* Banner inicial estilo OneTrust */}
       <AnimatePresence>
         {showBanner && (
           <motion.div
@@ -143,9 +141,9 @@ export function CookieBanner() {
                     </h2>
                   </div>
                   <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed max-w-3xl">
-                    Utilizamos cookies propias y de terceros para analizar nuestros servicios y mostrarte publicidad relacionada con tus preferencias en base a un perfil elaborado a partir de tus hábitos de navegación (por ejemplo, páginas visitadas). Puedes obtener más información{' '}
-                    <Link href="/cookie-policy" className="text-blue-600 hover:text-blue-700 underline">
-                      aquí
+                    Utilizamos cookies propias y de terceros para analizar nuestros servicios y mostrarte publicidad relacionada con tus preferencias en base a un perfil elaborado a partir de tus hábitos de navegación (por ejemplo, páginas visitadas). Puedes obtener más información en{' '}
+                    <Link href="/cookie-policy" className="text-blue-800 hover:text-blue-900 dark:text-blue-300 dark:hover:text-blue-200 underline font-medium">
+                      nuestra política de cookies
                     </Link>.
                   </p>
                 </div>
@@ -295,13 +293,13 @@ export function CookieBanner() {
                 <div className="flex gap-3">
                   <Link 
                     href="/privacy-policy" 
-                    className="text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
+                    className="text-sm text-blue-800 hover:text-blue-900 dark:text-blue-300 dark:hover:text-blue-200 font-medium underline"
                   >
                     Política de Privacidad
                   </Link>
                   <Link 
                     href="/cookie-policy" 
-                    className="text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
+                    className="text-sm text-blue-800 hover:text-blue-900 dark:text-blue-300 dark:hover:text-blue-200 font-medium underline"
                   >
                     Política de Cookies
                   </Link>

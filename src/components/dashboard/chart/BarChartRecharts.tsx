@@ -125,7 +125,7 @@ export function BarChart({ prices, period }: BarChartProps) {
                    data.level === 'alto' ? '🟠 Alto' : '🔴 Muy Alto'}
           </p>
           {data.isCurrentHour && (
-            <p className="text-xs text-blue-600 font-medium">⏰ Hora actual</p>
+            <p className="text-xs text-blue-800 dark:text-blue-300 font-medium">⏰ Hora actual</p>
           )}
         </div>
       )

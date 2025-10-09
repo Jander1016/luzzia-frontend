@@ -100,7 +100,7 @@ export function LineChart({ prices, period, showArea = false }: LineChartProps) 
                    data.level === 'alto' ? '🟠 Alto' : '🔴 Muy Alto'}
           </p>
           {data.isCurrentHour && (
-            <p className="text-xs text-blue-600 font-medium">⏰ Hora actual</p>
+            <p className="text-xs text-blue-800 dark:text-blue-300 font-medium">⏰ Hora actual</p>
           )}
           {/* <div className="text-xs text-muted-foreground mt-2 space-y-1">
             <div>📊 Promedio: {formatPrice(avgPrice)}</div>
