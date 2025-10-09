@@ -291,7 +291,7 @@ export function CookieBanner() {
               </div>
 
               {/* Footer */}
-              <div className="flex flex-col sm:flex-row justify-between gap-3 p-6 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
+              <div className="flex flex-col sm:flex-row justify-between items-center gap-3 p-6 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
                 <div className="flex gap-3">
                   <Link 
                     href="/privacy-policy" 
