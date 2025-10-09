@@ -41,26 +41,26 @@ export function useElectricityData(): UseElectricityDataReturn {
       setIsLoading(true)
       setError(null)
 
-      // Hacer todas las llamadas en paralelo
-      const [statsResult, pricesResult, recommendationsResult] = await Promise.all([
-        electricityService.getDashboardStats().catch(err => {
-          console.warn('⚠️ Error obteniendo stats:', err)
-          return null
-        }),
-        electricityService.getTodayPrices().catch(err => {
-          console.warn('⚠️ Error obteniendo precios:', err)
-          return []
-        }),
-        electricityService.getRecommendations().catch(err => {
-          console.warn('⚠️ Error obteniendo recomendaciones:', err)
-          return []
-        })
+      // Hacer todas las llamadas en paralelo con timeout reducido
+      const [statsResult, pricesResult, recommendationsResult] = await Promise.allSettled([
+        Promise.race([
+          electricityService.getDashboardStats(),
+          new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 5000))
+        ]),
+        Promise.race([
+          electricityService.getTodayPrices(),
+          new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 5000))
+        ]),
+        Promise.race([
+          electricityService.getRecommendations(),
+          new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 5000))
+        ])
       ])
 
       setData({
-        stats: statsResult,
-        prices: pricesResult,
-        recommendations: recommendationsResult
+        stats: statsResult.status === 'fulfilled' ? statsResult.value as DashboardStats : null,
+        prices: pricesResult.status === 'fulfilled' ? pricesResult.value as ElectricityPrice[] : [],
+        recommendations: recommendationsResult.status === 'fulfilled' ? recommendationsResult.value as PriceRecommendation[] : []
       })
       
       setLastUpdated(new Date())

@@ -3,9 +3,19 @@
 import { useElectricityData } from '@/hooks/useElectricityData.simple'
 import { ErrorDisplay } from '@/components/ui/errorDisplay'
 import Hero from './Hero'
-import { PriceChart } from './PriceChart'
 import { SubscribeForm } from '../forms/SubscribeForm'
 import { TrendingUp, Zap, Users } from 'lucide-react'
+import dynamic from 'next/dynamic'
+import { Loading } from '@/components/ui/loading'
+
+// Lazy load del componente pesado PriceChart
+const PriceChart = dynamic(() => 
+  import('./PriceChart').then(mod => ({ default: mod.PriceChart })),
+  { 
+    loading: () => <Loading />,
+    ssr: false
+  }
+)
 
 export function DashboardContent() {
   const { stats, isLoading, error, refetch } = useElectricityData()
@@ -44,7 +54,7 @@ export function DashboardContent() {
             <h2 className="text-4xl md:text-5xl font-bold text-white">
               Precios de la Electricidad
             </h2>
-            <p className="text-lg text-slate-400 max-w-2xl mx-auto">
+            <p className="text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
               Consulta los precios actuales y históricos del mercado eléctrico español. 
               Datos oficiales actualizados cada hora.
             </p>
@@ -63,7 +73,7 @@ export function DashboardContent() {
                 <Zap className="w-6 h-6 text-white" />
               </div>
               <h3 className="text-xl font-bold text-white mb-2">Ahorra hasta 30%</h3>
-              <p className="text-slate-400">
+              <p className="text-slate-600 dark:text-slate-300">
                 Descubre las horas más baratas para usar tus electrodomésticos
               </p>
             </div>
@@ -73,7 +83,7 @@ export function DashboardContent() {
                 <TrendingUp className="w-6 h-6 text-white" />
               </div>
               <h3 className="text-xl font-bold text-white mb-2">Datos Oficiales</h3>
-              <p className="text-slate-400">
+              <p className="text-slate-600 dark:text-slate-300">
                 Información directa de Red Eléctrica de España (REE)
               </p>
             </div>
@@ -83,7 +93,7 @@ export function DashboardContent() {
                 <Users className="w-6 h-6 text-white" />
               </div>
               <h3 className="text-xl font-bold text-white mb-2">+1,000 usuarios</h3>
-              <p className="text-slate-400">
+              <p className="text-slate-600 dark:text-slate-300">
                 Únete a miles de personas que ya ahorran en su factura
               </p>
             </div>
@@ -100,7 +110,7 @@ export function DashboardContent() {
               <h2 className="text-4xl md:text-5xl font-bold text-white">
                 ¿Quieres Ahorrar Más?
               </h2>
-              <p className="text-lg text-slate-400 max-w-3xl mx-auto">
+              <p className="text-lg text-slate-600 dark:text-slate-300 max-w-3xl mx-auto">
                 Suscríbete a nuestra newsletter y recibe alertas personalizadas cuando 
                 los precios estén en su punto más bajo. <span className="text-emerald-400 font-semibold">
                 Es completamente gratis.
@@ -114,7 +124,7 @@ export function DashboardContent() {
 
             {/* Social proof */}
             <div className="pt-8 border-t border-slate-700/50">
-              <p className="text-sm text-slate-500">
+              <p className="text-sm text-slate-600 dark:text-slate-300">
                 Trusted by <span className="text-emerald-400 font-semibold">1,000+ usuarios</span> • 
                 Promedio de ahorro: <span className="text-emerald-400 font-semibold">25% mensual</span>
               </p>
