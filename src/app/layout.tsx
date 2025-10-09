@@ -5,6 +5,7 @@ import Header from "@/components/layout/Header";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import { CookieBanner } from "@/components/legal/CookieBanner";
 // import ClientStartupBanner from "@/components/marketing/ClientStartupBanner";
+import { ElectricityDataProvider } from "@/hooks/useElectricityDataContext";
 
 const inter = Inter({ subsets: ["latin"], display: 'swap' });
 
@@ -96,17 +97,19 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange={false}
         >
-          {/* Main Layout */}
-          <div className="bg-gradient-to-br from-background via-background/95 to-background dark:from-slate-950 dark:via-slate-900 dark:to-slate-800">
-            <Header />
-            {/* <ClientStartupBanner /> */}
-            <main className="container mx-auto p-4 min-h-screen">
-              {children}
-            </main>
-          </div>
-          
-          {/* RGPD Cookie Banner */}
-          <CookieBanner />
+          <ElectricityDataProvider>
+            {/* Main Layout */}
+            <div className="bg-gradient-to-br from-background via-background/95 to-background dark:from-slate-950 dark:via-slate-900 dark:to-slate-800">
+              <Header />
+              {/* <ClientStartupBanner /> */}
+              <main className="container mx-auto p-4 min-h-screen">
+                {children}
+              </main>
+            </div>
+            
+            {/* RGPD Cookie Banner */}
+            <CookieBanner />
+          </ElectricityDataProvider>
         </ThemeProvider>
       </body>
     </html>
