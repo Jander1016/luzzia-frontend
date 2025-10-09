@@ -57,8 +57,8 @@ export function NotificationSettings({ isOpen, onClose, onBack }: NotificationSe
 
   const handleReset = () => {
     const defaultConfig: NotificationConfig = {
-      intervalMinutes: 60,
-      maxNotifications: 10,
+      intervalMinutes: 60*24,
+      maxNotifications: 4,
       enabledTypes: ['optimal_time', 'avoid_usage', 'schedule_device', 'tip_of_day'],
       autoExpireHours: 24,
       quietHours: {
