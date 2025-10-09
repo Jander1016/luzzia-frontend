@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-// import { Button } from '@/components/ui/button'
 import { BarChart3, Zap } from 'lucide-react'
 import { usePriceAnalysis, useWeekPrices, useMonthPrices } from '@/hooks/useElectricityData.simple'
 import { useResponsive } from '@/hooks/useResponsive'
@@ -87,17 +86,6 @@ export function PriceChart() {
       document.querySelector('.chart-container')?.classList.add('animate-slide-in-left')
     }, 100)
   }
-
-  // Auto-actualización cada 5 minutos
-  // useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     if (!isRefreshing) {
-  //       handleRefresh()
-  //     }
-  //   }, 5 * 60 * 1000) // 5 minutos
-
-  //   return () => clearInterval(interval)
-  // }, [isRefreshing])
 
   const getStatusIndicator = () => {
     if (currentData.isLoading || isRefreshing) {
@@ -188,17 +176,6 @@ export function PriceChart() {
               </div>
             </div>
           </div>
-          {/* <Button
-            variant="outline"
-            size="sm"
-            onClick={handleRefresh}
-            disabled={isRefreshing}
-            className={`border-slate-600 hover:bg-slate-700 text-white transition-smooth ${
-              isRefreshing ? 'animate-spin' : 'hover-scale-105'
-            } self-start sm:self-auto`}
-          >
-            <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
-          </Button> */}
         </div>
         
         <div className="flex flex-col md:flex-row md:items-start md:justify-between space-y-4 md:space-y-0 md:space-x-6">
@@ -219,14 +196,6 @@ export function PriceChart() {
               />
             </div>
           )}
-          
-          {/* Indicador de gráfico lineal en móvil */}
-          {/* {isMobile && (
-            <div className="flex items-center justify-center space-x-2 py-2 px-4 bg-blue-900/30 border border-blue-500/30 rounded-lg">
-              <div className="w-3 h-3 bg-blue-400 rounded-full"></div>
-              <span className="text-blue-300 text-sm font-medium">Vista Lineal (Móvil)</span>
-            </div>
-          )} */}
         </div>
       </CardHeader>
       

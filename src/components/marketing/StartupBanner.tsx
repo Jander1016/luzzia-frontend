@@ -32,13 +32,17 @@ export function StartupBanner({ onClose, className = '' }: StartupBannerProps) {
   ]
 
   useEffect(() => {
-    // Mostrar banner después de 3 segundos
-    const showTimer = setTimeout(() => setIsVisible(true), 3000)
+    // Verificar si ya fue cerrado antes de mostrar
+    const wasDismissed = localStorage.getItem('luzzia-startup-banner-dismissed')
+    if (wasDismissed) return
+
+    // Mostrar banner después de 2 segundos (reducido de 3)
+    const showTimer = setTimeout(() => setIsVisible(true), 2000)
     
-    // Rotar estadísticas cada 3 segundos
+    // Rotar estadísticas cada 4 segundos (incrementado para reducir re-renders)
     const statTimer = setInterval(() => {
       setCurrentStat(prev => (prev + 1) % stats.length)
-    }, 3000)
+    }, 4000)
 
     return () => {
       clearTimeout(showTimer)
@@ -64,19 +68,19 @@ export function StartupBanner({ onClose, className = '' }: StartupBannerProps) {
       animate={{ y: 0, opacity: 1 }}
       exit={{ y: -100, opacity: 0 }}
       transition={{ type: "spring", damping: 20, stiffness: 300 }}
-      className={`relative overflow-hidden bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 dark:from-emerald-600 dark:via-teal-600 dark:to-cyan-600 ${className}`}
+      className={`relative overflow-hidden bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 dark:from-emerald-700 dark:via-teal-700 dark:to-cyan-700 ${className}`}
     >
       {/* Animated background pattern */}
       <div className="absolute inset-0 opacity-10">
         <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]" />
       </div>
       
-      {/* Floating particles */}
+      {/* Floating particles - Reducido de 6 a 3 para mejor rendimiento */}
       <div className="absolute inset-0 overflow-hidden">
-        {[...Array(6)].map((_, i) => (
+        {[...Array(3)].map((_, i) => (
           <motion.div
             key={i}
-            className="absolute w-2 h-2 bg-white/20 rounded-full"
+            className="absolute w-1.5 h-1.5 bg-white/15 rounded-full"
             initial={{
               x: Math.random() * 100 + '%',
               y: Math.random() * 100 + '%',
@@ -86,7 +90,7 @@ export function StartupBanner({ onClose, className = '' }: StartupBannerProps) {
               y: Math.random() * 100 + '%',
             }}
             transition={{
-              duration: 10 + Math.random() * 10,
+              duration: 15 + Math.random() * 10, // Más lento para menos cálculos
               repeat: Infinity,
               ease: "linear"
             }}
@@ -101,7 +105,7 @@ export function StartupBanner({ onClose, className = '' }: StartupBannerProps) {
           <div className="flex items-center gap-4 flex-1">
             <motion.div
               animate={{ rotate: 360 }}
-              transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+              transition={{ duration: 12, repeat: Infinity, ease: "linear" }} // Más lento
               className="hidden sm:flex items-center justify-center w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full"
             >
               <Sparkles className="w-6 h-6 text-white" />
@@ -134,13 +138,13 @@ export function StartupBanner({ onClose, className = '' }: StartupBannerProps) {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              className="bg-white/20 backdrop-blur-sm rounded-lg px-4 py-2 min-w-[160px]"
+              className="bg-white/30 backdrop-blur-sm rounded-lg px-4 py-2 min-w-[160px] border border-white/20"
             >
               <div className="flex items-center justify-center gap-2 text-white">
                 {stats[currentStat].icon}
                 <div className="text-center">
-                  <div className="font-bold text-lg">{stats[currentStat].number}</div>
-                  <div className="text-xs opacity-90">{stats[currentStat].label}</div>
+                  <div className="font-bold text-lg drop-shadow-sm">{stats[currentStat].number}</div>
+                  <div className="text-xs opacity-95 drop-shadow-sm">{stats[currentStat].label}</div>
                 </div>
               </div>
             </motion.div>
@@ -151,7 +155,8 @@ export function StartupBanner({ onClose, className = '' }: StartupBannerProps) {
             <Link href="/contact">
               <Button 
                 size="sm"
-                className="bg-white text-emerald-600 hover:bg-white/90 hover:text-emerald-700 font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                className="bg-white text-emerald-700 hover:bg-gray-50 hover:text-emerald-800 font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 border-2 border-emerald-700"
+                aria-label="Comenzar a usar Luzzia gratis - Ir a página de contacto"
               >
                 <motion.div
                   className="flex items-center gap-2"
@@ -183,13 +188,13 @@ export function StartupBanner({ onClose, className = '' }: StartupBannerProps) {
               key={currentStat}
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="bg-white/20 backdrop-blur-sm rounded-lg px-4 py-2"
+              className="bg-white/30 backdrop-blur-sm rounded-lg px-4 py-2 border border-white/20"
             >
               <div className="flex items-center justify-center gap-2 text-white">
                 {stats[currentStat].icon}
                 <div className="text-center">
-                  <span className="font-bold text-lg">{stats[currentStat].number}</span>
-                  <span className="text-sm opacity-90 ml-2">{stats[currentStat].label}</span>
+                  <span className="font-bold text-lg drop-shadow-sm">{stats[currentStat].number}</span>
+                  <span className="text-sm opacity-95 ml-2 drop-shadow-sm">{stats[currentStat].label}</span>
                 </div>
               </div>
             </motion.div>
