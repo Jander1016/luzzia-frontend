@@ -8,14 +8,12 @@ import clsx from "clsx";
 import Image from "next/image";
 import { NotificationBell } from "@/components/notifications/NotificationBell";
 import { NotificationPanel } from "@/components/notifications/NotificationPanel";
-import { ThemeToggle } from "@/components/theme/ThemeToggle";
+// import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { useNotifications } from "@/hooks/useNotifications";
 
 const navLinks = [
   { name: "Inicio", href: "/" },
   { name: "¿Qué es Luzzia?", href: "/aboutme" },
-  // { name: "Precios", href: "/prices" },
-  // { name: "Diagnóstico", href: "/health" },
   { name: "Blog", href: "/blog" },
   { name: "Suscríbete", href: "/contact" },
 ];
@@ -53,7 +51,7 @@ export default function Header() {
 
           {/* Desktop actions */}
           <div className="hidden md:flex items-center space-x-3">
-            <ThemeToggle />
+            {/* <ThemeToggle /> */}
             <NotificationBell 
               onClick={() => setIsNotificationOpen(!isNotificationOpen)}
             />
@@ -61,7 +59,7 @@ export default function Header() {
 
           {/* Mobile toggle */}
           <div className="md:hidden flex items-center space-x-3">
-            <ThemeToggle />
+            {/* <ThemeToggle /> */}
             <NotificationBell 
               size="sm"
               onClick={() => setIsNotificationOpen(!isNotificationOpen)}

@@ -256,8 +256,11 @@ export function CookieBanner() {
                                 <span className="px-2 py-1 text-xs bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 rounded">
                                   {cookie.count} cookies
                                 </span>
+                                
+                              </div>
+                              <div className='py-2'>
                                 {cookie.key === 'necessary' && (
-                                  <span className="px-2 py-1 text-xs bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-400 rounded">
+                                  <span className="py-2 text-xs bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-400 rounded">
                                     Siempre activo
                                   </span>
                                 )}
@@ -324,7 +327,7 @@ export function CookieBanner() {
                         className="w-4 h-4 border-2 border-white border-t-transparent rounded-full"
                       />
                     ) : (
-                      'Confirmar mis opciones'
+                      'Confirmar'
                     )}
                   </Button>
                 </div>
