@@ -221,12 +221,12 @@ export function PriceChart() {
           )}
           
           {/* Indicador de gráfico lineal en móvil */}
-          {isMobile && (
+          {/* {isMobile && (
             <div className="flex items-center justify-center space-x-2 py-2 px-4 bg-blue-900/30 border border-blue-500/30 rounded-lg">
               <div className="w-3 h-3 bg-blue-400 rounded-full"></div>
               <span className="text-blue-300 text-sm font-medium">Vista Lineal (Móvil)</span>
             </div>
-          )}
+          )} */}
         </div>
       </CardHeader>
       
