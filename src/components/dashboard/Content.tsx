@@ -1,6 +1,8 @@
 'use client'
 
-import { useElectricityData } from '@/hooks/useElectricityData.simple'
+import { useEffect } from 'react'
+import { useCriticalData } from '@/hooks/useElectricityDataContext'
+import { useInView } from '@/hooks/useInView'
 import { ErrorDisplay } from '@/components/ui/errorDisplay'
 import Hero from './Hero'
 import { SubscribeForm } from '../forms/SubscribeForm'
@@ -9,8 +11,8 @@ import dynamic from 'next/dynamic'
 import { Loading } from '@/components/ui/loading'
 
 // Lazy load del componente pesado PriceChart
-const PriceChart = dynamic(() => 
-  import('./PriceChart').then(mod => ({ default: mod.PriceChart })),
+const LazyPriceChart = dynamic(() => 
+  import('./LazyPriceChart').then(mod => ({ default: mod.LazyPriceChart })),
   { 
     loading: () => <Loading />,
     ssr: false
@@ -18,10 +20,22 @@ const PriceChart = dynamic(() =>
 )
 
 export function DashboardContent() {
-  const { stats, isLoading, error, refetch } = useElectricityData()
+  // Solo cargar datos críticos inmediatamente
+  const { stats, isLoading, error, refetch } = useCriticalData()
+  
+  // Hook para detectar cuando el formulario entra en viewport
+  const { ref: subscribeRef, inView: subscribeInView } = useInView({
+    threshold: 0.2,
+    rootMargin: '50px'
+  })
 
-  // Mostrar contenido inmediatamente, solo loading en secciones específicas
-  // NO bloquear toda la página por datos de API
+  // Cargar datos críticos al montar el componente
+  useEffect(() => {
+    if (!stats && !isLoading) {
+      console.log('🚀 Loading critical data - component mounted')
+      refetch()
+    }
+  }, [stats, isLoading, refetch])
 
   return (
     <div className="min-h-screen">
@@ -61,7 +75,7 @@ export function DashboardContent() {
           </div>
           
           <div className="relative">
-            <PriceChart />
+            <LazyPriceChart />
           </div>
         </section>
 
@@ -100,8 +114,8 @@ export function DashboardContent() {
           </div>
         </section>
 
-        {/* Newsletter Section */}
-        <section className="py-16 relative">
+        {/* Newsletter Section - Progressive Loading */}
+        <section ref={subscribeRef} className="py-16 relative">
           {/* Background decoration */}
           <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/10 to-teal-500/10 rounded-3xl"></div>
           
@@ -118,8 +132,9 @@ export function DashboardContent() {
               </p>
             </div>
 
+            {/* Solo renderizar form cuando está visible */}
             <div className="flex justify-center">
-              <SubscribeForm />
+              {subscribeInView && <SubscribeForm />}
             </div>
 
             {/* Social proof */}
