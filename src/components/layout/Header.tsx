@@ -33,6 +33,9 @@ export default function Header() {
               width={180}
               height={180}
               className="inline-block ml-2 dark:brightness-110"
+              priority
+              sizes="180px"
+              quality={85}
             />
           </Link>
 
