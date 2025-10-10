@@ -17,12 +17,14 @@ class ApiClient {
 
   constructor(config: ApiClientConfig = {}) {
     this.baseURL = config.baseURL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api/v1'
-    this.timeout = config.timeout || 15000
-    this.retries = config.retries || 2
-    this.retryDelay = config.retryDelay || 1000
+    this.timeout = config.timeout || 10000 // Reducido de 15s a 10s
+    this.retries = config.retries || 1 // Reducido de 2 a 1 retry
+    this.retryDelay = config.retryDelay || 500 // Reducido de 1s a 500ms
     this.defaultHeaders = {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
+      // Optimización de compresión
+      'Accept-Encoding': 'gzip, deflate, br',
     }
   }
 

@@ -259,7 +259,7 @@ export function LineChart({ prices, period, showArea = false }: LineChartProps) 
       </CardHeader>
       <CardContent className='px-1'>
         <ChartContainer config={chartConfig} className={`${isMobile ? 'h-[50vh] w-full' : isTablet ? 'h-[350px] w-full' : 'h-[400px] w-full'}`}>
-          <ResponsiveContainer width="100%" height="100%">
+          <ResponsiveContainer width="100%" height="100%" debounce={50}>
             <ChartComponent 
               data={chartData} 
               margin={{ 

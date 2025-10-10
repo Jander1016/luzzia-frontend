@@ -9,7 +9,20 @@ const nextConfig: NextConfig = {
     reactCompiler: {
       // Configuración básica para React Compiler
       compilationMode: 'annotation'
+    },
+    // Optimizaciones para reducir JS execution time
+    optimizePackageImports: ['lucide-react', 'recharts', 'date-fns'],
+  },
+  // Optimizaciones de bundle más conservadoras
+  webpack: (config, { dev, isServer }) => {
+    if (!dev && !isServer) {
+      // Optimización específica para iconos
+      config.resolve.alias = {
+        ...config.resolve.alias,
+        'lucide-react': 'lucide-react/dist/esm/lucide-react.js',
+      }
     }
+    return config
   },
 };
 

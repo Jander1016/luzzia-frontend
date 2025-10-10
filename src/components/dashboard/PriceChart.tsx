@@ -5,7 +5,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { BarChart3, Zap } from 'lucide-react'
 import { usePriceAnalysis, useWeekPrices, useMonthPrices } from '@/hooks/useElectricityData.simple'
 import { useResponsive } from '@/hooks/useResponsive'
-import '@/styles/charts-dark.css'
 
 // Componentes separados
 import { PeriodFilter } from './chart/PeriodFilter'
@@ -75,7 +74,7 @@ export function PriceChart() {
     setActivePeriod(newPeriod)
     // Efecto de transición suave
     setTimeout(() => {
-      document.querySelector('.chart-container')?.classList.add('animate-slide-in-up')
+      document.querySelector('.chart-bg')?.classList.add('animate-chart-load')
     }, 100)
   }
 
@@ -83,7 +82,7 @@ export function PriceChart() {
     setActiveChartType(newType)
     // Efecto de transición para cambio de gráfico
     setTimeout(() => {
-      document.querySelector('.chart-container')?.classList.add('animate-slide-in-left')
+      document.querySelector('.chart-bg')?.classList.add('animate-chart-load')
     }, 100)
   }
 
@@ -201,7 +200,7 @@ export function PriceChart() {
       
       <CardContent className={`${isMobile ? 'p-2' : 'p-4 sm:p-2'}`}>
         {/* Gráfico dinámico con animaciones */}
-        <div className={`chart-container chart-glass-effect transition-smooth ${isMobile ? 'p-1 mb-4' : 'p-2 mb-6'}`}>
+        <div className={`chart-bg bg-gradient-to-br from-slate-800 via-slate-900 to-gray-900 rounded-xl border border-slate-400/10 shadow-2xl backdrop-blur-md transition-all duration-300 ${isMobile ? 'p-1 mb-4' : 'p-2 mb-6'}`}>
           {renderChart()}
         </div>
 

@@ -1,13 +1,10 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/layout/Header";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import { CookieBanner } from "@/components/legal/CookieBanner";
-// import ClientStartupBanner from "@/components/marketing/ClientStartupBanner";
+import ClientStartupBanner from "@/components/marketing/ClientStartupBanner";
 import { ElectricityDataProvider } from "@/hooks/useElectricityDataContext";
-
-const inter = Inter({ subsets: ["latin"], display: 'swap' });
 
 export const metadata: Metadata = {
   title: {
@@ -90,7 +87,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="es" suppressHydrationWarning>
-      <body className={`${inter.className} min-h-screen transition-colors duration-300`}>
+      <body className="font-sans min-h-screen transition-colors duration-300">
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"
@@ -101,7 +98,7 @@ export default function RootLayout({
             {/* Main Layout */}
             <div className="bg-gradient-to-br from-background via-background/95 to-background dark:from-slate-950 dark:via-slate-900 dark:to-slate-800">
               <Header />
-              {/* <ClientStartupBanner /> */}
+              <ClientStartupBanner />
               <main className="container mx-auto p-4 min-h-screen">
                 {children}
               </main>

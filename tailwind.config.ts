@@ -7,6 +7,18 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: [
+          'system-ui',
+          '-apple-system', 
+          'BlinkMacSystemFont',
+          '"Segoe UI"',
+          'Roboto',
+          '"Helvetica Neue"',
+          'Arial',
+          'sans-serif'
+        ],
+      },
       colors: {
         brand: {
           DEFAULT: "#00E0FF",
@@ -37,10 +49,30 @@ const config: Config = {
       },
       backgroundColor: {
         'app': '#f8fafc',
+      },
+      animation: {
+        'chart-load': 'chartLoad 0.3s ease-out',
+      },
+      keyframes: {
+        chartLoad: {
+          from: {
+            opacity: '0',
+            transform: 'translateY(10px)',
+          },
+          to: {
+            opacity: '1',
+            transform: 'translateY(0)',
+          },
+        },
+      },
+      backdropBlur: {
+        '16': '16px',
       }
     },
   },
-  plugins: [],
+  plugins: [
+    require('tailwind-scrollbar-hide'),
+  ],
 };
 
 export default config;

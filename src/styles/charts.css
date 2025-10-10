@@ -1,39 +1,8 @@
-/* Solo estilos específicos que Tailwind no puede manejar directamente */
+/* Solo estilos específicos de Recharts que NO se pueden hacer con Tailwind */
 
-/* Scrollbar personalizada */
-.scrollbar-hide {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
+/* Disable white bar selection highlight in charts */
 
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;
-}
-
-/* Smooth scrolling touch para iOS */
-.touch-scroll {
-  -webkit-overflow-scrolling: touch;
-  scroll-behavior: smooth;
-}
-
-/* Animación de carga */
-@keyframes chartLoad {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.chart-load-animation {
-  animation: chartLoad 0.3s ease-out;
-}
-
-/* Disable white bar selection highlight in charts - AGGRESSIVE APPROACH */
-.recharts-bar-rectangle,
+/* .recharts-bar-rectangle,
 .recharts-bar-rectangle:hover,
 .recharts-bar-rectangle:focus,
 .recharts-bar-rectangle:active,
@@ -56,22 +25,21 @@
 .recharts-bar {
   cursor: default !important;
   pointer-events: none !important;
-}
+} */
 
-/* Override any Recharts default styles that might add white backgrounds */
-.recharts-bar * {
+/* Override Recharts default styles */
+/* .recharts-bar * {
   pointer-events: none !important;
 }
 
-/* Completely disable any hover effects on the entire bar chart */
 .recharts-wrapper .recharts-bar,
 .recharts-wrapper .recharts-bar *,
 .recharts-wrapper .recharts-bar-rectangle {
   pointer-events: none !important;
-}
+} */
 
-/* Re-enable pointer events only for tooltip at the container level */
-.recharts-wrapper {
+/* Re-enable pointer events for tooltips */
+/* .recharts-wrapper {
   pointer-events: auto !important;
 }
 
@@ -81,18 +49,20 @@
 
 .recharts-tooltip-wrapper {
   pointer-events: auto !important;
-}
+} */
 
-/* Specific class for bar charts without selection */
-.no-bar-selection .recharts-bar-rectangle {
-  pointer-events: none !important;
-}
+/* Chart grid customization */
+/* .recharts-cartesian-grid-horizontal line,
+.recharts-cartesian-grid-vertical line {
+  stroke: rgba(148, 163, 184, 0.1) !important;
+  stroke-dasharray: 3 3;
+} */
 
-.no-bar-selection .recharts-bar-rectangle:hover,
-.no-bar-selection .recharts-bar-rectangle:focus,
-.no-bar-selection .recharts-bar-rectangle.recharts-active-bar {
-  opacity: 1 !important;
-  fill-opacity: 1 !important;
-  filter: none !important;
-  transform: none !important;
-}
+/* Tooltip background override */
+/* .recharts-tooltip-wrapper {
+  background: rgba(15, 23, 42, 0.95) !important;
+  backdrop-filter: blur(8px);
+  border-radius: 8px;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+} */
