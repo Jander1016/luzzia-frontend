@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Menu, X, Zap, TrendingUp, Clock, BarChart3, Info } from "lucide-react";
+import { Menu, X, Zap, TrendingUp, Clock, Info } from "lucide-react";
 import clsx from "clsx";
 import Image from "next/image";
 
@@ -13,12 +13,6 @@ const navLinks = [
     href: "/", 
     icon: Zap,
     description: "Consulta precios en tiempo real"
-  },
-  { 
-    name: "Estadísticas", 
-    href: "/prices", 
-    icon: BarChart3,
-    description: "Análisis histórico de precios"
   },
   { 
     name: "¿Qué es Luzzia?", 
@@ -71,7 +65,7 @@ export default function Header() {
                 aria-label="Toggle Menu"
                 className="w-10 h-10"
               >
-                {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+                {open ? <X className="h-10 w-10" /> : <Menu className="h-10 w-10" />}
               </Button>
             </div>
           </div>

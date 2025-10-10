@@ -1,0 +1,17 @@
+{
+  "name": "luzzia-accessibility-check",
+  "version": "1.0.0",
+  "description": "Herramientas de validación de accesibilidad para Luzzia",
+  "scripts": {
+    "a11y:check": "lighthouse --accessibility --chrome-flags=\"--headless\" --output=json --output-path=./accessibility-report.json http://localhost:3000",
+    "a11y:report": "lighthouse --accessibility --view http://localhost:3000",
+    "a11y:axe": "npx @axe-core/cli http://localhost:3000",
+    "a11y:dev": "npm run dev & sleep 5 && npm run a11y:check",
+    "contrast:check": "echo 'Verificando contrastes AAA...' && node scripts/check-contrast.js"
+  },
+  "devDependencies": {
+    "@axe-core/cli": "^4.9.0",
+    "lighthouse": "^11.0.0",
+    "puppeteer": "^21.0.0"
+  }
+}
