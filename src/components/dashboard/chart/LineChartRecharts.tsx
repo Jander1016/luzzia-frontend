@@ -81,13 +81,14 @@ export function LineChart({ prices, period, showArea = false }: LineChartProps) 
       };
     });
   } else if (period === 'hoy') {
-    // En mobile y desktop, mostrar todos los puntos horarios
+    // En mobile y desktop, mostrar todos los puntos horarios como string sin ceros a la izquierda
     chartData = (validPrices as PriceData[]).map((data, index) => {
+      const hourStr = String(data.hour);
       const level = classifyPrice(data.price, validPrices as PriceData[]);
       const isCurrentHour = currentHour !== null && data.hour === currentHour;
       return {
-        xLabel: formatHour(data.hour),
-        hour: formatHour(data.hour),
+        xLabel: hourStr,
+        hour: hourStr,
         price: data.price,
         level,
         isCurrentHour,
@@ -340,6 +341,8 @@ export function LineChart({ prices, period, showArea = false }: LineChartProps) 
                 height={isMobile ? 50 : 30}
                 interval={isMobile ? 0 : 'preserveStartEnd'}
                 tickMargin={isMobile ? 8 : 5}
+                ticks={isMobile && period === 'hoy' ? ['0','3','6','9','12','15','18','21'] : undefined}
+                tickFormatter={isMobile && period === 'hoy' ? (value) => value : undefined}
               />
               <YAxis 
                 tick={{ fontSize: isMobile ? 10 : 12 }}
