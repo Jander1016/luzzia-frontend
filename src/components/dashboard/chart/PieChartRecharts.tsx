@@ -1,5 +1,6 @@
 'use client'
 
+
 import { PriceData, PeriodType } from './types'
 import { classifyPrice, formatPrice } from './types'
 import { useState } from 'react'
@@ -7,6 +8,7 @@ import { useResponsive } from '@/hooks/useResponsive'
 import { Pie, PieChart as RechartsPieChart, Cell, ResponsiveContainer, Tooltip } from 'recharts'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ChartConfig, ChartContainer } from '@/components/ui/chart'
+import type { PieLabelRenderProps } from 'recharts';
 
 interface PieChartProps {
   prices: PriceData[]
@@ -33,15 +35,23 @@ export function PieChart({ prices, period }: PieChartProps) {
     )
   }
 
-  // Validar datos
-  const validPrices = prices.filter(p => p && typeof p.price === 'number' && !isNaN(p.price))
-  
+  // Validar datos y proteger contra listas vacías
+  function isDailyPriceAvgArray(arr: unknown[]): arr is import('@/hooks/useElectricityData.simple').DailyPriceAvg[] {
+    return arr.length > 0 && typeof arr[0] === 'object' && arr[0] !== null && 'date' in arr[0] && typeof (arr[0] as { date: string }).date === 'string';
+  }
+  let filteredPrices: PriceData[] | import('@/hooks/useElectricityData.simple').DailyPriceAvg[] = [];
+  if (period === 'hoy' && Array.isArray(prices) && !isDailyPriceAvgArray(prices)) {
+    filteredPrices = (prices as PriceData[]).filter(p => p && typeof p.price === 'number' && !isNaN(p.price));
+  } else if (Array.isArray(prices) && isDailyPriceAvgArray(prices)) {
+    filteredPrices = (prices as import('@/hooks/useElectricityData.simple').DailyPriceAvg[]).filter(p => p && typeof p.price === 'number' && !isNaN(p.price));
+  }
+
   // Clasificar precios por niveles
-  const priceDistribution = validPrices.reduce((acc, priceData) => {
-    const level = classifyPrice(priceData.price, prices)
-    acc[level] = (acc[level] || 0) + 1
-    return acc
-  }, {} as Record<string, number>)
+  const priceDistribution = filteredPrices.reduce((acc, priceData) => {
+    const level = classifyPrice(priceData.price, prices);
+    acc[level] = (acc[level] || 0) + 1;
+    return acc;
+  }, {} as Record<string, number>);
 
   // Configuración del chart
   const chartConfig = {
@@ -50,7 +60,7 @@ export function PieChart({ prices, period }: PieChartProps) {
       color: "hsl(142 71% 45%)",
     },
     medio: {
-      label: "Precio Medio", 
+      label: "Precio Medio",
       color: "hsl(43 89% 58%)",
     },
     alto: {
@@ -61,34 +71,33 @@ export function PieChart({ prices, period }: PieChartProps) {
       label: "Precio Muy Alto",
       color: "hsl(0 84% 60%)",
     },
-  } satisfies ChartConfig
+  } satisfies ChartConfig;
 
   // Transformar datos para el gráfico
   const chartData = Object.entries(priceDistribution).map(([level, count]) => {
-    const percentage = (count / validPrices.length) * 100
+    const percentage = filteredPrices.length > 0 ? (count / filteredPrices.length) * 100 : 0;
     const levelLabels = {
       'bajo': '🟢 Bajo',
-      'medio': '🟡 Medio', 
+      'medio': '🟡 Medio',
       'alto': '🟠 Alto',
       'muy-alto': '🔴 Muy Alto'
-    }
-    
+    };
     return {
       level,
       count,
       percentage: Math.round(percentage * 10) / 10,
       label: levelLabels[level as keyof typeof levelLabels] || level,
       color: chartConfig[level as keyof typeof chartConfig]?.color || 'hsl(var(--chart-1))'
-    }
-  }).sort((a, b) => b.count - a.count) // Ordenar por cantidad descendente
+    };
+  }).sort((a, b) => b.count - a.count); // Ordenar por cantidad descendente
 
   // Calcular estadísticas adicionales
-  const avgPrice = validPrices.reduce((sum, p) => sum + p.price, 0) / validPrices.length
-  const minPrice = Math.min(...validPrices.map(p => p.price))
-  const maxPrice = Math.max(...validPrices.map(p => p.price))
+  const avgPrice = filteredPrices.length > 0 ? filteredPrices.reduce((sum, p) => sum + p.price, 0) / filteredPrices.length : 0;
+  const minPrice = filteredPrices.length > 0 ? Math.min(...filteredPrices.map(p => p.price)) : 0;
+  const maxPrice = filteredPrices.length > 0 ? Math.max(...filteredPrices.map(p => p.price)) : 0;
 
   // Encontrar el nivel más común
-  const mostCommonLevel = chartData[0]
+  const mostCommonLevel = chartData[0];
 
   const CustomTooltip = ({ active, payload }: {
     active?: boolean;
@@ -120,36 +129,35 @@ export function PieChart({ prices, period }: PieChartProps) {
     return null
   }
 
-  const CustomLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percentage }: {
-    cx?: number;
-    cy?: number;
-    midAngle?: number;
-    innerRadius?: number;
-    outerRadius?: number;
-    percentage?: number;
-  }) => {
-    if (!percentage || percentage < 5 || !cx || !cy || !midAngle || !innerRadius || !outerRadius) return null // No mostrar etiquetas muy pequeñas
-    
-    const RADIAN = Math.PI / 180
-    const radius = innerRadius + (outerRadius - innerRadius) * 0.5
-    const x = cx + radius * Math.cos(-midAngle * RADIAN)
-    const y = cy + radius * Math.sin(-midAngle * RADIAN)
-
+  const CustomLabel = (props: PieLabelRenderProps) => {
+    const { cx, cy, midAngle, innerRadius, outerRadius, percent } = props;
+    // Convertir cx/cy a number si vienen como string
+    const x = typeof cx === 'string' ? parseFloat(cx) : cx;
+    const y = typeof cy === 'string' ? parseFloat(cy) : cy;
+    const percentNumber = typeof percent === 'number' ? percent : 0;
+    // Convertir radios a número y proteger contra undefined
+    const inner = typeof innerRadius === 'string' ? parseFloat(innerRadius) : (typeof innerRadius === 'number' ? innerRadius : 0);
+    const outer = typeof outerRadius === 'string' ? parseFloat(outerRadius) : (typeof outerRadius === 'number' ? outerRadius : 0);
+    if (x == null || y == null || percentNumber < 0.05 || !midAngle || !inner || !outer) return null;
+    const RADIAN = Math.PI / 180;
+    const radius = inner + (outer - inner) * 0.5;
+    const labelX = x + radius * Math.cos(-midAngle * RADIAN);
+    const labelY = y + radius * Math.sin(-midAngle * RADIAN);
     return (
-      <text 
-        x={x} 
-        y={y} 
-        fill="white" 
-        textAnchor={x > cx ? 'start' : 'end'} 
+      <text
+        x={labelX}
+        y={labelY}
+        fill="white"
+        textAnchor={labelX > x ? 'start' : 'end'}
         dominantBaseline="central"
         fontSize={12}
         fontWeight="bold"
         className="drop-shadow-lg"
       >
-        {`${percentage.toFixed(0)}%`}
+        {`${(percentNumber * 100).toFixed(0)}%`}
       </text>
-    )
-  }
+    );
+  };
 
   const onPieEnter = (_: unknown, index: number) => {
     setActiveIndex(index)
