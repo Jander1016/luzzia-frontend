@@ -19,33 +19,30 @@ export function useInView(options: UseInViewOptions = {}) {
   const [hasTriggered, setHasTriggered] = useState(false)
   const elementRef = useRef<HTMLDivElement>(null)
 
+
+  // Callback clásico para IntersectionObserver
+  const handleIntersection = (entry: IntersectionObserverEntry) => {
+    const isIntersecting = entry.isIntersecting
+    setInView(isIntersecting)
+    if (isIntersecting && triggerOnce) {
+      setHasTriggered(true)
+    }
+  }
+
   useEffect(() => {
     const element = elementRef.current
     if (!element) return
-
-    // Si ya se triggeró y es triggerOnce, no hacer nada
     if (triggerOnce && hasTriggered) return
 
     const observer = new IntersectionObserver(
-      ([entry]) => {
-        const isIntersecting = entry.isIntersecting
-        setInView(isIntersecting)
-        
-        if (isIntersecting && triggerOnce) {
-          setHasTriggered(true)
-        }
-      },
-      {
-        threshold,
-        rootMargin
-      }
+      ([entry]) => handleIntersection(entry),
+      { threshold, rootMargin }
     )
 
     observer.observe(element)
-
-    return () => {
-      observer.unobserve(element)
-    }
+    return () => observer.unobserve(element)
+    // handleIntersection no se incluye en deps para evitar recrear observer
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [threshold, rootMargin, triggerOnce, hasTriggered])
 
   return {

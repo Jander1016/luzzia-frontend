@@ -16,10 +16,10 @@ export const isValidDashboardStats = (data: unknown): data is DashboardStats => 
   const obj = data as Record<string, unknown>
   return (
     typeof obj.currentPrice === 'number' &&
-    typeof obj.nextHourPrice === 'number' &&
-    typeof obj.priceChangePercentage === 'number' &&
-    typeof obj.monthlySavings === 'number' &&
-    typeof obj.comparisonType === 'string' &&
+    typeof obj.minPrice === 'number' &&
+    typeof obj.minPriceHour === 'number' &&
+    typeof obj.maxPrice === 'number' &&
+    typeof obj.maxPriceHour === 'number' &&
     typeof obj.lastUpdated === 'string'
   )
 }

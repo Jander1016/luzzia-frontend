@@ -11,6 +11,37 @@ import {
 import { isValidElectricityPrice, isValidDashboardStats } from '@/lib/api/validators'
 
 class ElectricityService {
+  // Precios promedio por mes del año actual
+  async getMonthlyAverages(): Promise<{ month: number; avgPrice: number }[]> {
+    try {
+      const result = await apiClient.get<{ month: number; avgPrice: number }[]>(
+        '/prices/monthly-averages'
+      );
+      if (!Array.isArray(result)) {
+        throw new Error('Formato de datos mensual inválido');
+      }
+      return result;
+    } catch (error) {
+      console.error('Error obteniendo promedios mensuales:', error);
+      throw error;
+    }
+  }
+
+  // Precios promedio por semana del año actual
+  async getWeeklyAverages(): Promise<{ week: number; avgPrice: number }[]> {
+    try {
+      const result = await apiClient.get<{ week: number; avgPrice: number }[]>(
+        '/prices/weekly-averages'
+      );
+      if (!Array.isArray(result)) {
+        throw new Error('Formato de datos semanal inválido');
+      }
+      return result;
+    } catch (error) {
+      console.error('Error obteniendo promedios semanales:', error);
+      throw error;
+    }
+  }
   private endpoints = {
     pricesHistory: '/prices/history',
     pricesStats: '/prices/dashboard-stats', 
@@ -77,28 +108,23 @@ class ElectricityService {
     }
   }
 
-  // Hourly prices by period (real backend endpoint)
-  async getHourlyPrices(period: 'today' | 'week' | 'month' = 'today'): Promise<ElectricityPrice[]> {
+  // Precios agregados por semana y mes (usando /prices/history)
+  async getAggregatedPrices(period: 'week' | 'month'): Promise<ElectricityPrice[]> {
     try {
-      const response = await apiClient.get<{ prices: ElectricityPrice[] }>(
-        `${this.endpoints.pricesHourly}?period=${period}`
-      )
-      
-      if (!response || !Array.isArray(response.prices)) {
-        throw new Error('Formato de datos de precios por hora inválido')
+      const days = period === 'week' ? 7 : 30;
+      const prices = await apiClient.get<ElectricityPrice[]>(`${this.endpoints.pricesHistory}?days=${days}`);
+      if (!Array.isArray(prices)) {
+        throw new Error('Formato de datos de precios inválido');
       }
-
-      // Validate each array element
-      response.prices.forEach((price, index) => {
+      prices.forEach((price, index) => {
         if (!isValidElectricityPrice(price)) {
-          console.warn(`Precio de electricidad inválido en índice ${index}:`, price)
+          console.warn(`Precio de electricidad inválido en índice ${index}:`, price);
         }
-      })
-
-      return response.prices
+      });
+      return prices;
     } catch (error) {
-      console.error(`Error obteniendo precios por hora (${period}):`, error)
-      throw error
+      console.error(`Error obteniendo precios agregados (${period}):`, error);
+      throw error;
     }
   }
 

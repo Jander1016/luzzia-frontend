@@ -10,8 +10,10 @@ const nextConfig: NextConfig = {
       // Configuración básica para React Compiler
       compilationMode: 'annotation'
     },
-    // Optimizaciones para reducir JS execution time
     optimizePackageImports: ['lucide-react', 'recharts', 'date-fns'],
+    serverActions: {},
+    // Habilita la optimización de CSS crítico para reducir render blocking
+    optimizeCss: true,
   },
   // Optimizaciones de bundle más conservadoras
   webpack: (config, { dev, isServer }) => {
