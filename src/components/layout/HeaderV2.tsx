@@ -38,6 +38,7 @@ const navLinks = [
 export default function HeaderV2() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   const toggleMenu = useCallback(() => {
     setIsMenuOpen(prev => !prev);
@@ -49,6 +50,7 @@ export default function HeaderV2() {
 
   // Handle scroll effect
   useEffect(() => {
+    setMounted(true);
     const handleScroll = () => {
       setScrolled(window.scrollY > 10);
     };
@@ -83,14 +85,8 @@ export default function HeaderV2() {
   return (
     <>
       <header
-        className={clsx(
-          "sticky top-0 z-50 w-full transition-all duration-300",
-          scrolled
-            ? "bg-background/80 backdrop-blur-xl border-b border-border/50 shadow-lg"
-            : "bg-transparent"
-        )}
+        className="sticky top-0 z-50 w-full transition-all duration-300 bg-transparent"
         role="banner"
-        suppressHydrationWarning={true}
       >
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex h-20 items-center justify-between">
@@ -149,7 +145,7 @@ export default function HeaderV2() {
                 )} />
                 <X className={clsx(
                   "absolute inset-0 transition-all duration-300",
-                  isMenuOpen ? "opacity-100 rotate-0 scale-100" : "opacity-0 -rotate-180 scale-75"
+                  isMenuOpen ? "opacity-100 rotate-0 scale-120" : "opacity-0 -rotate-180 scale-105"
                 )} />
               </div>
             </Button>
@@ -226,7 +222,7 @@ export default function HeaderV2() {
         </div>
       </div>
 
-      <style jsx>{`
+      {/* <style jsx>{`
         @keyframes slideInFromRight {
           from {
             opacity: 0;
@@ -237,7 +233,7 @@ export default function HeaderV2() {
             transform: translateX(0);
           }
         }
-      `}</style>
+      `}</style> */}
     </>
   );
 }
