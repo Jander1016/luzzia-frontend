@@ -1,5 +1,74 @@
-'use client'
+"use client";
+/**
+ * Hook para obtener promedios mensuales del año actual
+ */
+export function useMonthlyAverages() {
+  const [data, setData] = useState<{ month: number; avgPrice: number }[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
+  const fetchData = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      const result = await electricityService.getMonthlyAverages();
+      setData(result);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Error desconocido');
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  return {
+    data,
+    isLoading,
+    error,
+    refetch: fetchData
+  };
+}
+
+/**
+ * Hook para obtener promedios semanales del año actual
+ */
+export function useWeeklyAverages() {
+  const [data, setData] = useState<{ week: number; avgPrice: number }[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchData = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      const result = await electricityService.getWeeklyAverages();
+      setData(result);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Error desconocido');
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  return {
+    data,
+    isLoading,
+    error,
+    refetch: fetchData
+  };
+}
+// Tipo para promedio diario
+export interface DailyPriceAvg {
+  price: number;
+  date: string;
+}
 import { useState, useEffect, useCallback } from 'react'
 import { electricityService } from '@/services/electricityService'
 import { DashboardStats, PriceRecommendation, ElectricityPrice, PriceLevel } from '@/types/api'
@@ -199,24 +268,49 @@ export function useDashboardStats() {
 }
 
 export function useWeekPrices() {
-  const [data, setData] = useState<ElectricityPrice[] | null>(null)
+  const [data, setData] = useState<DailyPriceAvg[] | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
   const fetchData = useCallback(async () => {
     try {
-      setIsLoading(true)
-      setError(null)
-      
-      const result = await electricityService.getHourlyPrices('week')
-      setData(result || [])
+      setIsLoading(true);
+      setError(null);
+      const result = await electricityService.getAggregatedPrices('week');
+      // Filtrar solo los días de la semana actual
+      const now = new Date();
+      const startOfWeek = new Date(now);
+      startOfWeek.setDate(now.getDate() - now.getDay() + 1); // lunes
+      startOfWeek.setHours(0,0,0,0);
+      const endOfWeek = new Date(startOfWeek);
+      endOfWeek.setDate(startOfWeek.getDate() + 6);
+      endOfWeek.setHours(23,59,59,999);
+      // Filtrar y agrupar por día
+      const filtered = (result || []).filter(p => {
+        const d = new Date(p.date);
+        return d >= startOfWeek && d <= endOfWeek;
+      });
+      // Agrupar por día y calcular promedio
+      const grouped: { [key: string]: { sum: number; count: number; date: string; } } = {};
+      filtered.forEach(p => {
+        const d = new Date(p.date);
+        const key = d.toISOString().slice(0, 10); // yyyy-mm-dd
+        if (!grouped[key]) grouped[key] = { sum: 0, count: 0, date: key };
+        grouped[key].sum += p.price;
+        grouped[key].count++;
+      });
+      const averaged = Object.values(grouped).map(g => ({
+        price: g.sum / g.count,
+        date: g.date
+      }));
+      setData(averaged);
     } catch (err) {
-      console.error('❌ Error obteniendo precios de la semana:', err)
-      setError(err instanceof Error ? err.message : 'Error desconocido')
+      console.error('❌ Error obteniendo precios de la semana:', err);
+      setError(err instanceof Error ? err.message : 'Error desconocido');
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }, [])
+  }, []);
 
   useEffect(() => {
     fetchData()
@@ -237,24 +331,45 @@ export function useWeekPrices() {
  * Hook para obtener precios del mes
  */
 export function useMonthPrices() {
-  const [data, setData] = useState<ElectricityPrice[] | null>(null)
+  const [data, setData] = useState<DailyPriceAvg[] | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
   const fetchData = useCallback(async () => {
     try {
-      setIsLoading(true)
-      setError(null)
-      
-      const result = await electricityService.getHourlyPrices('month')
-      setData(result || [])
+      setIsLoading(true);
+      setError(null);
+      const result = await electricityService.getAggregatedPrices('month');
+      // Filtrar solo los días del mes actual
+      const now = new Date();
+      const month = now.getMonth();
+      const year = now.getFullYear();
+      // Filtrar y agrupar por día
+      const filtered = (result || []).filter(p => {
+        const d = new Date(p.date);
+        return d.getMonth() === month && d.getFullYear() === year;
+      });
+      // Agrupar por día y calcular promedio
+      const grouped: { [key: string]: { sum: number; count: number; date: string; } } = {};
+      filtered.forEach(p => {
+        const d = new Date(p.date);
+        const key = d.toISOString().slice(0, 10); // yyyy-mm-dd
+        if (!grouped[key]) grouped[key] = { sum: 0, count: 0, date: key };
+        grouped[key].sum += p.price;
+        grouped[key].count++;
+      });
+      const averaged = Object.values(grouped).map(g => ({
+        price: g.sum / g.count,
+        date: g.date
+      }));
+      setData(averaged);
     } catch (err) {
-      console.error('❌ Error obteniendo precios del mes:', err)
-      setError(err instanceof Error ? err.message : 'Error desconocido')
+      console.error('❌ Error obteniendo precios del mes:', err);
+      setError(err instanceof Error ? err.message : 'Error desconocido');
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }, [])
+  }, []);
 
   useEffect(() => {
     fetchData()
@@ -275,7 +390,7 @@ export function usePriceAnalysis() {
   const { data: prices, isLoading, error, refetch } = useTodayPrices()
 
   if (!prices || prices.length === 0) {
-    return { data: null, isLoading, error, refetch }
+    return { data: { prices: [] }, isLoading, error, refetch }
   }
 
   // Calcular estadísticas

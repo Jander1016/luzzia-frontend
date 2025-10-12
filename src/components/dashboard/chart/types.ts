@@ -7,6 +7,8 @@ export interface PriceData {
   price: number
   timestamp: Date
   label?: string
+  weekday?: number // 0=lun, 1=mar, ... 6=dom (para semana)
+  day?: number     // 1-31 (para mes)
 }
 
 export interface LegendItem {
