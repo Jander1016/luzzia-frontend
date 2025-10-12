@@ -90,6 +90,7 @@ export default function HeaderV2() {
             : "bg-transparent"
         )}
         role="banner"
+        suppressHydrationWarning={true}
       >
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex h-20 items-center justify-between">
