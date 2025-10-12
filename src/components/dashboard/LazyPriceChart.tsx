@@ -5,7 +5,7 @@ import { useChartData } from '@/hooks/useElectricityDataContext'
 import { useInView } from '@/hooks/useInView'
 import { PriceChart } from './PriceChart'
 
-export function LazyPriceChart() {
+export default function LazyPriceChart() {
   const { ref, inView } = useInView({ 
     threshold: 0.1, 
     rootMargin: '100px',

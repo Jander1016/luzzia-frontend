@@ -12,60 +12,67 @@ interface PriceCardsProps {
 
 export const PriceCards = memo(function PriceCards({ stats, isLoading = false }: PriceCardsProps) {
   // Valores fijos para evitar problemas de hidratación
+
+  // Valores por defecto para evitar problemas de hidratación
   const defaultStats = {
     currentPrice: 0.1200,
-    nextHourPrice: 0.0800,
-    priceChangePercentage: -33.0,
-    monthlySavings: 25.0,
-    comparisonType: 'tarifa fija'
+    minPrice: 0.1000,
+    minPriceHour: 3,
+    maxPrice: 0.2000,
+    maxPriceHour: 19,
+    lastUpdated: new Date().toISOString()
   }
 
   const safeStats = stats ? {
-    currentPrice: stats.currentPrice || defaultStats.currentPrice,
-    nextHourPrice: stats.nextHourPrice || defaultStats.nextHourPrice,
-    priceChangePercentage: stats.priceChangePercentage || defaultStats.priceChangePercentage,
-    monthlySavings: stats.monthlySavings || defaultStats.monthlySavings,
-    comparisonType: stats.comparisonType || defaultStats.comparisonType
+    currentPrice: stats.currentPrice ?? defaultStats.currentPrice,
+    minPrice: stats.minPrice ?? defaultStats.minPrice,
+    minPriceHour: stats.minPriceHour ?? defaultStats.minPriceHour,
+    maxPrice: stats.maxPrice ?? defaultStats.maxPrice,
+    maxPriceHour: stats.maxPriceHour ?? defaultStats.maxPriceHour,
+    lastUpdated: stats.lastUpdated ?? defaultStats.lastUpdated
   } : defaultStats
 
-  const {
-    currentPrice,
-    nextHourPrice,
-    priceChangePercentage,
-    monthlySavings,
-    comparisonType
-  } = safeStats
-
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-      <PriceCard
-        icon={<Euro className="w-8 h-8 text-white" />}
-        iconBgColor="bg-gradient-to-br from-cyan-400 to-teal-500 shadow-cyan-500/25"
-        title="Precio actual"
-        price={isLoading ? "..." : `${currentPrice.toFixed(4)}€/kWh`}
-        description="Momento ideal para usar electrodomésticos"
-        isGreenPrice={true}
-        isLoading={isLoading}
-      />
-      
-      <PriceCard
-        icon={<Clock className="w-8 h-8 text-white" />}
-        iconBgColor="bg-gradient-to-br from-amber-400 to-orange-500 shadow-orange-500/25"
-        title="Próxima hora"
-        price={`${nextHourPrice.toFixed(4)}€/kWh`}
-        description={`Precio bajará un ${Math.abs(priceChangePercentage)}%`}
-        isGreenPrice={true}
-      />
-      
-      <PriceCard
-        icon={<TrendingUp className="w-8 h-8 text-white" />}
-        iconBgColor="bg-gradient-to-br from-fuchsia-400 to-pink-500 shadow-pink-500/25"
-        title="Ahorro este mes"
-        price={`${monthlySavings}%`}
-        description={`Comparado con ${comparisonType}`}
-        isGreenPrice={false}
-      />
-    </div>
+    <section className="space-y-8" role="region" aria-labelledby="price-cards-heading">
+      {/* Indicador de hora de actualización */}
+      <div className="text-center">
+        <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 border border-primary/20 rounded-full backdrop-blur-sm">
+          <Clock className="size-4 text-primary" aria-hidden="true" />
+          <span className="text-sm font-medium" id="price-cards-heading">
+            Datos actualizados: {new Date(safeStats.lastUpdated).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}
+          </span>
+        </div>
+      </div>
+
+      {/* Grid principal de cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <PriceCard
+          icon={<Euro className="w-8 h-8 text-white" />}
+          iconBgColor="bg-gradient-to-br from-cyan-400 to-teal-500 shadow-cyan-500/25"
+          title="Precio actual"
+          price={isLoading ? "..." : `${safeStats.currentPrice.toFixed(4)}€/kWh`}
+          description={`Hora actual: ${new Date().getHours().toString().padStart(2, '0')}:00`}
+          isGreenPrice={true}
+          isLoading={isLoading}
+        />
+        <PriceCard
+          icon={<TrendingUp className="w-8 h-8 text-white" />}
+          iconBgColor="bg-gradient-to-br from-green-400 to-emerald-500 shadow-green-500/25"
+          title="Precio más bajo del día"
+          price={`${safeStats.minPrice.toFixed(4)}€/kWh`}
+          description={`Hora: ${safeStats.minPriceHour.toString().padStart(2, '0')}:00`}
+          isGreenPrice={true}
+        />
+        <PriceCard
+          icon={<TrendingUp className="w-8 h-8 text-white" />}
+          iconBgColor="bg-gradient-to-br from-pink-400 to-red-500 shadow-pink-500/25"
+          title="Precio más alto del día"
+          price={`${safeStats.maxPrice.toFixed(4)}€/kWh`}
+          description={`Hora: ${safeStats.maxPriceHour.toString().padStart(2, '0')}:00`}
+          isGreenPrice={false}
+        />
+      </div>
+    </section>
   )
 })
 

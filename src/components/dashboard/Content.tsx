@@ -1,63 +1,24 @@
-'use client'
 
-import { useEffect } from 'react'
-import { useCriticalData } from '@/hooks/useElectricityDataContext'
-import { useInView } from '@/hooks/useInView'
-import { ErrorDisplay } from '@/components/ui/errorDisplay'
-import Hero from './Hero'
-import { SubscribeForm } from '../forms/SubscribeForm'
-import { TrendingUp, Zap, Users } from 'lucide-react'
-import dynamic from 'next/dynamic'
-import { Loading } from '@/components/ui/loading'
+import { use } from 'react';
+import { electricityService } from '@/services/electricityService';
+import Hero from './Hero';
+import { TrendingUp, Zap, Users } from 'lucide-react';
 
-// Lazy load del componente pesado PriceChart
-const LazyPriceChart = dynamic(() => 
-  import('./LazyPriceChart').then(mod => ({ default: mod.LazyPriceChart })),
-  { 
-    loading: () => <Loading />,
-    ssr: false
-  }
-)
+import DashboardContentClient from './DashboardContentClient';
+import PriceChartClientWrapper from './PriceChartClientWrapper';
+
 
 export function DashboardContent() {
-  // Solo cargar datos críticos inmediatamente
-  const { stats, isLoading, error, refetch } = useCriticalData()
-  
-  // Hook para detectar cuando el formulario entra en viewport
-  const { ref: subscribeRef, inView: subscribeInView } = useInView({
-    threshold: 0.2,
-    rootMargin: '50px'
-  })
-
-  // Cargar datos críticos al montar el componente
-  useEffect(() => {
-    if (!stats && !isLoading) {
-      console.log('🚀 Loading critical data - component mounted')
-      refetch()
-    }
-  }, [stats, isLoading, refetch])
+  // Fetch de datos críticos en Server Component usando use
+  const stats = use(electricityService.getDashboardStats());
 
   return (
     <div className="min-h-screen">
       <div className="container">
-      {/* <div className="container mx-auto px-4 py-8 space-y-16"> */}
-        
         {/* Hero Section - Siempre visible, datos opcionales */}
         <section>
-          <Hero stats={stats} isLoading={isLoading} />
+          <Hero stats={stats} />
         </section>
-
-        {/* Error handling - UX mejorado */}
-        {error && (
-          <section className="mb-8">
-            <ErrorDisplay
-              title={!stats ? "Error de conexión" : "Advertencia"}
-              message={!stats ? error : `Algunos datos pueden estar desactualizados: ${error}`}
-              onRetry={refetch}
-              severity={!stats ? "error" : "warning"}
-            />
-          </section>
-        )}
 
         {/* Price Chart Section */}
         <section className="space-y-8">
@@ -69,13 +30,12 @@ export function DashboardContent() {
               Precios de la Electricidad
             </h2>
             <p className="text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
-              Consulta los precios actuales y históricos del mercado eléctrico español. 
+              Consulta los precios actuales y históricos del mercado eléctrico español.
               Datos oficiales actualizados cada hora.
             </p>
           </div>
-          
           <div className="relative">
-            <LazyPriceChart />
+            <PriceChartClientWrapper />
           </div>
         </section>
 
@@ -91,7 +51,6 @@ export function DashboardContent() {
                 Descubre las horas más baratas para usar tus electrodomésticos
               </p>
             </div>
-
             <div className="text-center group">
               <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-full mb-4 group-hover:scale-110 transition-transform duration-300">
                 <TrendingUp className="w-6 h-6 text-white" />
@@ -101,7 +60,6 @@ export function DashboardContent() {
                 Información directa de Red Eléctrica de España (REE)
               </p>
             </div>
-
             <div className="text-center group">
               <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-br from-pink-400 to-rose-500 rounded-full mb-4 group-hover:scale-110 transition-transform duration-300">
                 <Users className="w-6 h-6 text-white" />
@@ -114,40 +72,9 @@ export function DashboardContent() {
           </div>
         </section>
 
-        {/* Newsletter Section - Progressive Loading */}
-        <section ref={subscribeRef} className="py-16 relative">
-          {/* Background decoration */}
-          <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/10 to-teal-500/10 rounded-3xl"></div>
-          
-          <div className="relative z-10 text-center space-y-8">
-            <div className="space-y-4">
-              <h2 className="text-4xl md:text-5xl font-bold text-white">
-                ¿Quieres Ahorrar Más?
-              </h2>
-              <p className="text-lg text-slate-600 dark:text-slate-300 max-w-3xl mx-auto">
-                Suscríbete a nuestra newsletter y recibe alertas personalizadas cuando 
-                los precios estén en su punto más bajo. <span className="text-emerald-400 font-semibold">
-                Es completamente gratis.
-                </span>
-              </p>
-            </div>
-
-            {/* Solo renderizar form cuando está visible */}
-            <div className="flex justify-center">
-              {subscribeInView && <SubscribeForm />}
-            </div>
-
-            {/* Social proof */}
-            <div className="pt-8 border-t border-slate-700/50">
-              <p className="text-sm text-slate-600 dark:text-slate-300">
-                Trusted by <span className="text-emerald-400 font-semibold">1,000+ usuarios</span> • 
-                Promedio de ahorro: <span className="text-emerald-400 font-semibold">25% mensual</span>
-              </p>
-            </div>
-          </div>
-        </section>
-
+        {/* Newsletter Section - Progressive Loading (Client Component) */}
+        <DashboardContentClient />
       </div>
     </div>
-  )
+  );
 }

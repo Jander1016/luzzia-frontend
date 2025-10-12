@@ -1,7 +1,8 @@
 'use client'
 
-import { PriceCards } from './PriceCards'
+// import { PriceCards } from './PriceCards'
 import { DashboardStats } from '@/types/api'
+import { PriceCardsV2 } from './PriceCardsV2'
 // import { PriceCardsV2 } from './PriceCardsV2'
 
 interface HeroProps {
@@ -44,7 +45,7 @@ export default function Hero({ stats, isLoading = false }: HeroProps) {
         <h2 id="price-section-title" className="sr-only">
           Información de precios eléctricos en tiempo real
         </h2>
-        <PriceCards stats={stats || null} isLoading={isLoading} />
+        <PriceCardsV2 stats={stats || null} isLoading={isLoading} />
       </section>
     </main>
   )

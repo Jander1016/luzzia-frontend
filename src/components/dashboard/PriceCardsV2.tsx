@@ -25,6 +25,7 @@ interface PriceCardData {
   icon: React.ReactNode
   colorClass: string
   iconBgClass: string
+  percent?: string
 }
 
 export const PriceCardsV2 = memo(function PriceCardsV2({ 
@@ -41,22 +42,16 @@ export const PriceCardsV2 = memo(function PriceCardsV2({
 
     const currentHour = new Date().getHours();
     
-    // Datos del precio actual
+    // Datos del precio actual y extremos del día desde dashboard-stats
     const currentPrice = stats?.currentPrice ?? 0;
-    
-    // Encontrar precios más bajo y más alto del día desde la API
-    let lowestPrice = { price: 0, hour: 0 };
-    let highestPrice = { price: 0, hour: 0 };
-    
-    if (dailyPrices.length > 0) {
-      const prices = dailyPrices.map(p => ({ price: p.price, hour: p.hour }));
-      lowestPrice = prices.reduce((min, current) => 
-        current.price < min.price ? current : min
-      );
-      highestPrice = prices.reduce((max, current) => 
-        current.price > max.price ? current : max
-      );
-    }
+    const lowestPrice = {
+      price: stats?.minPrice ?? 0,
+      hour: stats?.minPriceHour ?? 0
+    };
+    const highestPrice = {
+      price: stats?.maxPrice ?? 0,
+      hour: stats?.maxPriceHour ?? 0
+    };
 
     return {
       current: {
@@ -81,34 +76,48 @@ export const PriceCardsV2 = memo(function PriceCardsV2({
     );
   }
 
-  // Configuración de las 3 cards requeridas
+  // Calcular porcentaje de comparación respecto a la siguiente hora
+  function getNextHourComparison(price: number, hour: number) {
+    const nextHour = hour + 1;
+    const nextPrice = dailyPrices.find(p => p.hour === nextHour)?.price;
+    if (nextPrice && price > 0) {
+      const percent = ((nextPrice - price) / price) * 100;
+      return `${percent > 0 ? '+' : ''}${percent.toFixed(1)}% vs siguiente hora`;
+    }
+    return 'Sin comparación';
+  }
+
+  // Configuración de las 3 cards en el orden solicitado
   const cardsData: PriceCardData[] = [
     {
       id: 'current',
       title: 'PRECIO ACTUAL',
       price: `${processedData.current.price.toFixed(4)} €/kWh`,
-      subtitle: `Hora: ${processedData.current.hour.toString().padStart(2, '0')}:00`,
-      icon: <Zap className="size-6 text-white" aria-hidden="true" />,
-      colorClass: 'bg-blue-800',
-      iconBgClass: 'bg-blue-900/50'
+      subtitle: `Hora actual: ${processedData.current.hour.toString().padStart(2, '0')}:00`,
+      icon: <Zap className="size-7 text-cyan-200" aria-hidden="true" />,
+      colorClass: 'bg-gradient-to-br from-cyan-900 via-blue-800 to-blue-900 shadow-lg',
+      iconBgClass: 'bg-cyan-700/60',
+      percent: getNextHourComparison(processedData.current.price, processedData.current.hour)
     },
     {
       id: 'lowest',
       title: 'PRECIO MÁS BAJO DEL DÍA',
       price: `${processedData.lowest.price.toFixed(4)} €/kWh`,
       subtitle: `Hora: ${processedData.lowest.hour.toString().padStart(2, '0')}:00`,
-      icon: <TrendingDown className="size-6 text-white" aria-hidden="true" />,
-      colorClass: 'bg-green-800',
-      iconBgClass: 'bg-green-900/50'
+      icon: <TrendingDown className="size-7 text-green-200" aria-hidden="true" />,
+      colorClass: 'bg-gradient-to-br from-green-900 via-green-800 to-emerald-900 shadow-lg',
+      iconBgClass: 'bg-green-700/60',
+      percent: getNextHourComparison(processedData.lowest.price, processedData.lowest.hour)
     },
     {
       id: 'highest',
       title: 'PRECIO MÁS ALTO DEL DÍA',
       price: `${processedData.highest.price.toFixed(4)} €/kWh`,
       subtitle: `Hora: ${processedData.highest.hour.toString().padStart(2, '0')}:00`,
-      icon: <TrendingUp className="size-6 text-white" aria-hidden="true" />,
-      colorClass: 'bg-red-800',
-      iconBgClass: 'bg-red-900/50'
+      icon: <TrendingUp className="size-7 text-pink-200" aria-hidden="true" />,
+      colorClass: 'bg-gradient-to-br from-pink-900 via-red-800 to-red-900 shadow-lg',
+      iconBgClass: 'bg-pink-700/60',
+      percent: getNextHourComparison(processedData.highest.price, processedData.highest.hour)
     }
   ];
 
@@ -153,47 +162,51 @@ const PriceCard = memo(function PriceCard({
   subtitle,
   icon,
   colorClass,
-  iconBgClass
-}: PriceCardData) {
+  iconBgClass,
+  percent
+}: PriceCardData & { percent?: string }) {
   return (
     <Card 
       className={`
         relative overflow-hidden transition-all duration-300 
-        hover:scale-[1.02] hover:shadow-xl
-        ${colorClass} text-white border-0
+        hover:scale-[1.03] hover:shadow-2xl
+        ${colorClass} text-white border-0 rounded-2xl
         focus-within:ring-2 focus-within:ring-white focus-within:ring-offset-2
       `}
       role="article"
       aria-labelledby={`price-card-${id}-title`}
     >
-      <CardContent className="p-6 space-y-4">
+      <CardContent className="p-7 space-y-5">
         {/* Icon */}
         <div className={`
-          size-12 rounded-full ${iconBgClass}
+          size-14 rounded-full ${iconBgClass}
           flex items-center justify-center
           transition-transform duration-300 hover:scale-110
         `}>
           {icon}
         </div>
-        
+
         {/* Title */}
-        <div>
-          <h3 
-            id={`price-card-${id}-title`} 
-            className="text-sm font-semibold tracking-wide uppercase text-white/90 mb-2"
-          >
-            {title}
-          </h3>
-        </div>
-        
+        <h3 
+          id={`price-card-${id}-title`} 
+          className="text-base font-semibold tracking-wide uppercase text-white/90 mb-2"
+        >
+          {title}
+        </h3>
+
         {/* Main Price - prominente */}
-        <div className="text-3xl font-bold text-white">
+        <div className="text-4xl font-bold text-white drop-shadow">
           {price}
         </div>
-        
+
         {/* Hour info */}
-        <div className="text-sm text-white/80">
+        <div className="text-sm text-white/80 mb-2">
           {subtitle}
+        </div>
+
+        {/* Percent comparison */}
+        <div className="text-xs font-medium text-white/70">
+          {percent}
         </div>
       </CardContent>
     </Card>
