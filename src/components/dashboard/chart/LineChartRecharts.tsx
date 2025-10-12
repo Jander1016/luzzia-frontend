@@ -1,16 +1,18 @@
 'use client'
 
 import { PriceData, PeriodType } from './types'
+import { DailyPriceAvg } from '@/hooks/useElectricityData.simple'
 import { classifyPrice, formatHour, formatPrice } from './types'
 import { useResponsive } from '@/hooks/useResponsive'
 import { Line, LineChart as RechartsLineChart, Area, AreaChart, CartesianGrid, XAxis, YAxis, ResponsiveContainer, Tooltip, ReferenceLine } from 'recharts'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ChartConfig, ChartContainer } from '@/components/ui/chart'
 
+type LineChartDatum = PriceData | DailyPriceAvg | { price: number | null; date: string };
 interface LineChartProps {
-  prices: PriceData[]
-  period: PeriodType
-  showArea?: boolean
+  prices: LineChartDatum[];
+  period: PeriodType;
+  showArea?: boolean;
 }
 
 export function LineChart({ prices, period, showArea = false }: LineChartProps) {
@@ -33,8 +35,15 @@ export function LineChart({ prices, period, showArea = false }: LineChartProps) 
   }
 
   // Validar datos
-  const validPrices = prices.filter(p => p && typeof p.price === 'number' && !isNaN(p.price))
-  const currentHour = new Date().getHours()
+  let validPrices: LineChartDatum[] = [];
+  const currentHour = new Date().getHours();
+  if (period === 'hoy') {
+    validPrices = (prices as PriceData[]).filter(p => p && typeof p.price === 'number' && !isNaN(p.price));
+  } else if (Array.isArray(prices) && prices.length > 0 && 'date' in prices[0]) {
+    validPrices = (prices as Array<{ price: number | null; date: string }> ).filter(p => typeof p.price === 'number' && !isNaN(p.price));
+  } else {
+    validPrices = (prices as DailyPriceAvg[]).filter(p => p && typeof p.price === 'number' && !isNaN(p.price));
+  }
 
   // Configuración del chart
   const chartConfig = {
@@ -44,25 +53,66 @@ export function LineChart({ prices, period, showArea = false }: LineChartProps) 
     },
   } satisfies ChartConfig
 
-  // Transformar datos para Recharts
-  const chartData = validPrices.map((data, index) => {
-    const level = classifyPrice(data.price, prices)
-    const isCurrentHour = period === 'hoy' && data.hour === currentHour
-    
-    return {
-      hour: formatHour(data.hour),
-      price: data.price,
-      level,
-      isCurrentHour,
-      formattedPrice: formatPrice(data.price),
-      originalIndex: index
-    }
-  })
+  // Transformar datos para Recharts según período
+  type ChartDatum = {
+    xLabel: string;
+    price: number;
+    level: string;
+    formattedPrice: string;
+    originalIndex: number;
+    hour?: string;
+    isCurrentHour?: boolean;
+  };
+  let chartData: ChartDatum[] = [];
+  if (period === 'semana' || period === 'mes') {
+    chartData = (validPrices as Array<{ price: number | null; date: string }> ).map((data, index) => {
+      return {
+        xLabel: data.date,
+        price: data.price ?? 0,
+        level: '',
+        formattedPrice: typeof data.price === 'number' ? formatPrice(data.price) : 'N/A',
+        originalIndex: index
+      };
+    });
+  } else if (period === 'hoy' && isMobile) {
+    // Agrupar por rangos de hora para mobile
+    const hourRanges = [0, 4, 8, 12, 16, 20, 24];
+    const grouped = hourRanges.map((start, idx) => {
+      const end = hourRanges[idx + 1] ?? 24;
+      const items = (validPrices as PriceData[]).filter(p => p.hour >= start && p.hour < end);
+      const avg = items.length > 0 ? items.reduce((sum, p) => sum + (typeof p.price === 'number' ? p.price : 0), 0) / items.length : 0;
+      return {
+        xLabel: `${start}-${end}`,
+        hour: `${start}-${end}`,
+        price: avg,
+        level: '',
+        isCurrentHour: items.some(p => p.hour === currentHour),
+        formattedPrice: formatPrice(avg),
+        originalIndex: idx
+      };
+    });
+    chartData = grouped;
+  } else {
+    chartData = (validPrices as PriceData[]).map((data, index) => {
+      const level = classifyPrice(data.price, validPrices as PriceData[]);
+      const isCurrentHour = data.hour === currentHour;
+      return {
+        xLabel: formatHour(data.hour),
+        hour: formatHour(data.hour),
+        price: data.price,
+        level,
+        isCurrentHour,
+        formattedPrice: formatPrice(data.price),
+        originalIndex: index
+      };
+    });
+  }
 
   // Encontrar valores min/max para referencias
-  const minPrice = Math.min(...validPrices.map(p => p.price))
-  const maxPrice = Math.max(...validPrices.map(p => p.price))
-  const avgPrice = validPrices.reduce((sum, p) => sum + p.price, 0) / validPrices.length
+  const numericPrices = validPrices.map(p => p.price).filter((v): v is number => typeof v === 'number' && !isNaN(v));
+  const minPrice = numericPrices.length > 0 ? Math.min(...numericPrices) : 0;
+  const maxPrice = numericPrices.length > 0 ? Math.max(...numericPrices) : 0;
+  const avgPrice = numericPrices.length > 0 ? numericPrices.reduce((sum, v) => sum + v, 0) / numericPrices.length : 0;
 
   // Colores por nivel de precio
   const getLevelColor = (level: string) => {
@@ -173,20 +223,29 @@ export function LineChart({ prices, period, showArea = false }: LineChartProps) 
     payload?: {
       level: string;
       isCurrentHour: boolean;
-      hour: string;
+      hour?: string;
+      xLabel?: string;
     };
   }) => {
     const { cx, cy, payload } = props
-    if (!payload) return null
-    
-    // Extraer la hora del label (formato "0h", "3h", etc.)
-    const hour = parseInt(payload.hour.replace('h', ''))
-    
-    // Solo mostrar puntos cada 3 horas (0, 3, 6, 9, 12, 15, 18, 21)
-    if (hour % 3 === 0) {
-      const color = getLevelColor(payload.level)
-      const isCurrentHour = payload.isCurrentHour
-      
+    if (!payload) return null;
+    // Usar xLabel para semana/mes, hour para hoy
+  const value = payload.xLabel ?? payload.hour;
+    // Si es un nombre de día, convertir a índice; si es número, parsear
+    let hourNum = 0;
+    if (typeof value === 'string') {
+      if (/^\d+$/.test(value)) {
+        hourNum = parseInt(value, 10);
+      } else {
+        // Para días de la semana: lun=0, mar=1, ... dom=6
+        const weekDays = ['lun', 'mar', 'mié', 'jue', 'vie', 'sáb', 'dom'];
+        hourNum = weekDays.indexOf(value);
+      }
+    }
+    // Solo mostrar puntos cada 3 horas/días
+    if (hourNum % 3 === 0) {
+      const color = getLevelColor(payload.level);
+      const isCurrentHour = payload.isCurrentHour;
       return (
         <g>
           <circle
@@ -211,9 +270,9 @@ export function LineChart({ prices, period, showArea = false }: LineChartProps) 
             />
           )}
         </g>
-      )
+      );
     }
-    return null
+    return null;
   }
 
   // Custom activeDot que mantiene el color original
@@ -270,13 +329,13 @@ export function LineChart({ prices, period, showArea = false }: LineChartProps) 
               }}>
               <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
               <XAxis 
-                dataKey="hour" 
+                dataKey={period === 'hoy' ? 'hour' : 'xLabel'}
                 tick={{ fontSize: isMobile ? 10 : 12 }}
                 stroke="hsl(var(--muted-foreground))"
                 angle={isMobile ? -45 : 0}
                 textAnchor={isMobile ? 'end' : 'middle'}
                 height={isMobile ? 50 : 30}
-                interval={isMobile ? 2 : 'preserveStartEnd'}
+                interval={isMobile ? 0 : 'preserveStartEnd'}
                 tickMargin={isMobile ? 8 : 5}
               />
               <YAxis 

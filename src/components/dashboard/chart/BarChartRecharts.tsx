@@ -8,9 +8,10 @@ import { Bar, BarChart as RechartsBarChart, CartesianGrid, XAxis, YAxis, Respons
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ChartConfig, ChartContainer } from '@/components/ui/chart'
 
+type BarChartDatum = PriceData | import('@/hooks/useElectricityData.simple').DailyPriceAvg | { price: number | null; date: string };
 interface BarChartProps {
-  prices: PriceData[]
-  period: PeriodType
+  prices: BarChartDatum[];
+  period: PeriodType;
 }
 
 export function BarChart({ prices, period }: BarChartProps) {
@@ -62,19 +63,54 @@ export function BarChart({ prices, period }: BarChartProps) {
   } satisfies ChartConfig
 
   // Transformar datos para Recharts
-  const chartData = displayPrices.map((data, index) => {
-    const level = classifyPrice(data.price, prices)
-    const isCurrentHour = period === 'hoy' && data.hour === currentHour
-    
-    return {
-      hour: formatHour(data.hour),
-      price: data.price,
-      level,
-      isCurrentHour,
-      formattedPrice: formatPrice(data.price),
-      originalIndex: isMobile ? mobileStartIndex + index : index
-    }
-  })
+  let chartData: Array<{ hour: string; price: number | null; level: string; isCurrentHour?: boolean; formattedPrice: string; originalIndex: number }> = [];
+  if (period === 'hoy') {
+    chartData = (displayPrices as PriceData[]).map((data, index) => {
+      const level = classifyPrice(data.price, displayPrices as PriceData[]);
+      const isCurrentHour = data.hour === currentHour;
+      return {
+        hour: formatHour(data.hour),
+        price: data.price,
+        level,
+        isCurrentHour,
+        formattedPrice: formatPrice(data.price),
+        originalIndex: isMobile ? mobileStartIndex + index : index
+      };
+    });
+  } else if (Array.isArray(displayPrices) && displayPrices.length > 0 && 'date' in displayPrices[0]) {
+    chartData = (displayPrices as Array<{ price: number | null; date: string }> ).map((data, index) => {
+      // Para semana: mostrar día de la semana, para mes: nombre del mes
+      let hour = '';
+      if (period === 'semana') {
+        hour = data.date;
+      } else if (period === 'mes') {
+        hour = data.date;
+      } else {
+        hour = data.date;
+      }
+      return {
+        hour,
+        price: data.price,
+        level: '',
+        formattedPrice: typeof data.price === 'number' ? formatPrice(data.price) : 'N/A',
+        originalIndex: isMobile ? mobileStartIndex + index : index
+      };
+    });
+  } else {
+    chartData = (displayPrices as import('@/hooks/useElectricityData.simple').DailyPriceAvg[]).map((data, index) => {
+      const d = new Date(data.date);
+      const hour = period === 'semana'
+        ? ['lun', 'mar', 'mié', 'jue', 'vie', 'sáb', 'dom'][d.getDay() === 0 ? 6 : d.getDay() - 1]
+        : d.getDate().toString();
+      return {
+        hour,
+        price: data.price,
+        level: '',
+        formattedPrice: formatPrice(data.price),
+        originalIndex: isMobile ? mobileStartIndex + index : index
+      };
+    });
+  }
 
   // Colores por nivel de precio
   const getLevelColor = (level: string) => {
@@ -92,13 +128,13 @@ export function BarChart({ prices, period }: BarChartProps) {
   const goToNextView = () => setMobileViewIndex(Math.min(totalMobileViews - 1, mobileViewIndex + 1))
   
   const goToCurrentHour = () => {
-    if (!Array.isArray(prices) || prices.length === 0) return
-    const currentIndex = prices.findIndex(p => p && typeof p.hour === 'number' && p.hour === currentHour)
+    if (period !== 'hoy' || !Array.isArray(prices) || prices.length === 0) return;
+    const currentIndex = (prices as PriceData[]).findIndex(p => p && typeof p.hour === 'number' && p.hour === currentHour);
     if (currentIndex !== -1) {
-      const targetView = Math.floor(currentIndex / MOBILE_HOURS_PER_VIEW)
-      setMobileViewIndex(Math.min(Math.max(0, targetView), totalMobileViews - 1))
+      const targetView = Math.floor(currentIndex / MOBILE_HOURS_PER_VIEW);
+      setMobileViewIndex(Math.min(Math.max(0, targetView), totalMobileViews - 1));
     }
-  }
+  };
 
   const CustomTooltip = ({ active, payload, label }: {
     active?: boolean;
