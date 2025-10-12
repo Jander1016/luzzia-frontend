@@ -7,6 +7,7 @@ import { useResponsive } from '@/hooks/useResponsive'
 import { Line, LineChart as RechartsLineChart, Area, AreaChart, CartesianGrid, XAxis, YAxis, ResponsiveContainer, Tooltip, ReferenceLine } from 'recharts'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ChartConfig, ChartContainer } from '@/components/ui/chart'
+import { useEffect, useState } from 'react'
 
 type LineChartDatum = PriceData | DailyPriceAvg | { price: number | null; date: string };
 interface LineChartProps {
@@ -16,7 +17,13 @@ interface LineChartProps {
 }
 
 export function LineChart({ prices, period, showArea = false }: LineChartProps) {
-  const { isMobile, isTablet } = useResponsive()
+  const { isMobile, isTablet } = useResponsive();
+  const [currentHour, setCurrentHour] = useState<number | null>(null);
+
+  // Solo obtener la hora en el cliente
+  useEffect(() => {
+    setCurrentHour(new Date().getHours());
+  }, []);
 
   if (!prices || !Array.isArray(prices) || prices.length === 0) {
     return (
@@ -31,12 +38,11 @@ export function LineChart({ prices, period, showArea = false }: LineChartProps) 
           </div>
         </CardContent>
       </Card>
-    )
+    );
   }
 
   // Validar datos
   let validPrices: LineChartDatum[] = [];
-  const currentHour = new Date().getHours();
   if (period === 'hoy') {
     validPrices = (prices as PriceData[]).filter(p => p && typeof p.price === 'number' && !isNaN(p.price));
   } else if (Array.isArray(prices) && prices.length > 0 && 'date' in prices[0]) {
@@ -74,28 +80,25 @@ export function LineChart({ prices, period, showArea = false }: LineChartProps) 
         originalIndex: index
       };
     });
-  } else if (period === 'hoy' && isMobile) {
-    // Agrupar por rangos de hora para mobile
-    const hourRanges = [0, 4, 8, 12, 16, 20, 24];
-    const grouped = hourRanges.map((start, idx) => {
-      const end = hourRanges[idx + 1] ?? 24;
-      const items = (validPrices as PriceData[]).filter(p => p.hour >= start && p.hour < end);
-      const avg = items.length > 0 ? items.reduce((sum, p) => sum + (typeof p.price === 'number' ? p.price : 0), 0) / items.length : 0;
+  } else if (period === 'hoy') {
+    // En mobile y desktop, mostrar todos los puntos horarios
+    chartData = (validPrices as PriceData[]).map((data, index) => {
+      const level = classifyPrice(data.price, validPrices as PriceData[]);
+      const isCurrentHour = currentHour !== null && data.hour === currentHour;
       return {
-        xLabel: `${start}-${end}`,
-        hour: `${start}-${end}`,
-        price: avg,
-        level: '',
-        isCurrentHour: items.some(p => p.hour === currentHour),
-        formattedPrice: formatPrice(avg),
-        originalIndex: idx
+        xLabel: formatHour(data.hour),
+        hour: formatHour(data.hour),
+        price: data.price,
+        level,
+        isCurrentHour,
+        formattedPrice: formatPrice(data.price),
+        originalIndex: index
       };
     });
-    chartData = grouped;
   } else {
     chartData = (validPrices as PriceData[]).map((data, index) => {
       const level = classifyPrice(data.price, validPrices as PriceData[]);
-      const isCurrentHour = data.hour === currentHour;
+      const isCurrentHour = currentHour !== null && data.hour === currentHour;
       return {
         xLabel: formatHour(data.hour),
         hour: formatHour(data.hour),
@@ -361,7 +364,7 @@ export function LineChart({ prices, period, showArea = false }: LineChartProps) 
               {/* Línea de hora actual - Solo en desktop */}
               {!isMobile && period === 'hoy' && chartData.some(d => d.isCurrentHour) && (
                 <ReferenceLine 
-                  x={formatHour(currentHour)} 
+                  x={formatHour(currentHour!)} 
                   stroke="hsl(217 91% 60%)" 
                   strokeDasharray="3 3"
                   opacity={0.7}
