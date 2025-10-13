@@ -85,7 +85,7 @@ export default function HeaderV2() {
   return (
     <>
       <header
-        className="sticky top-0 z-50 w-full transition-all duration-300 bg-transparent"
+        className="sticky top-0 z-50 w-full transition-all duration-300 bg-background"
       >
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex h-20 items-center justify-between">
@@ -100,7 +100,7 @@ export default function HeaderV2() {
                   className="inline-block ml-2 dark:brightness-110"
                   priority
                   sizes="180px"
-                  quality={85}
+                  quality={75}
                 />
               </Link>
 
@@ -139,11 +139,11 @@ export default function HeaderV2() {
             >
               <div className="relative w-6 h-6">
                 <Menu className={clsx(
-                  "absolute inset-0 transition-all duration-300",
+                  "absolute inset-0 transition-all duration-300 size-8",
                   isMenuOpen ? "opacity-0 rotate-180 scale-75" : "opacity-100 rotate-0 scale-100"
                 )} />
                 <X className={clsx(
-                  "absolute inset-0 transition-all duration-300",
+                  "absolute inset-0 transition-all duration-300 size-8",
                   isMenuOpen ? "opacity-100 rotate-0 scale-120" : "opacity-0 -rotate-180 scale-105"
                 )} />
               </div>
@@ -221,7 +221,7 @@ export default function HeaderV2() {
         </div>
       </div>
 
-      <style jsx>{`
+      {/* <style jsx>{`
         @keyframes slideInFromRight {
           from {
             opacity: 0;
@@ -232,7 +232,7 @@ export default function HeaderV2() {
             transform: translateX(0);
           }
         }
-      `}</style>
+      `}</style> */}
     </>
   );
 }
