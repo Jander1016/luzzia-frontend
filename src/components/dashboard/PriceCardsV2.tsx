@@ -93,9 +93,9 @@ export const PriceCardsV2 = memo(function PriceCardsV2({
       title: 'PRECIO ACTUAL',
       price: `${processedData.current.price.toFixed(4)} €/kWh`,
       subtitle: `Hora actual: ${processedData.current.hour.toString().padStart(2, '0')}:00`,
-      icon: <Zap className="size-7 text-cyan-200" aria-hidden="true" />,
-      colorClass: 'bg-gradient-to-br from-cyan-900 via-blue-800 to-blue-900 shadow-lg',
-      iconBgClass: 'bg-cyan-700/60',
+      icon: <Zap className="size-7 text-cyan-500" aria-hidden="true" />,
+      colorClass: 'bg-slate-900/80 shadow-lg',
+      iconBgClass: 'bg-slate-800',
       percent: getNextHourComparison(processedData.current.price, processedData.current.hour)
     },
     {
@@ -103,9 +103,9 @@ export const PriceCardsV2 = memo(function PriceCardsV2({
       title: 'PRECIO MÁS BAJO DEL DÍA',
       price: `${processedData.lowest.price.toFixed(4)} €/kWh`,
       subtitle: `Hora: ${processedData.lowest.hour.toString().padStart(2, '0')}:00`,
-      icon: <TrendingDown className="size-7 text-green-200" aria-hidden="true" />,
-      colorClass: 'bg-gradient-to-br from-green-900 via-green-800 to-emerald-900 shadow-lg',
-      iconBgClass: 'bg-green-700/60',
+      icon: <TrendingDown className="size-7 text-green-500" aria-hidden="true" />,
+      colorClass: 'bg-slate-900/80 shadow-lg',
+      iconBgClass: 'bg-slate-800',
       percent: getNextHourComparison(processedData.lowest.price, processedData.lowest.hour)
     },
     {
@@ -113,9 +113,9 @@ export const PriceCardsV2 = memo(function PriceCardsV2({
       title: 'PRECIO MÁS ALTO DEL DÍA',
       price: `${processedData.highest.price.toFixed(4)} €/kWh`,
       subtitle: `Hora: ${processedData.highest.hour.toString().padStart(2, '0')}:00`,
-      icon: <TrendingUp className="size-7 text-pink-200" aria-hidden="true" />,
-      colorClass: 'bg-gradient-to-br from-pink-900 via-red-800 to-red-900 shadow-lg',
-      iconBgClass: 'bg-pink-700/60',
+      icon: <TrendingUp className="size-7 text-pink-500" aria-hidden="true" />,
+      colorClass: 'bg-slate-900/80 shadow-lg',
+      iconBgClass: 'bg-slate-800',
       percent: getNextHourComparison(processedData.highest.price, processedData.highest.hour)
     }
   ];
@@ -127,7 +127,6 @@ export const PriceCardsV2 = memo(function PriceCardsV2({
   return (
     <section 
       className="space-y-8"
-      // aria-labelledby="price-cards-heading"
     >
       {/* Current time indicator */}
       {/* <div className="text-center">
@@ -159,53 +158,36 @@ const PriceCard = memo(function PriceCard({
   price,
   subtitle,
   icon,
-  colorClass,
-  iconBgClass,
   percent
 }: PriceCardData & { percent?: string }) {
+  const borderColor = "border-[2px] border-violet-500";
+  const bgColor = "bg-[#14003a]";
+  const titleColor = "text-white";
+  const priceColor = id === 'lowest' ? "text-green-500" : id === 'highest' ? "text-red-500" : "text-cyan-500";
   return (
     <Card 
       className={`
         relative overflow-hidden transition-all duration-300 
         hover:scale-[1.03] hover:shadow-2xl
-        ${colorClass} text-white border-0 rounded-2xl
+        ${bgColor} ${borderColor} rounded-2xl
         focus-within:ring-2 focus-within:ring-white focus-within:ring-offset-2
       `}
       role="article"
       aria-labelledby={`price-card-${id}-title`}
     >
-      <CardContent className="p-7 space-y-5">
+      <CardContent className="p-7 space-y-3 flex flex-col items-center justify-center text-center">
         {/* Icon */}
-        <div className={`
-          size-14 rounded-full ${iconBgClass}
-          flex items-center justify-center
-          transition-transform duration-300 hover:scale-110
-        `}>
+        <div className={`size-14 rounded-full bg-slate-800 flex items-center justify-center mb-2 transition-transform duration-300 hover:scale-110`}>
           {icon}
         </div>
-
         {/* Title */}
-        <h3 
-          id={`price-card-${id}-title`} 
-          className="text-base font-semibold tracking-wide uppercase text-white/90 mb-2"
-        >
-          {title}
-        </h3>
-
+        <h3 id={`price-card-${id}-title`} className={`text-2xl font-extrabold mb-2 ${titleColor}`}>{id === 'lowest' ? 'Precio más barato' : id === 'highest' ? 'Precio más caro' : "Precio actual"}</h3>
         {/* Main Price - prominente */}
-        <div className="text-4xl font-bold text-white drop-shadow">
-          {price}
-        </div>
-
+        <div className={`text-2xl font-bold mb-1 ${priceColor}`}>{price}</div>
         {/* Hour info */}
-        <div className="text-sm text-white/80 mb-2">
-          {subtitle}
-        </div>
-
+        {subtitle && <div className={`text-base text-white/80 mb-1`}>{subtitle}</div>}
         {/* Percent comparison */}
-        <div className="text-xs font-medium text-white/70">
-          {percent}
-        </div>
+        {percent && <div className={`text-xs font-semibold text-white/60`}>{percent}</div>}
       </CardContent>
     </Card>
   )
