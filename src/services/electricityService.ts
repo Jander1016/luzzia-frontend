@@ -65,7 +65,9 @@ class ElectricityService {
       // Validate each array element
       prices.forEach((price, index) => {
         if (!isValidElectricityPrice(price)) {
-          console.warn(`Precio de electricidad inválido en índice ${index}:`, price)
+          if (process.env.NODE_ENV === 'development') {
+            console.warn(`Precio de electricidad inválido en índice ${index}:`, price)
+          }
         }
       })
 
