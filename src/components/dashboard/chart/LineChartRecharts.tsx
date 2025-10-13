@@ -321,16 +321,20 @@ export function LineChart({ prices, period, showArea = false }: LineChartProps) 
         </CardDescription>
       </CardHeader>
       <CardContent className='px-1'>
-        <ChartContainer config={chartConfig} className={`${isMobile ? 'h-[50vh] w-full' : isTablet ? 'h-[350px] w-full' : 'h-[400px] w-full'}`}>
-          <ResponsiveContainer width="100%" height="100%" debounce={50}>
+        <ChartContainer config={chartConfig}>
+        {/* <ChartContainer config={chartConfig} className={`${isMobile ? 'h-[50vh] w-full' : isTablet ? 'h-[350px] w-full' : 'h-[400px] w-full'}`}> */}
+          {/* <ResponsiveContainer width="100%" height="100%" debounce={50}> */}
+          {/* <ResponsiveContainer width="100%" height={isMobile ? 200 : isTablet ? 300 : 370} debounce={50}> */}
+          <ResponsiveContainer>
             <ChartComponent 
               data={chartData} 
-              margin={{ 
-                top: isMobile ? 20 : 20, 
-                right: isMobile ? 5 : 30, 
-                left: isMobile ? 5 : 20, 
-                bottom: isMobile ? 40 : 5 
-              }}>
+              // margin={{ 
+              //   top: isMobile ? 20 : 20, 
+              //   right: isMobile ? 5 : 30, 
+              //   left: isMobile ? 5 : 20, 
+              //   bottom: isMobile ? 40 : 5 
+              // }}
+              >
               <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
               <XAxis 
                 dataKey={period === 'hoy' ? 'hour' : 'xLabel'}

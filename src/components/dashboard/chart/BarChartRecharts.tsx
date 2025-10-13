@@ -249,7 +249,7 @@ export function BarChart({ prices, period }: BarChartProps) {
         </CardHeader>
         <CardContent>
           <ChartContainer config={chartConfig} className={`${isMobile ? 'h-[300px] w-full' : isTablet ? 'h-[350px] w-full' : 'h-[400px] w-full'} no-bar-selection`}>
-            <ResponsiveContainer width="100%" height="100%" debounce={50}>
+            <ResponsiveContainer width="100%" height={isMobile ? 200 : isTablet ? 300 : 370} debounce={50}>
               <RechartsBarChart 
                 data={chartData} 
                 margin={{ 

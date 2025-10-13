@@ -181,7 +181,7 @@ export function PieChart({ prices, period }: PieChartProps) {
         <div className="space-y-6">
           {/* Gráfico principal */}
           <ChartContainer config={chartConfig} className={`${isMobile ? 'h-[280px] w-full' : isTablet ? 'h-[320px] w-full' : 'h-[350px] w-full'}`}>
-            <ResponsiveContainer width="100%" height="100%" debounce={50}>
+            <ResponsiveContainer width="100%" height={isMobile ? 200 : isTablet ? 300 : 370} debounce={50}>
               <RechartsPieChart>
                 <Pie
                   data={chartData}
