@@ -84,70 +84,61 @@ export default function HeaderV2() {
 
   return (
     <>
-      <header
-        className="sticky top-0 z-50 w-full transition-all duration-300 bg-background"
-      >
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex h-20 items-center justify-between">
-            {/* Logo */}
-            
+      <header className="sticky top-0 z-50 w-full transition-all duration-300 bg-background">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl lg:max-w-6xl xl:max-w-7xl">
+          <div className="flex h-20 items-center justify-center lg:justify-between">
+            {/* Mobile: Logo y botón centrados */}
+            <div className="flex items-center justify-between gap-4 w-full lg:w-auto">
               <Link href="/" className="text-xl font-bold">
                 <Image
                   src="/logo.webp"
                   alt="Luzzia Logo"
                   width={180}
                   height={180}
-                  className="inline-block ml-2 dark:brightness-110"
+                  className="inline-block dark:brightness-110"
                   priority
                   sizes="180px"
                   quality={75}
                 />
               </Link>
-
+              <Button
+                variant="ghost"
+                size="lg"
+                className="lg:hidden relative z-50 h-12 w-12 flex items-center justify-center"
+                onClick={toggleMenu}
+                aria-expanded={isMenuOpen}
+                aria-controls="mobile-menu"
+                aria-label={isMenuOpen ? "Cerrar menú de navegación" : "Abrir menú de navegación"}
+              >
+                <div className="w-6 h-6 flex items-center justify-center">
+                  <Menu className={clsx(
+                    "absolute inset-0 transition-all duration-300 size-8 mx-auto",
+                    isMenuOpen ? "opacity-0 rotate-180 scale-75" : "opacity-100 rotate-0 scale-100"
+                  )} />
+                  <X className={clsx(
+                    "absolute inset-0 transition-all duration-300 size-8 mx-auto",
+                    isMenuOpen ? "opacity-100 rotate-0 scale-120" : "opacity-0 -rotate-180 scale-105"
+                  )} />
+                </div>
+              </Button>
+            </div>
             {/* Desktop Navigation - Moved to right */}
             <nav
               className="hidden lg:flex items-center space-x-2"
-              // role="navigation"
               aria-label="Navegación principal"
             >
-              {navLinks.map((link) => {
-                // const IconComponent = link.icon;
-                return (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    className="group relative flex items-center space-x-2 px-4 py-3 text-sm font-medium text-foreground/80 hover:text-foreground transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-xl"
-                  >
-                    {/* <IconComponent className="h-4 w-4 transition-transform group-hover:scale-110" /> */}
-                    <span className="relative z-10 text-lg">{link.name}</span>
-                    <div className="absolute inset-0 bg-accent/60 rounded-xl scale-0 opacity-0 group-hover:scale-100 group-hover:opacity-100 transition-all duration-200" />
-                    <div className="absolute bottom-1 left-1/2 w-0 h-0.5 bg-primary group-hover:w-3/4 group-hover:left-1/8 transition-all duration-300 rounded-full" />
-                  </Link>
-                );
-              })}
+              {navLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="group relative flex items-center space-x-2 px-4 py-3 text-sm font-medium text-foreground/80 hover:text-foreground transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-xl"
+                >
+                  <span className="relative z-10 text-lg">{link.name}</span>
+                  <div className="absolute inset-0 bg-accent/60 rounded-xl scale-0 opacity-0 group-hover:scale-100 group-hover:opacity-100 transition-all duration-200" />
+                  <div className="absolute bottom-1 left-1/2 w-0 h-0.5 bg-primary group-hover:w-3/4 group-hover:left-1/8 transition-all duration-300 rounded-full" />
+                </Link>
+              ))}
             </nav>
-
-            {/* Mobile menu button */}
-            <Button
-              variant="ghost"
-              size="lg"
-              className="lg:hidden relative z-50 h-12 w-12"
-              onClick={toggleMenu}
-              aria-expanded={isMenuOpen}
-              aria-controls="mobile-menu"
-              aria-label={isMenuOpen ? "Cerrar menú de navegación" : "Abrir menú de navegación"}
-            >
-              <div className="relative w-6 h-6">
-                <Menu className={clsx(
-                  "absolute inset-0 transition-all duration-300 size-8",
-                  isMenuOpen ? "opacity-0 rotate-180 scale-75" : "opacity-100 rotate-0 scale-100"
-                )} />
-                <X className={clsx(
-                  "absolute inset-0 transition-all duration-300 size-8",
-                  isMenuOpen ? "opacity-100 rotate-0 scale-120" : "opacity-0 -rotate-180 scale-105"
-                )} />
-              </div>
-            </Button>
           </div>
         </div>
       </header>
