@@ -17,7 +17,7 @@ interface LineChartProps {
 }
 
 export function LineChart({ prices, period, showArea = false }: LineChartProps) {
-  const { isMobile, isTablet } = useResponsive();
+  const { isMobile } = useResponsive();
   const [currentHour, setCurrentHour] = useState<number | null>(null);
 
   // Solo obtener la hora en el cliente

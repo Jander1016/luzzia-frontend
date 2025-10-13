@@ -90,7 +90,7 @@ export const PriceCardsV2 = memo(function PriceCardsV2({
   const cardsData: PriceCardData[] = [
     {
       id: 'current',
-      title: 'PRECIO ACTUAL',
+      title: 'Precio actual',
       price: `${processedData.current.price.toFixed(4)} €/kWh`,
       subtitle: `Hora actual: ${processedData.current.hour.toString().padStart(2, '0')}:00`,
       icon: <Zap className="size-7 text-cyan-500" aria-hidden="true" />,
@@ -181,7 +181,7 @@ const PriceCard = memo(function PriceCard({
           {icon}
         </div>
         {/* Title */}
-        <h3 id={`price-card-${id}-title`} className={`text-2xl font-extrabold mb-2 ${titleColor}`}>{id === 'lowest' ? 'Precio más barato' : id === 'highest' ? 'Precio más caro' : "Precio actual"}</h3>
+        <h3 id={`price-card-${id}-title`} className={`text-2xl font-extrabold mb-2 ${titleColor}`}>{id === 'lowest' ? 'Precio más barato' : id === 'highest' ? 'Precio más caro' : title}</h3>
         {/* Main Price - prominente */}
         <div className={`text-2xl font-bold mb-1 ${priceColor}`}>{price}</div>
         {/* Hour info */}
