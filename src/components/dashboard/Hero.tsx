@@ -3,7 +3,7 @@
 // import { PriceCards } from './PriceCards'
 import { DashboardStats } from '@/types/api'
 import { PriceCardsV2 } from './PriceCardsV2'
-// import { PriceCardsV2 } from './PriceCardsV2'
+import { useTodayPrices } from '@/hooks/useElectricityData.simple'
 
 interface HeroProps {
   stats?: DashboardStats | null
@@ -11,6 +11,8 @@ interface HeroProps {
 }
 
 export default function Hero({ stats, isLoading = false }: HeroProps) {
+  const { data: dailyPrices, isLoading: pricesLoading } = useTodayPrices();
+
   return (
     <main role="main" aria-labelledby="hero-title">
       {/* Hero Section */}
@@ -45,7 +47,11 @@ export default function Hero({ stats, isLoading = false }: HeroProps) {
         <h2 id="price-section-title" className="sr-only">
           Información de precios eléctricos en tiempo real
         </h2>
-        <PriceCardsV2 stats={stats || null} isLoading={isLoading} />
+        <PriceCardsV2
+          stats={stats || null}
+          dailyPrices={dailyPrices}
+          isLoading={isLoading || pricesLoading}
+        />
       </section>
     </main>
   )

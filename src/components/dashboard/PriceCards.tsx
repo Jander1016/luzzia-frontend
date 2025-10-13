@@ -2,7 +2,7 @@
 
 import { memo } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
-import { Euro, Clock, TrendingUp } from 'lucide-react'
+import { Euro, TrendingUp } from 'lucide-react'
 import { DashboardStats } from '@/types/api'
 
 interface PriceCardsProps {
@@ -33,16 +33,18 @@ export const PriceCards = memo(function PriceCards({ stats, isLoading = false }:
   } : defaultStats
 
   return (
-    <section className="space-y-8" role="region" aria-labelledby="price-cards-heading">
+    <section className="space-y-8" role="region" 
+    // aria-labelledby="price-cards-heading"
+    >
       {/* Indicador de hora de actualización */}
-      <div className="text-center">
+      {/* <div className="text-center">
         <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 border border-primary/20 rounded-full backdrop-blur-sm">
           <Clock className="size-4 text-primary" aria-hidden="true" />
           <span className="text-sm font-medium" id="price-cards-heading">
             Datos actualizados: {new Date(safeStats.lastUpdated).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}
           </span>
         </div>
-      </div>
+      </div> */}
 
       {/* Grid principal de cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">

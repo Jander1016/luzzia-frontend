@@ -5,8 +5,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { 
   Zap, 
   TrendingDown, 
-  TrendingUp, 
-  Clock4
+  TrendingUp
 } from 'lucide-react'
 import { DashboardStats, ElectricityPrice } from '@/types/api'
 
@@ -53,6 +52,16 @@ export const PriceCardsV2 = memo(function PriceCardsV2({
       hour: stats?.maxPriceHour ?? 0
     };
 
+    console.log({
+      current: {
+        price: currentPrice,
+        hour: currentHour
+      },
+      lowest: lowestPrice,
+      highest: highestPrice,
+      lastUpdated: stats?.lastUpdated ?? new Date().toISOString()
+    })
+
     return {
       current: {
         price: currentPrice,
@@ -84,6 +93,7 @@ export const PriceCardsV2 = memo(function PriceCardsV2({
       const percent = ((nextPrice - price) / price) * 100;
       return `${percent > 0 ? '+' : ''}${percent.toFixed(1)}% vs siguiente hora`;
     }
+    console.log({"dailys":dailyPrices,"price":nextPrice, "hour":nextHour})
     return 'Sin comparación';
   }
 
@@ -129,10 +139,10 @@ export const PriceCardsV2 = memo(function PriceCardsV2({
     <section 
       className="space-y-8"
       role="region"
-      aria-labelledby="price-cards-heading"
+      // aria-labelledby="price-cards-heading"
     >
       {/* Current time indicator */}
-      <div className="text-center">
+      {/* <div className="text-center">
         <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 border border-primary/20 rounded-full backdrop-blur-sm">
           <Clock4 className="size-4 text-primary" aria-hidden="true" />
           <span className="text-sm font-medium" id="price-cards-heading">
@@ -142,7 +152,7 @@ export const PriceCardsV2 = memo(function PriceCardsV2({
             })}
           </span>
         </div>
-      </div>
+      </div> */}
 
       {/* Main price cards grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
