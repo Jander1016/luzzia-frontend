@@ -52,16 +52,6 @@ export const PriceCardsV2 = memo(function PriceCardsV2({
       hour: stats?.maxPriceHour ?? 0
     };
 
-    console.log({
-      current: {
-        price: currentPrice,
-        hour: currentHour
-      },
-      lowest: lowestPrice,
-      highest: highestPrice,
-      lastUpdated: stats?.lastUpdated ?? new Date().toISOString()
-    })
-
     return {
       current: {
         price: currentPrice,
@@ -93,7 +83,6 @@ export const PriceCardsV2 = memo(function PriceCardsV2({
       const percent = ((nextPrice - price) / price) * 100;
       return `${percent > 0 ? '+' : ''}${percent.toFixed(1)}% vs siguiente hora`;
     }
-    console.log({"dailys":dailyPrices,"price":nextPrice, "hour":nextHour})
     return 'Sin comparación';
   }
 
@@ -138,7 +127,6 @@ export const PriceCardsV2 = memo(function PriceCardsV2({
   return (
     <section 
       className="space-y-8"
-      role="region"
       // aria-labelledby="price-cards-heading"
     >
       {/* Current time indicator */}

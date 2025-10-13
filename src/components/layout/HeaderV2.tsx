@@ -86,7 +86,6 @@ export default function HeaderV2() {
     <>
       <header
         className="sticky top-0 z-50 w-full transition-all duration-300 bg-transparent"
-        role="banner"
       >
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex h-20 items-center justify-between">
@@ -108,7 +107,7 @@ export default function HeaderV2() {
             {/* Desktop Navigation - Moved to right */}
             <nav
               className="hidden lg:flex items-center space-x-2"
-              role="navigation"
+              // role="navigation"
               aria-label="Navegación principal"
             >
               {navLinks.map((link) => {
@@ -222,7 +221,7 @@ export default function HeaderV2() {
         </div>
       </div>
 
-      {/* <style jsx>{`
+      <style jsx>{`
         @keyframes slideInFromRight {
           from {
             opacity: 0;
@@ -233,7 +232,7 @@ export default function HeaderV2() {
             transform: translateX(0);
           }
         }
-      `}</style> */}
+      `}</style>
     </>
   );
 }
