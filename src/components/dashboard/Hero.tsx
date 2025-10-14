@@ -14,7 +14,7 @@ export default function Hero({ stats, isLoading = false }: HeroProps) {
   const { data: dailyPrices, isLoading: pricesLoading } = useTodayPrices();
 
   return (
-    <main role="main" aria-labelledby="hero-title">
+    <main aria-labelledby="hero-title">
       {/* Hero Section */}
       <header className="text-center mb-12">
         <div className="min-h-[140px] flex flex-col justify-center">
