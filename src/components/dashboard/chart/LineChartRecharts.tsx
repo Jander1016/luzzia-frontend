@@ -141,32 +141,30 @@ export function LineChart({ prices, period, showArea = false }: LineChartProps) 
     label?: string;
   }) => {
     if (active && payload && payload.length) {
-      const data = payload[0].payload
+      const data = payload[0].payload;
+      const { isMobile } = useResponsive();
       return (
-        <div className="bg-background/95 backdrop-blur-sm border rounded-lg shadow-lg p-3">
-          <p className="font-medium">{label}:00h</p>
-          <p className="text-lg font-bold" style={{ color: getLevelColor(data.level) }}>
+        <div className={
+          isMobile
+            ? "bg-background border rounded-lg shadow p-2 text-xs"
+            : "bg-background/95 backdrop-blur-sm border rounded-lg shadow-lg p-3"
+        }>
+          <p className={isMobile ? "font-semibold mb-1" : "font-medium"}>{label}:00h</p>
+          <p className={isMobile ? "font-bold mb-1" : "text-lg font-bold"} style={{ color: getLevelColor(data.level) }}>
             {data.formattedPrice}
           </p>
-          <p className="text-sm text-muted-foreground">
+          <p className={isMobile ? "mb-1" : "text-sm text-muted-foreground"}>
             Nivel: {data.level === 'bajo' ? '🟢 Bajo' : 
                    data.level === 'medio' ? '🟡 Medio' : 
                    data.level === 'alto' ? '🟠 Alto' : '🔴 Muy Alto'}
           </p>
           {data.isCurrentHour && (
-            <p className="text-xs text-blue-800 dark:text-blue-300 font-medium">⏰ Hora actual</p>
+            <p className={isMobile ? "text-blue-800 dark:text-blue-300 font-medium" : "text-xs text-blue-800 dark:text-blue-300 font-medium"}>⏰ Hora actual</p>
           )}
-          {/* <div className="text-xs text-muted-foreground mt-2 space-y-1">
-            <div>📊 Promedio: {formatPrice(avgPrice)}</div>
-            <div className="flex justify-between gap-4">
-              <span>📉 Mín: {formatPrice(minPrice)}</span>
-              <span>📈 Máx: {formatPrice(maxPrice)}</span>
-            </div>
-          </div> */}
         </div>
-      )
+      );
     }
-    return null
+    return null;
   }
 
   const CustomDot = ({ cx, cy, payload }: {
@@ -270,7 +268,6 @@ export function LineChart({ prices, period, showArea = false }: LineChartProps) 
               stroke={color}
               strokeWidth={1}
               opacity={0.6}
-              className="animate-ping"
             />
           )}
         </g>
@@ -394,8 +391,6 @@ export function LineChart({ prices, period, showArea = false }: LineChartProps) 
                 <Line
                   type="monotone"
                   dataKey="price"
-                  // stroke="hsl(var(--chart-1))"
-                  // stroke="#FFFFFF" 
                   stroke="#4f46e5" 
                   strokeWidth={isMobile ? 2 : 1}
                   dot={isMobile ? <CustomDotEvery3Hours />: <CustomDot />}
