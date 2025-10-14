@@ -97,7 +97,6 @@ export default function HeaderV2() {
                   height={180}
                   className="inline-block dark:brightness-110"
                   priority
-                  sizes="180px"
                   quality={75}
                 />
               </Link>
