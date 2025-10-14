@@ -129,7 +129,7 @@ export function LineChart({ prices, period, showArea = false }: LineChartProps) 
     }
   }
 
-  const CustomTooltip = ({ active, payload, label }: {
+  const CustomTooltip = ({ active, payload, label, isMobile }: {
     active?: boolean;
     payload?: Array<{
       payload: {
@@ -139,10 +139,10 @@ export function LineChart({ prices, period, showArea = false }: LineChartProps) 
       };
     }>;
     label?: string;
+    isMobile: boolean;
   }) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload;
-      const { isMobile } = useResponsive();
       return (
         <div className={
           isMobile
@@ -352,7 +352,7 @@ export function LineChart({ prices, period, showArea = false }: LineChartProps) 
                 width={isMobile ? 50 : 60}
                 tickCount={isMobile ? 5 : 8}
               />
-              <Tooltip content={<CustomTooltip />} />
+        <Tooltip content={<CustomTooltip isMobile={isMobile} />} />
               
               {/* Líneas de referencia - Solo en desktop */}
               {!isMobile && (

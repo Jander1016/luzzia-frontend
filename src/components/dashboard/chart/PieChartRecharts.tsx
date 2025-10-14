@@ -225,10 +225,6 @@ export function PieChart({ prices, period }: PieChartProps) {
                 onMouseEnter={() => setActiveIndex(index)}
                 onMouseLeave={() => setActiveIndex(null)}
               >
-                <div 
-                  className="w-4 h-4 rounded-full flex-shrink-0"
-                  style={{ backgroundColor: entry.color }}
-                />
                 <div className="flex-1 min-w-0">
                   <div className="font-medium text-sm truncate text-white">{entry.label}</div>
                   <div className="text-xs text-slate-400">
@@ -263,29 +259,6 @@ export function PieChart({ prices, period }: PieChartProps) {
               </div>
             </div>
           </div>
-
-          {/* Insights automáticos */}
-          {/* <div className="bg-gradient-to-r from-blue-900/30 to-indigo-900/30 border border-blue-700/30 rounded-lg p-4">
-            <h4 className="font-medium text-sm text-blue-300 mb-2">💡 Insights</h4>
-            <div className="space-y-1 text-sm text-blue-200">
-              <p>
-                • El nivel de precio más frecuente es <strong className="text-blue-100">{mostCommonLevel.label.toLowerCase()}</strong> 
-                ({mostCommonLevel.percentage}% del tiempo)
-              </p>
-              {chartData.find(d => d.level === 'bajo') && (
-                <p>
-                  • Hay <strong className="text-green-300">{chartData.find(d => d.level === 'bajo')?.count} {period === 'hoy' ? 'horas' : 'períodos'}</strong> con 
-                  precios bajos (mejores momentos para consumir)
-                </p>
-              )}
-              {chartData.find(d => d.level === 'muy-alto') && (
-                <p>
-                  • Evita consumir durante <strong className="text-red-300">{chartData.find(d => d.level === 'muy-alto')?.count} {period === 'hoy' ? 'horas' : 'períodos'}</strong> de 
-                  precios muy altos
-                </p>
-              )}
-            </div>
-          </div> */}
         </div>
       </CardContent>
     </Card>
