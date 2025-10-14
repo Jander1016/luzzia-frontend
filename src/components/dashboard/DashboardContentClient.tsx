@@ -11,7 +11,7 @@ export default function DashboardContentClient() {
   return (
     <section ref={subscribeRef} className="py-16 relative">
       {/* Background decoration */}
-      <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/10 to-teal-500/10 rounded-3xl"></div>
+      <div className="absolute inset-0 rounded-3xl"></div>
       <div className="relative z-10 text-center space-y-8">
         <div className="space-y-4">
           <h2 className="text-4xl md:text-5xl font-bold text-white">

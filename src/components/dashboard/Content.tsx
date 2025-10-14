@@ -13,8 +13,8 @@ export function DashboardContent() {
   const stats = use(electricityService.getDashboardStats());
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
-      <div className="container mx-auto px-6 py-12">
+    // <div className=" bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
+      <div className="container min-h-screen mx-auto p-4">
         {/* Hero Section - Siempre visible, datos opcionales */}
         <section className="mb-16">
           <Hero stats={stats} />
@@ -80,6 +80,6 @@ export function DashboardContent() {
         {/* Newsletter Section - Progressive Loading (Client Component) */}
         <DashboardContentClient />
       </div>
-    </div>
+    // </div>
   );
 }
