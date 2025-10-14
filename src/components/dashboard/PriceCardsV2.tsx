@@ -33,16 +33,24 @@ export const PriceCardsV2 = memo(function PriceCardsV2({
   isLoading = false 
 }: PriceCardsV2Props) {
   
-  // Procesamiento de datos reales de la API
+  // Procesamiento de datos: Precio actual se actualiza cada hora, los otros una vez al día
   const processedData = useMemo(() => {
     if (!stats && dailyPrices.length === 0) {
       return null;
     }
 
-    const currentHour = new Date().getHours();
-    
-    // Datos del precio actual y extremos del día desde dashboard-stats
-    const currentPrice = stats?.currentPrice ?? 0;
+    const now = new Date();
+    const currentHour = now.getHours();
+    // Precio actual: buscar en dailyPrices por la hora actual
+    let currentPrice = 0;
+    if (dailyPrices.length > 0) {
+      const found = dailyPrices.find(p => p.hour === currentHour);
+      currentPrice = found ? found.price : 0;
+    } else {
+      currentPrice = stats?.currentPrice ?? 0;
+    }
+
+    // Precios extremos: solo se actualizan una vez al día (stats)
     const lowestPrice = {
       price: stats?.minPrice ?? 0,
       hour: stats?.minPriceHour ?? 0
@@ -59,7 +67,7 @@ export const PriceCardsV2 = memo(function PriceCardsV2({
       },
       lowest: lowestPrice,
       highest: highestPrice,
-      lastUpdated: stats?.lastUpdated ?? new Date().toISOString()
+      lastUpdated: stats?.lastUpdated ?? now.toISOString()
     };
   }, [stats, dailyPrices]);
 
