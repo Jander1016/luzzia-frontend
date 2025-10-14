@@ -1,7 +1,7 @@
 'use client'
 
 import { createContext, useContext, useState, useCallback, ReactNode } from 'react'
-import { DashboardStats, PriceRecommendation, ElectricityPrice } from '@/types/api'
+import { DashboardStats, ElectricityPrice } from '@/types/api'
 import { electricityService } from '@/services/electricityService'
 
 interface ElectricityDataState {
@@ -23,12 +23,12 @@ interface ElectricityDataState {
     lastUpdated: Date | null
   }
   
-  recommendations: {
-    data: PriceRecommendation[]
-    isLoading: boolean
-    error: string | null
-    lastUpdated: Date | null
-  }
+  // recommendations: {
+  //   data: PriceRecommendation[]
+  //   isLoading: boolean
+  //   error: string | null
+  //   lastUpdated: Date | null
+  // }
 }
 
 interface ElectricityDataActions {
@@ -41,7 +41,7 @@ interface ElectricityDataActions {
   loadMonthData: () => Promise<void>
   
   // Recommendations
-  loadRecommendations: () => Promise<void>
+  // loadRecommendations: () => Promise<void>
   
   // Utils
   refetchAll: () => Promise<void>
@@ -66,12 +66,12 @@ const initialState: ElectricityDataState = {
     error: null,
     lastUpdated: null
   },
-  recommendations: {
-    data: [],
-    isLoading: false,
-    error: null,
-    lastUpdated: null
-  }
+  // recommendations: {
+  //   data: [],
+  //   isLoading: false,
+  //   error: null,
+  //   lastUpdated: null
+  // }
 }
 
 export function ElectricityDataProvider({ children }: { children: ReactNode }) {
@@ -185,49 +185,49 @@ export function ElectricityDataProvider({ children }: { children: ReactNode }) {
   }, [])
 
   // Recommendations - Carga lazy
-  const loadRecommendations = useCallback(async () => {
-    setState(prev => ({
-      ...prev,
-      recommendations: { ...prev.recommendations, isLoading: true, error: null }
-    }))
+  // const loadRecommendations = useCallback(async () => {
+  //   setState(prev => ({
+  //     ...prev,
+  //     recommendations: { ...prev.recommendations, isLoading: true, error: null }
+  //   }))
 
-    try {
-      const data = await Promise.race([
-        electricityService.getRecommendations(),
-        new Promise<never>((_, reject) => 
-          setTimeout(() => reject(new Error('Timeout')), 5000)
-        )
-      ])
+  //   try {
+  //     const data = await Promise.race([
+  //       electricityService.getRecommendations(),
+  //       new Promise<never>((_, reject) => 
+  //         setTimeout(() => reject(new Error('Timeout')), 5000)
+  //       )
+  //     ])
 
-      setState(prev => ({
-        ...prev,
-        recommendations: {
-          data,
-          isLoading: false,
-          error: null,
-          lastUpdated: new Date()
-        }
-      }))
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Error en recomendaciones'
-      setState(prev => ({
-        ...prev,
-        recommendations: {
-          ...prev.recommendations,
-          isLoading: false,
-          error: errorMessage
-        }
-      }))
-    }
-  }, [])
+  //     setState(prev => ({
+  //       ...prev,
+  //       recommendations: {
+  //         data,
+  //         isLoading: false,
+  //         error: null,
+  //         lastUpdated: new Date()
+  //       }
+  //     }))
+  //   } catch (error) {
+  //     const errorMessage = error instanceof Error ? error.message : 'Error en recomendaciones'
+  //     setState(prev => ({
+  //       ...prev,
+  //       recommendations: {
+  //         ...prev.recommendations,
+  //         isLoading: false,
+  //         error: errorMessage
+  //       }
+  //     }))
+  //   }
+  // }, [])
 
   const refetchAll = useCallback(async () => {
     await Promise.all([
       loadCriticalData(),
       loadChartData(),
-      loadRecommendations()
+      // loadRecommendations()
     ])
-  }, [loadCriticalData, loadChartData, loadRecommendations])
+  }, [loadCriticalData, loadChartData])
 
   const value: ElectricityDataContextType = {
     ...state,
@@ -235,7 +235,6 @@ export function ElectricityDataProvider({ children }: { children: ReactNode }) {
     loadChartData,
     loadWeekData,
     loadMonthData,
-    loadRecommendations,
     refetchAll
   }
 
@@ -283,13 +282,13 @@ export function useChartData() {
 }
 
 // Hook específico para recomendaciones
-export function useRecommendations() {
-  const { recommendations, loadRecommendations } = useElectricityDataContext()
-  return {
-    data: recommendations.data,
-    isLoading: recommendations.isLoading,
-    error: recommendations.error,
-    lastUpdated: recommendations.lastUpdated,
-    load: loadRecommendations
-  }
-}
+// export function useRecommendations() {
+//   const { recommendations, loadRecommendations } = useElectricityDataContext()
+//   return {
+//     data: recommendations.data,
+//     isLoading: recommendations.isLoading,
+//     error: recommendations.error,
+//     lastUpdated: recommendations.lastUpdated,
+//     load: loadRecommendations
+//   }
+// }
