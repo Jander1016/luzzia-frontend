@@ -98,7 +98,7 @@ export const PriceCardsV2 = memo(function PriceCardsV2({
   const cardsData: PriceCardData[] = [
     {
       id: 'current',
-      title: 'Precio actual',
+      title: 'Precio actual de Hoy',
       price: `${processedData.current.price.toFixed(4)} €/kWh`,
       subtitle: `Hora actual: ${processedData.current.hour.toString().padStart(2, '0')}:00`,
       icon: <Zap className="size-7 text-cyan-500" aria-hidden="true" />,

@@ -70,14 +70,41 @@ export function LineChart({ prices, period, showArea = false }: LineChartProps) 
     isCurrentHour?: boolean;
   };
   let chartData: ChartDatum[] = [];
-  if (period === 'semana' || period === 'mes') {
-    chartData = (validPrices as Array<{ price: number | null; date: string }> ).map((data, index) => {
+  if (period === 'semana') {
+    // Mostrar abreviatura de día de la semana y calcular nivel
+    const weekDays = ['lun', 'mar', 'mié', 'jue', 'vie', 'sáb', 'dom'];
+    chartData = (validPrices as Array<{ price: number | null; date: string }> ).map((data, index, arr) => {
+      const dateObj = new Date(data.date);
+      const dayIdx = dateObj.getDay();
+      const weekDay = weekDays[(dayIdx + 6) % 7];
+      // Construir array compatible con PriceData para classifyPrice
+      const arrForLevel = arr.map(d => ({ price: d.price ?? 0, hour: 0, timestamp: new Date(d.date) }));
+      const level = classifyPrice(data.price ?? 0, arrForLevel);
       return {
-        xLabel: data.date,
+        xLabel: weekDay,
         price: data.price ?? 0,
-        level: '',
+        level,
         formattedPrice: typeof data.price === 'number' ? formatPrice(data.price) : 'N/A',
         originalIndex: index
+      };
+    });
+  } else if (period === 'mes') {
+    // Para mes, mostrar día y calcular nivel
+    chartData = (validPrices as Array<{ price: number | null; date: string }> ).map((data, index, arr) => {
+      const dateObj = new Date(data.date);
+      const day = dateObj.getDate();
+      const arrForLevel = arr.map(d => ({ price: d.price ?? 0, hour: 0, timestamp: new Date(d.date) }));
+      const level = classifyPrice(data.price ?? 0, arrForLevel);
+      // Para dots custom en mobile
+      const showDot = (isMobile && day % 3 === 1) || !isMobile;
+      return {
+        xLabel: day.toString(),
+        price: data.price ?? 0,
+        level,
+        formattedPrice: typeof data.price === 'number' ? formatPrice(data.price) : 'N/A',
+        originalIndex: index,
+        hour: day.toString(), // reutilizamos para el dot
+        isCurrentHour: showDot // reutilizamos para el dot custom
       };
     });
   } else if (period === 'hoy') {
@@ -384,7 +411,10 @@ export function LineChart({ prices, period, showArea = false }: LineChartProps) 
                   strokeWidth={isMobile ? 4 : 2}
                   fill="hsl(var(--chart-1))"
                   fillOpacity={0.2}
-                  dot={isMobile ? <CustomDotEvery3Hours />: <CustomDot />}
+                  dot={period === 'mes' && isMobile ? (props => {
+                    // Solo mostrar dot si isCurrentHour (reutilizado como showDot)
+                    return props.payload?.isCurrentHour ? <CustomDot {...props} /> : <></>;
+                  }) : isMobile ? <CustomDotEvery3Hours /> : <CustomDot />}
                   activeDot={<CustomActiveDot />}
                 />
               ) : (
@@ -393,7 +423,9 @@ export function LineChart({ prices, period, showArea = false }: LineChartProps) 
                   dataKey="price"
                   stroke="#4f46e5" 
                   strokeWidth={isMobile ? 2 : 1}
-                  dot={isMobile ? <CustomDotEvery3Hours />: <CustomDot />}
+                  dot={period === 'mes' && isMobile ? (props => {
+                    return props.payload?.isCurrentHour ? <CustomDot {...props} /> : <></>;
+                  }) : isMobile ? <CustomDotEvery3Hours /> : <CustomDot />}
                   activeDot={<CustomActiveDot />}
                 />
               )}
