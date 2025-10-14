@@ -168,8 +168,9 @@ const PriceCard = memo(function PriceCard({
   icon,
   percent
 }: PriceCardData & { percent?: string }) {
-  const borderColor = "border-[2px] border-violet-500";
-  const bgColor = "bg-[#14003a]";
+  const borderColor = "border-[1px] border-violet-200";
+  // const bgColor = "bg-[#14003a]";
+  const bgColor ="bg-gradient-to-br from-slate-800 via-slate-900 to-gray-900 border-slate-700/50"
   const titleColor = "text-white";
   const priceColor = id === 'lowest' ? "text-green-500" : id === 'highest' ? "text-red-500" : "text-cyan-500";
   return (
