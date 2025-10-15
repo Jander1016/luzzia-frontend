@@ -2,12 +2,15 @@
 
 import { PriceData, PeriodType } from './types'
 import { DailyPriceAvg } from '@/hooks/useElectricityData.simple'
-import { classifyPrice, formatHour, formatPrice } from './types'
+import { formatHour, formatPrice } from './types'
 import { useResponsive } from '@/hooks/useResponsive'
 import { Line, LineChart as RechartsLineChart, Area, AreaChart, CartesianGrid, XAxis, YAxis, ResponsiveContainer, Tooltip, ReferenceLine } from 'recharts'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ChartConfig, ChartContainer } from '@/components/ui/chart'
 import { useEffect, useState } from 'react'
+import { useMonthlyDailyAverages } from '@/hooks/useMonthlyDailyAverages'
+import { useLineChartData } from '@/hooks/useLineChartData'
+import { getLevelColor } from '@/lib/utils'
 
 type LineChartDatum = PriceData | DailyPriceAvg | { price: number | null; date: string };
 interface LineChartProps {
@@ -20,12 +23,25 @@ export function LineChart({ prices, period, showArea = false }: LineChartProps) 
   const { isMobile } = useResponsive();
   const [currentHour, setCurrentHour] = useState<number | null>(null);
 
-  // Solo obtener la hora en el cliente
+  // Hook para datos mensuales
+  const now = new Date();
+  const month = now.getMonth() + 1;
+  const year = now.getFullYear();
+  const { data: monthlyDailyAverages, isLoading: isLoadingMonthly } = useMonthlyDailyAverages(month, year);
+
   useEffect(() => {
     setCurrentHour(new Date().getHours());
   }, []);
 
-  if (!prices || !Array.isArray(prices) || prices.length === 0) {
+  // Si es gráfico mensual, usar datos del hook
+  const chartPrices = period === 'mes'
+    ? monthlyDailyAverages.map(d => ({ price: d.avgPrice ?? 0, date: `${d.year}-${String(d.month).padStart(2, '0')}-${String(d.day).padStart(2, '0')}` }))
+    : prices;
+
+  // Desacoplado: transformar datos para el gráfico
+  const chartData = useLineChartData(chartPrices, period, currentHour ?? undefined, isMobile);
+
+  if ((period === 'mes' && isLoadingMonthly) || !chartData || chartData.length === 0) {
     return (
       <Card className="w-full">
         <CardContent className="h-72 flex items-center justify-center">
@@ -42,14 +58,7 @@ export function LineChart({ prices, period, showArea = false }: LineChartProps) 
   }
 
   // Validar datos
-  let validPrices: LineChartDatum[] = [];
-  if (period === 'hoy') {
-    validPrices = (prices as PriceData[]).filter(p => p && typeof p.price === 'number' && !isNaN(p.price));
-  } else if (Array.isArray(prices) && prices.length > 0 && 'date' in prices[0]) {
-    validPrices = (prices as Array<{ price: number | null; date: string }> ).filter(p => typeof p.price === 'number' && !isNaN(p.price));
-  } else {
-    validPrices = (prices as DailyPriceAvg[]).filter(p => p && typeof p.price === 'number' && !isNaN(p.price));
-  }
+  const validPrices = chartData.filter(p => typeof p.price === 'number' && !isNaN(p.price));
 
   // Configuración del chart
   const chartConfig = {
@@ -59,86 +68,6 @@ export function LineChart({ prices, period, showArea = false }: LineChartProps) 
     },
   } satisfies ChartConfig
 
-  // Transformar datos para Recharts según período
-  type ChartDatum = {
-    xLabel: string;
-    price: number;
-    level: string;
-    formattedPrice: string;
-    originalIndex: number;
-    hour?: string;
-    isCurrentHour?: boolean;
-  };
-  let chartData: ChartDatum[] = [];
-  if (period === 'semana') {
-    // Mostrar abreviatura de día de la semana y calcular nivel
-    const weekDays = ['lun', 'mar', 'mié', 'jue', 'vie', 'sáb', 'dom'];
-    chartData = (validPrices as Array<{ price: number | null; date: string }> ).map((data, index, arr) => {
-      const dateObj = new Date(data.date);
-      const dayIdx = dateObj.getDay();
-      const weekDay = weekDays[(dayIdx + 6) % 7];
-      // Construir array compatible con PriceData para classifyPrice
-      const arrForLevel = arr.map(d => ({ price: d.price ?? 0, hour: 0, timestamp: new Date(d.date) }));
-      const level = classifyPrice(data.price ?? 0, arrForLevel);
-      return {
-        xLabel: weekDay,
-        price: data.price ?? 0,
-        level,
-        formattedPrice: typeof data.price === 'number' ? formatPrice(data.price) : 'N/A',
-        originalIndex: index
-      };
-    });
-  } else if (period === 'mes') {
-    // Para mes, mostrar día y calcular nivel
-    chartData = (validPrices as Array<{ price: number | null; date: string }> ).map((data, index, arr) => {
-      const dateObj = new Date(data.date);
-      const day = dateObj.getDate();
-      const arrForLevel = arr.map(d => ({ price: d.price ?? 0, hour: 0, timestamp: new Date(d.date) }));
-      const level = classifyPrice(data.price ?? 0, arrForLevel);
-      // Para dots custom en mobile
-      const showDot = (isMobile && day % 3 === 1) || !isMobile;
-      return {
-        xLabel: day.toString(),
-        price: data.price ?? 0,
-        level,
-        formattedPrice: typeof data.price === 'number' ? formatPrice(data.price) : 'N/A',
-        originalIndex: index,
-        hour: day.toString(), // reutilizamos para el dot
-        isCurrentHour: showDot // reutilizamos para el dot custom
-      };
-    });
-  } else if (period === 'hoy') {
-    // En mobile y desktop, mostrar todos los puntos horarios como string sin ceros a la izquierda
-    chartData = (validPrices as PriceData[]).map((data, index) => {
-      const hourStr = String(data.hour);
-      const level = classifyPrice(data.price, validPrices as PriceData[]);
-      const isCurrentHour = currentHour !== null && data.hour === currentHour;
-      return {
-        xLabel: hourStr,
-        hour: hourStr,
-        price: data.price,
-        level,
-        isCurrentHour,
-        formattedPrice: formatPrice(data.price),
-        originalIndex: index
-      };
-    });
-  } else {
-    chartData = (validPrices as PriceData[]).map((data, index) => {
-      const level = classifyPrice(data.price, validPrices as PriceData[]);
-      const isCurrentHour = currentHour !== null && data.hour === currentHour;
-      return {
-        xLabel: formatHour(data.hour),
-        hour: formatHour(data.hour),
-        price: data.price,
-        level,
-        isCurrentHour,
-        formattedPrice: formatPrice(data.price),
-        originalIndex: index
-      };
-    });
-  }
-
   // Encontrar valores min/max para referencias
   const numericPrices = validPrices.map(p => p.price).filter((v): v is number => typeof v === 'number' && !isNaN(v));
   const minPrice = numericPrices.length > 0 ? Math.min(...numericPrices) : 0;
@@ -146,15 +75,6 @@ export function LineChart({ prices, period, showArea = false }: LineChartProps) 
   const avgPrice = numericPrices.length > 0 ? numericPrices.reduce((sum, v) => sum + v, 0) / numericPrices.length : 0;
 
   // Colores por nivel de precio
-  const getLevelColor = (level: string) => {
-    switch (level) {
-      case 'bajo': return 'hsl(142 71% 45%)' // Green
-      case 'medio': return 'hsl(43 89% 58%)' // Amber
-      case 'alto': return 'hsl(25 95% 58%)' // Orange
-      case 'muy-alto': return 'hsl(0 84% 60%)' // Red
-      default: return 'hsl(142 71% 45%)'
-    }
-  }
 
   const CustomTooltip = ({ active, payload, label, isMobile }: {
     active?: boolean;
@@ -181,9 +101,9 @@ export function LineChart({ prices, period, showArea = false }: LineChartProps) 
             {data.formattedPrice}
           </p>
           <p className={isMobile ? "mb-1" : "text-sm text-muted-foreground"}>
-            Nivel: {data.level === 'bajo' ? '🟢 Bajo' : 
-                   data.level === 'medio' ? '🟡 Medio' : 
-                   data.level === 'alto' ? '🟠 Alto' : '🔴 Muy Alto'}
+            Nivel: {data.level === 'bajo' ? '🟢 Bajo' :
+              data.level === 'medio' ? '🟡 Medio' :
+                data.level === 'alto' ? '🟠 Alto' : '🔴 Muy Alto'}
           </p>
           {data.isCurrentHour && (
             <p className={isMobile ? "text-blue-800 dark:text-blue-300 font-medium" : "text-xs text-blue-800 dark:text-blue-300 font-medium"}>⏰ Hora actual</p>
@@ -203,10 +123,10 @@ export function LineChart({ prices, period, showArea = false }: LineChartProps) 
     };
   }) => {
     if (!payload) return null
-    
+
     const color = getLevelColor(payload.level)
     const isCurrentHour = payload.isCurrentHour
-    
+
     return (
       <g>
         {/* Punto principal */}
@@ -219,7 +139,7 @@ export function LineChart({ prices, period, showArea = false }: LineChartProps) 
           strokeWidth={1}
           className="transition-all duration-200"
         />
-        
+
         {/* Punto de la hora actual con animación */}
         {isCurrentHour && (
           <>
@@ -231,7 +151,6 @@ export function LineChart({ prices, period, showArea = false }: LineChartProps) 
               stroke={color}
               strokeWidth={1}
               opacity={0.6}
-              className="animate-ping"
             />
             <circle
               cx={cx}
@@ -259,7 +178,7 @@ export function LineChart({ prices, period, showArea = false }: LineChartProps) 
     const { cx, cy, payload } = props
     if (!payload) return null;
     // Usar xLabel para semana/mes, hour para hoy
-  const value = payload.xLabel ?? payload.hour;
+    const value = payload.xLabel ?? payload.hour;
     // Si es un nombre de día, convertir a índice; si es número, parsear
     let hourNum = 0;
     if (typeof value === 'string') {
@@ -280,22 +199,30 @@ export function LineChart({ prices, period, showArea = false }: LineChartProps) 
           <circle
             cx={cx}
             cy={cy}
-            r={isCurrentHour ? 4 : 2}
+            r={isCurrentHour ? 6 : 4}
             fill={color}
             stroke="white"
             strokeWidth={1}
             className="transition-all duration-200"
           />
           {isCurrentHour && (
-            <circle
-              cx={cx}
-              cy={cy}
-              r={6}
-              fill="none"
-              stroke={color}
-              strokeWidth={1}
-              opacity={0.6}
-            />
+            <>
+              <circle
+                cx={cx}
+                cy={cy}
+                r={8}
+                fill="none"
+                stroke={color}
+                strokeWidth={1}
+                opacity={0.6}
+              />
+              <circle
+                cx={cx}
+                cy={cy}
+                r={3}
+                fill="white"
+              />
+            </>
           )}
         </g>
       );
@@ -314,7 +241,7 @@ export function LineChart({ prices, period, showArea = false }: LineChartProps) 
   }) => {
     const { cx, cy, payload } = props
     if (!payload) return <circle cx={cx} cy={cy} r={0} />
-    
+
     const color = getLevelColor(payload.level)
     return (
       <circle
@@ -339,28 +266,17 @@ export function LineChart({ prices, period, showArea = false }: LineChartProps) 
           {showArea && <span className="text-sm text-muted-foreground">(Área)</span>}
         </CardTitle>
         <CardDescription className="text-slate-300">
-          {period === 'hoy' ? 'Evolución de precios durante el día' : 
-           period === 'semana' ? 'Evolución semanal de precios' : 
-           'Evolución mensual de precios'}
+          {period === 'hoy' ? 'Evolución de precios durante el día' :
+            period === 'semana' ? 'Evolución semanal de precios' :
+              'Evolución mensual de precios'}
         </CardDescription>
       </CardHeader>
       <CardContent className='px-1'>
         <ChartContainer config={chartConfig}>
-        {/* <ChartContainer config={chartConfig} className={`${isMobile ? 'h-[50vh] w-full' : isTablet ? 'h-[350px] w-full' : 'h-[400px] w-full'}`}> */}
-          {/* <ResponsiveContainer width="100%" height="100%" debounce={50}> */}
-          {/* <ResponsiveContainer width="100%" height={isMobile ? 200 : isTablet ? 300 : 370} debounce={50}> */}
           <ResponsiveContainer>
-            <ChartComponent 
-              data={chartData} 
-              // margin={{ 
-              //   top: isMobile ? 20 : 20, 
-              //   right: isMobile ? 5 : 30, 
-              //   left: isMobile ? 5 : 20, 
-              //   bottom: isMobile ? 40 : 5 
-              // }}
-              >
+            <ChartComponent data={chartData}>
               <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-              <XAxis 
+              <XAxis
                 dataKey={period === 'hoy' ? 'hour' : 'xLabel'}
                 tick={{ fontSize: isMobile ? 10 : 12 }}
                 stroke="hsl(var(--muted-foreground))"
@@ -369,34 +285,42 @@ export function LineChart({ prices, period, showArea = false }: LineChartProps) 
                 height={isMobile ? 50 : 30}
                 interval={isMobile ? 0 : 'preserveStartEnd'}
                 tickMargin={isMobile ? 8 : 5}
-                ticks={isMobile && period === 'hoy' ? ['0','3','6','9','12','15','18','21'] : undefined}
-                tickFormatter={isMobile && period === 'hoy' ? (value) => value : undefined}
+                ticks={
+                  isMobile && period === 'hoy' ? ['0', '3', '6', '9', '12', '15', '18', '21'] :
+                    isMobile && period === 'mes' ? chartData.filter(d => Number(d.xLabel) % 3 === 1).map(d => d.xLabel) :
+                      undefined
+                }
+                tickFormatter={
+                  isMobile && period === 'hoy' ? (value) => value :
+                    isMobile && period === 'mes' ? (value) => value :
+                      undefined
+                }
               />
-              <YAxis 
+              <YAxis
                 tick={{ fontSize: isMobile ? 10 : 12 }}
                 stroke="hsl(var(--muted-foreground))"
                 tickFormatter={(value) => isMobile ? `${value.toFixed(3)}` : `${value.toFixed(3)}€`}
                 width={isMobile ? 50 : 60}
                 tickCount={isMobile ? 5 : 8}
               />
-        <Tooltip content={<CustomTooltip isMobile={isMobile} />} />
-              
+              <Tooltip content={<CustomTooltip isMobile={isMobile} />} />
+
               {/* Líneas de referencia - Solo en desktop */}
               {!isMobile && (
-                <ReferenceLine 
-                  y={avgPrice} 
-                  stroke="hsl(var(--muted-foreground))" 
-                  strokeDasharray="5 5" 
+                <ReferenceLine
+                  y={avgPrice}
+                  stroke="hsl(var(--muted-foreground))"
+                  strokeDasharray="5 5"
                   opacity={0.5}
                   label={{ value: "Promedio", fontSize: 12 }}
                 />
               )}
-              
+
               {/* Línea de hora actual - Solo en desktop */}
               {!isMobile && period === 'hoy' && chartData.some(d => d.isCurrentHour) && (
-                <ReferenceLine 
-                  x={formatHour(currentHour!)} 
-                  stroke="hsl(217 91% 60%)" 
+                <ReferenceLine
+                  x={formatHour(currentHour!)}
+                  stroke="hsl(217 91% 60%)"
                   strokeDasharray="3 3"
                   opacity={0.7}
                   label={{ value: "Ahora", fontSize: 11 }}
@@ -412,8 +336,11 @@ export function LineChart({ prices, period, showArea = false }: LineChartProps) 
                   fill="hsl(var(--chart-1))"
                   fillOpacity={0.2}
                   dot={period === 'mes' && isMobile ? (props => {
-                    // Solo mostrar dot si isCurrentHour (reutilizado como showDot)
-                    return props.payload?.isCurrentHour ? <CustomDot {...props} /> : <></>;
+                    const { key: _key, ...rest } = props;
+                    const key = props.index ?? props.payload?.hour ?? Math.random();
+                    return props.payload?.isCurrentHour
+                      ? <CustomDot {...rest} key={key} />
+                      : <g r={0} key={key} />;
                   }) : isMobile ? <CustomDotEvery3Hours /> : <CustomDot />}
                   activeDot={<CustomActiveDot />}
                 />
@@ -421,10 +348,14 @@ export function LineChart({ prices, period, showArea = false }: LineChartProps) 
                 <Line
                   type="monotone"
                   dataKey="price"
-                  stroke="#4f46e5" 
+                  stroke="#4f46e5"
                   strokeWidth={isMobile ? 2 : 1}
                   dot={period === 'mes' && isMobile ? (props => {
-                    return props.payload?.isCurrentHour ? <CustomDot {...props} /> : <></>;
+                    const { key: _key, ...rest } = props;
+                    const key = props.index ?? props.payload?.hour ?? Math.random();
+                    return props.payload?.isCurrentHour
+                      ? <CustomDot {...rest} key={key} />
+                      : <g r={0} key={key} />;
                   }) : isMobile ? <CustomDotEvery3Hours /> : <CustomDot />}
                   activeDot={<CustomActiveDot />}
                 />
@@ -432,10 +363,10 @@ export function LineChart({ prices, period, showArea = false }: LineChartProps) 
             </ChartComponent>
           </ResponsiveContainer>
         </ChartContainer>
-        
+
         {/* Estadísticas adicionales - Ocultas en móvil para más espacio */}
         {/* {!isMobile && ( */}
-        { (
+        {(
           <div className={`${isMobile ? 'mt-2' : 'mt-4'} grid ${isMobile ? 'grid-cols-2' : 'grid-cols-2 md:grid-cols-4'} gap-4 text-sm`}>
             <div className={`bg-slate-800/60 rounded-lg ${isMobile ? 'p-2' : 'p-3'} text-center border border-slate-700/30`}>
               <div className="text-xs text-slate-400">Precio Actual</div>
