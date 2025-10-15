@@ -18,11 +18,27 @@ export function generateDynamicLegend(
 
   let priceValues: number[] = [];
   if (isPriceDataArray(prices) || isDailyPriceAvgArray(prices)) {
-    priceValues = prices.map(p => p.price);
+    priceValues = prices.map(p => p.price).filter(v => typeof v === 'number' && !isNaN(v) && v > 0);
   } else if (isMonthlyAvgArray(prices)) {
-    priceValues = prices.map(p => p.avgPrice);
+    priceValues = prices.map(p => p.avgPrice).filter(v => typeof v === 'number' && !isNaN(v) && v > 0);
   } else if (isWeeklyAvgArray(prices)) {
-    priceValues = prices.map(p => p.avgPrice);
+    priceValues = prices.map(p => p.avgPrice).filter(v => typeof v === 'number' && !isNaN(v) && v > 0);
+  }
+
+  if (!priceValues.length) {
+    // Si no hay datos válidos, mostrar leyenda vacía o con mensaje
+    return [
+      {
+        level: 'sin-datos',
+        color: 'bg-gray-500',
+        textColor: 'text-gray-400',
+        min: 0,
+        max: 0,
+        label: 'Sin datos',
+        range: 'No disponible',
+        description: 'No hay datos válidos para mostrar'
+      }
+    ];
   }
 
   const min = Math.min(...priceValues);

@@ -6,15 +6,17 @@ import { BarChart3, Zap } from "lucide-react";
 import { usePriceAnalysis } from "@/hooks/useElectricityData.simple";
 import { useWeeklyAverages, useMonthlyAverages } from "@/hooks/useElectricityData.simple";
 import { useResponsive } from "@/hooks/useResponsive";
-import { PeriodFilter } from "./chart/PeriodFilter";
-import { BarChart } from "./chart/BarChartRecharts";
-import { LineChart } from "./chart/LineChartRecharts";
-import { PieChart } from "./chart/PieChartRecharts";
-import { ChartTypeSelector } from "./chart/ChartTypeSelector";
-import { ChartLegend } from "./chart/ChartLegend";
-import { PriceChartSkeleton, PriceChartError } from "./chart/ChartStates";
-import { PeriodType, PriceData, ChartType } from "./chart/types";
-import { generateDynamicLegend } from "./chart/legendUtils";
+import { PeriodFilter } from "../chart/PeriodFilter";
+import { BarChart } from "../chart/BarChartRecharts";
+import { LineChart } from "../chart/LineChartRecharts";
+import { PieChart } from "../chart/PieChartRecharts";
+import { ChartTypeSelector } from "../chart/ChartTypeSelector";
+import { ChartLegend } from "../chart/ChartLegend";
+import { PriceChartSkeleton, PriceChartError } from "../chart/ChartStates";
+import { PeriodType, PriceData, ChartType } from "../chart/types";
+import { generateDynamicLegend } from "../chart/legendUtils";
+import { MonthlyBarChart } from '../chart/MonthlyBarChart';
+import { MonthlyPieChart } from '../chart/MonthlyPieChart';
 
 export function PriceChart() {
 	const [activePeriod, setActivePeriod] = useState<PeriodType>("hoy");
@@ -131,7 +133,7 @@ export function PriceChart() {
 		const isDailyPriceAvgArray = (arr: unknown[]): arr is import("@/hooks/useElectricityData.simple").DailyPriceAvg[] => {
 			return arr.length > 0 && typeof arr[0] === "object" && arr[0] !== null && "date" in (arr[0] as object);
 		};
-		const isPriceDataArray = (arr: unknown[]): arr is import("./chart/types").PriceData[] => {
+		const isPriceDataArray = (arr: unknown[]): arr is import("../chart/types").PriceData[] => {
 			return arr.length === 0 || (typeof arr[0] === "object" && arr[0] !== null && "hour" in (arr[0] as object));
 		};
 		const isMonthlyAvgArray = (arr: unknown[]): arr is { month: number; avgPrice: number }[] => arr.length > 0 && "month" in (arr[0] as object);
@@ -186,13 +188,15 @@ export function PriceChart() {
 					return <BarChart prices={finalData as { price: number | null; date: string }[]} period={activePeriod} />;
 				}
 				if (activePeriod === "mes" && isMonthlyAvgArray(prices)) {
-					return <BarChart prices={finalData as { price: number | null; date: string }[]} period={activePeriod} />;
+					return <MonthlyBarChart />;
+					// return <BarChart prices={finalData as { price: number | null; date: string }[]} period={activePeriod} />;
 				}
 				if (isPriceDataArray(prices)) {
 					return <BarChart prices={finalData as PriceData[]} period={activePeriod} />;
 				}
 				if (isDailyPriceAvgArray(prices)) {
-					return <BarChart prices={finalData as import("@/hooks/useElectricityData.simple").DailyPriceAvg[]} period={activePeriod} />;
+					// return <BarChart prices={finalData as import("@/hooks/useElectricityData.simple").DailyPriceAvg[]} period={activePeriod} />;
+					return <MonthlyBarChart />;
 				}
 				return <div className="text-center text-slate-400">No hay datos compatibles para el gráfico</div>;
 			case "line":
@@ -212,13 +216,18 @@ export function PriceChart() {
 			case "pie":
 				// PieChart solo acepta PriceData[]
 				if (isPriceDataArray(finalData)) return <PieChart prices={finalData as PriceData[]} period={activePeriod} />;
-				return <div className="text-center text-slate-400">No hay datos compatibles para el gráfico</div>;
+				// return <div className="text-center text-slate-400">No hay datos compatibles para el gráfico</div>;
+				if (activePeriod === "mes" && isMonthlyAvgArray(prices)) {
+					// return <LineChart prices={finalData as { price: number | null; date: string }[]} period={activePeriod} />;
+					return <MonthlyPieChart />;
+				}
 			default:
 				if (activePeriod === "semana" && isWeeklyAvgArray(prices)) {
 					return <BarChart prices={finalData as { price: number | null; date: string }[]} period={activePeriod} />;
 				}
 				if (activePeriod === "mes" && isMonthlyAvgArray(prices)) {
-					return <BarChart prices={finalData as { price: number | null; date: string }[]} period={activePeriod} />;
+					// return <BarChart prices={finalData as { price: number | null; date: string }[]} period={activePeriod} />;
+					return <MonthlyBarChart />;
 				}
 				if (isPriceDataArray(prices)) {
 					return <BarChart prices={finalData as PriceData[]} period={activePeriod} />;
@@ -299,7 +308,7 @@ export function PriceChart() {
 					<div className="flex justify-center items-center p-3">
 								{/* ChartLegend solo acepta PriceData[] */}
 								{isPriceDataArray(prices) && (
-									<ChartLegend legend={dynamicLegend} prices={prices} activePeriod={activePeriod} />
+									<ChartLegend legend={dynamicLegend} prices={prices} />
 								)}
 					</div>
 				)}

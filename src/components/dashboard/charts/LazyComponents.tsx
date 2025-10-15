@@ -12,16 +12,8 @@ export const LazyPriceChart = dynamic(() =>
   }
 )
 
-export const LazyRecommendations = dynamic(() => 
-  import('./Recommendations').then(mod => ({ default: mod.Recommendations })),
-  { 
-    loading: () => <Loading size="md" />,
-    ssr: false
-  }
-)
-
 export const LazySubscribeForm = dynamic(() => 
-  import('../forms/SubscribeForm').then(mod => ({ default: mod.SubscribeForm })),
+  import('../../forms/SubscribeForm').then(mod => ({ default: mod.SubscribeForm })),
   { 
     loading: () => <div className="h-96 animate-pulse bg-slate-800/50 rounded-lg" />,
     ssr: false

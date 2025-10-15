@@ -5,7 +5,7 @@ import Hero from './Hero';
 import { TrendingUp, Zap, Users } from 'lucide-react';
 
 import DashboardContentClient from './DashboardContentClient';
-import PriceChartClientWrapper from './PriceChartClientWrapper';
+import PriceChartClientWrapper from '../charts/PriceChartClientWrapper';
 
 
 export function DashboardContent() {

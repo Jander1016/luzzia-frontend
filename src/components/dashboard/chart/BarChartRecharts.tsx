@@ -2,11 +2,11 @@
 
 import { PriceData, PeriodType } from './types'
 import { classifyPrice, formatHour, formatPrice } from './types'
-import { useState } from 'react'
 import { useResponsive } from '@/hooks/useResponsive'
 import { Bar, BarChart as RechartsBarChart, CartesianGrid, XAxis, YAxis, ResponsiveContainer, Tooltip, Cell } from 'recharts'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ChartConfig, ChartContainer } from '@/components/ui/chart'
+import { getLevelColor } from '@/lib/utils'
 
 type BarChartDatum = PriceData | import('@/hooks/useElectricityData.simple').DailyPriceAvg | { price: number | null; date: string };
 interface BarChartProps {
@@ -15,8 +15,8 @@ interface BarChartProps {
 }
 
 export function BarChart({ prices, period }: BarChartProps) {
-  const [mobileViewIndex, setMobileViewIndex] = useState(0)
-  const { isMobile, isTablet } = useResponsive()
+  // const [mobileViewIndex, setMobileViewIndex] = useState(0)
+  const { isMobile } = useResponsive()
 
   if (!prices || !Array.isArray(prices) || prices.length === 0) {
     return (
@@ -36,23 +36,8 @@ export function BarChart({ prices, period }: BarChartProps) {
 
   // Validar datos y configurar
   const currentHour = new Date().getHours()
-  
-  // Configuración móvil con rangos adaptativos
-  const MOBILE_HOURS_PER_VIEW = 8
-  
-  const getTimeRangeLabel = (viewIndex: number) => {
-    const startHour = viewIndex * MOBILE_HOURS_PER_VIEW
-    const endHour = Math.min(startHour + MOBILE_HOURS_PER_VIEW - 1, 23)
     
-    if (startHour === 0) return `🌙 ${startHour}h - ${endHour}h`
-    if (startHour === 8) return `☀️ ${startHour}h - ${endHour}h`
-    if (startHour === 16) return `🌅 ${startHour}h - ${endHour}h`
-    return `⏰ ${startHour}h - ${endHour}h`
-  }
-  
-  const totalMobileViews = Math.max(1, Math.ceil(prices.length / MOBILE_HOURS_PER_VIEW))
-  const mobileStartIndex = Math.max(0, mobileViewIndex * MOBILE_HOURS_PER_VIEW)
-  const displayPrices = isMobile ? prices.slice(mobileStartIndex, mobileStartIndex + MOBILE_HOURS_PER_VIEW) : prices
+  const displayPrices = prices
 
   // Configuración del chart
   const chartConfig = {
@@ -62,79 +47,36 @@ export function BarChart({ prices, period }: BarChartProps) {
     },
   } satisfies ChartConfig
 
-  // Transformar datos para Recharts
-  let chartData: Array<{ hour: string; price: number | null; level: string; isCurrentHour?: boolean; formattedPrice: string; originalIndex: number }> = [];
-  if (period === 'hoy') {
-    chartData = (displayPrices as PriceData[]).map((data, index) => {
-      const level = classifyPrice(data.price, displayPrices as PriceData[]);
-      const isCurrentHour = data.hour === currentHour;
-      return {
-        hour: formatHour(data.hour),
-        price: data.price,
-        level,
-        isCurrentHour,
-        formattedPrice: formatPrice(data.price),
-        originalIndex: isMobile ? mobileStartIndex + index : index
-      };
-    });
-  } else if (Array.isArray(displayPrices) && displayPrices.length > 0 && 'date' in displayPrices[0]) {
-    chartData = (displayPrices as Array<{ price: number | null; date: string }> ).map((data, index) => {
-      // Para semana: mostrar día de la semana, para mes: nombre del mes
-      let hour = '';
-      if (period === 'semana') {
-        hour = data.date;
-      } else if (period === 'mes') {
-        hour = data.date;
-      } else {
-        hour = data.date;
-      }
-      return {
-        hour,
-        price: data.price,
-        level: '',
-        formattedPrice: typeof data.price === 'number' ? formatPrice(data.price) : 'N/A',
-        originalIndex: isMobile ? mobileStartIndex + index : index
-      };
-    });
-  } else {
-    chartData = (displayPrices as import('@/hooks/useElectricityData.simple').DailyPriceAvg[]).map((data, index) => {
-      const d = new Date(data.date);
-      const hour = period === 'semana'
-        ? ['lun', 'mar', 'mié', 'jue', 'vie', 'sáb', 'dom'][d.getDay() === 0 ? 6 : d.getDay() - 1]
-        : d.getDate().toString();
-      return {
-        hour,
-        price: data.price,
-        level: '',
-        formattedPrice: formatPrice(data.price),
-        originalIndex: isMobile ? mobileStartIndex + index : index
-      };
-    });
+  // Solo gráfico diario
+  if (period !== 'hoy') {
+    return (
+      <Card className="w-full">
+        <CardContent className="h-72 flex items-center justify-center">
+          <div className="text-center">
+            <div className="w-16 h-16 mx-auto mb-4 bg-muted rounded-full flex items-center justify-center">
+              📊
+            </div>
+            <p className="text-lg font-medium">Este componente solo muestra el gráfico diario</p>
+            <p className="text-sm text-muted-foreground mt-1">Usa otro componente para semanal o mensual</p>
+          </div>
+        </CardContent>
+      </Card>
+    );
   }
 
-  // Colores por nivel de precio
-  const getLevelColor = (level: string) => {
-    switch (level) {
-      case 'bajo': return 'hsl(142 71% 45%)' // Green
-      case 'medio': return 'hsl(43 89% 58%)' // Amber
-      case 'alto': return 'hsl(25 95% 58%)' // Orange
-      case 'muy-alto': return 'hsl(0 84% 60%)' // Red
-      default: return 'hsl(43 89% 58%)' // Default to amber
-    }
-  }
-
-  // Navegación móvil
-  const goToPreviousView = () => setMobileViewIndex(Math.max(0, mobileViewIndex - 1))
-  const goToNextView = () => setMobileViewIndex(Math.min(totalMobileViews - 1, mobileViewIndex + 1))
-  
-  const goToCurrentHour = () => {
-    if (period !== 'hoy' || !Array.isArray(prices) || prices.length === 0) return;
-    const currentIndex = (prices as PriceData[]).findIndex(p => p && typeof p.hour === 'number' && p.hour === currentHour);
-    if (currentIndex !== -1) {
-      const targetView = Math.floor(currentIndex / MOBILE_HOURS_PER_VIEW);
-      setMobileViewIndex(Math.min(Math.max(0, targetView), totalMobileViews - 1));
-    }
-  };
+  // Transformar datos para Recharts (solo diario)
+  const chartData: Array<{ hour: string; price: number | null; level: string; isCurrentHour?: boolean; formattedPrice: string; originalIndex: number }> = (displayPrices as PriceData[]).map((data, index) => {
+    const level = classifyPrice(data.price, displayPrices as PriceData[]);
+    const isCurrentHour = data.hour === currentHour;
+    return {
+      hour: formatHour(data.hour),
+      price: data.price,
+      level,
+      isCurrentHour,
+      formattedPrice: formatPrice(data.price),
+      originalIndex: index
+    };
+  });
 
   const CustomTooltip = ({ active, payload, label }: {
     active?: boolean;
@@ -170,95 +112,21 @@ export function BarChart({ prices, period }: BarChartProps) {
   }
 
   return (
-    <div className="w-full space-y-4">
-      {/* Controles de navegación móvil */}
-      {isMobile && (
-        <Card className="bg-gradient-to-r from-slate-800 to-slate-900 border-slate-700/50">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between mb-4">
-              <button
-                onClick={goToPreviousView}
-                disabled={mobileViewIndex === 0}
-                className="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-700/60 text-white disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-600/80 transition-colors border border-slate-600/50"
-              >
-                <span className="text-lg">←</span>
-                <span className="text-xs font-medium">Anterior</span>
-              </button>
-              
-              <div className="text-center flex-1 px-4">
-                <div className="font-semibold text-sm text-white">
-                  {getTimeRangeLabel(mobileViewIndex)}
-                </div>
-                <div className="text-xs text-slate-400 mt-1">
-                  Vista {mobileViewIndex + 1} de {totalMobileViews}
-                </div>
-              </div>
-              
-              <button
-                onClick={goToNextView}
-                disabled={mobileViewIndex === totalMobileViews - 1}
-                className="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-700/60 text-white disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-600/80 transition-colors border border-slate-600/50"
-              >
-                <span className="text-xs font-medium">Siguiente</span>
-                <span className="text-lg">→</span>
-              </button>
-            </div>
-            
-            {/* Botón para ir a la hora actual */}
-            {period === 'hoy' && (
-              <div className="flex justify-center mb-3">
-                <button
-                  onClick={goToCurrentHour}
-                  className="flex items-center gap-2 px-4 py-2 rounded-full bg-blue-900/40 border border-blue-500/50 text-blue-300 text-xs font-medium hover:bg-blue-800/60 transition-colors"
-                >
-                  <span className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></span>
-                  <span>Ir a hora actual ({formatHour(currentHour)}:00)</span>
-                </button>
-              </div>
-            )}
-            
-            {/* Acceso rápido a rangos horarios */}
-            <div className="flex justify-center gap-2">
-              {[0, 1, 2].map((viewIndex) => (
-                <button
-                  key={viewIndex}
-                  onClick={() => setMobileViewIndex(viewIndex)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors border ${
-                    mobileViewIndex === viewIndex
-                      ? 'bg-blue-600 text-white border-blue-500'
-                      : 'bg-slate-700/60 text-slate-300 border-slate-600/50 hover:bg-slate-600/80'
-                  }`}
-                >
-                  {getTimeRangeLabel(viewIndex)}
-                </button>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
+    <div className="w-full space-y-4">     
       {/* Gráfico principal */}
       <Card className="bg-gradient-to-br from-slate-800 via-slate-900 to-gray-900 border-slate-700/50 shadow-2xl">
         <CardHeader>
           <CardTitle className="text-white">Precio de la Electricidad</CardTitle>
           <CardDescription className="text-slate-300">
-            {period === 'hoy' ? 'Precios por hora de hoy' : 
-             period === 'semana' ? 'Precios promedio por semana' : 
-             'Precios promedio por mes'}
+            Precios por hora de hoy
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <ChartContainer config={chartConfig} className={`${isMobile ? 'h-[300px] w-full' : isTablet ? 'h-[350px] w-full' : 'h-[400px] w-full'} no-bar-selection`}>
-            <ResponsiveContainer width="100%" height={isMobile ? 200 : isTablet ? 300 : 370} debounce={50}>
+          <ChartContainer config={chartConfig}>
+            <ResponsiveContainer width="100%" height="100%">
               <RechartsBarChart 
                 data={chartData} 
-                margin={{ 
-                  top: isMobile ? 10 : 20, 
-                  right: isMobile ? 10 : 30, 
-                  left: isMobile ? 10 : 20, 
-                  bottom: isMobile ? 20 : 5 
-                }}
-                style={{ cursor: 'default' }}
+                // style={{ cursor: 'default' }}
               >
                 <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                 <XAxis 

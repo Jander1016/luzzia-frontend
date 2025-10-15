@@ -1,6 +1,6 @@
 "use client";
 import { useInView } from '@/hooks/useInView';
-import { SubscribeForm } from '../forms/SubscribeForm';
+import { SubscribeForm } from '@/components/forms/SubscribeForm';
 
 export default function DashboardContentClient() {
   const { ref: subscribeRef, inView: subscribeInView } = useInView({

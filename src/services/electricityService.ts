@@ -273,3 +273,10 @@ class ElectricityService {
 // Export singleton instance
 export const electricityService = new ElectricityService()
 export default electricityService
+
+export async function getMonthlyDailyAverages(month: number, year: number) {
+  const response = await apiClient.get<{ day: number; month: number; year: number; avgPrice: number | null }[]>(
+    `/prices/daily-averages?month=${month}&year=${year}`
+  );
+  return response;
+}

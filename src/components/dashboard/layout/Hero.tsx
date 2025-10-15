@@ -2,7 +2,7 @@
 
 // import { PriceCards } from './PriceCards'
 import { DashboardStats } from '@/types/api'
-import { PriceCardsV2 } from './PriceCardsV2'
+import  PriceCardsV2  from '../cards/PriceCardsV2'
 import { useTodayPrices } from '@/hooks/useElectricityData.simple'
 
 interface HeroProps {

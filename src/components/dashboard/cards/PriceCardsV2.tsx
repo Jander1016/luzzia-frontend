@@ -1,8 +1,8 @@
 'use client'
 
-import { PriceCardsClient } from './cards/PriceCardsClient';
-import { processPriceCardsData } from './cards/PriceCardsServer';
-import { PriceCardsSkeleton } from './cards/PriceCardsClient';
+import { PriceCardsClient } from './PriceCardsClient';
+import { processPriceCardsData } from './PriceCardsServer';
+import { PriceCardsSkeleton } from './PriceCardsClient';
 import { DashboardStats, ElectricityPrice } from '@/types/api';
 
 interface PriceCardsV2Props {
