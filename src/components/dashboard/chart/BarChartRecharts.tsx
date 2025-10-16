@@ -5,8 +5,8 @@ import { classifyPrice, formatHour, formatPrice } from './types'
 import { useResponsive } from '@/hooks/useResponsive'
 import { Bar, BarChart as RechartsBarChart, CartesianGrid, XAxis, YAxis, ResponsiveContainer, Tooltip, Cell } from 'recharts'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { ChartConfig, ChartContainer } from '@/components/ui/chart'
-import { getLevelColor } from '@/lib/utils'
+import { ChartContainer } from '@/components/ui/chart'
+import { chartConfig, getLevelColor } from '@/lib/utils'
 
 type BarChartDatum = PriceData | import('@/hooks/useElectricityData.simple').DailyPriceAvg | { price: number | null; date: string };
 interface BarChartProps {
@@ -39,13 +39,6 @@ export function BarChart({ prices, period }: BarChartProps) {
     
   const displayPrices = prices
 
-  // Configuración del chart
-  const chartConfig = {
-    price: {
-      label: "Precio",
-      color: "hsl(var(--chart-1))",
-    },
-  } satisfies ChartConfig
 
   // Solo gráfico diario
   if (period !== 'hoy') {

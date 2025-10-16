@@ -10,7 +10,7 @@ import { ChartConfig, ChartContainer } from '@/components/ui/chart'
 import { useEffect, useState } from 'react'
 import { useMonthlyDailyAverages } from '@/hooks/useMonthlyDailyAverages'
 import { useLineChartData } from '@/hooks/useLineChartData'
-import { getLevelColor } from '@/lib/utils'
+import { chartConfig, getLevelColor } from '@/lib/utils'
 
 type LineChartDatum = PriceData | DailyPriceAvg | { price: number | null; date: string };
 interface LineChartProps {
@@ -60,14 +60,7 @@ export function LineChart({ prices, period, showArea = false }: LineChartProps) 
   // Validar datos
   const validPrices = chartData.filter(p => typeof p.price === 'number' && !isNaN(p.price));
 
-  // Configuración del chart
-  const chartConfig = {
-    price: {
-      label: "Precio",
-      color: "hsl(var(--chart-1))",
-    },
-  } satisfies ChartConfig
-
+ 
   // Encontrar valores min/max para referencias
   const numericPrices = validPrices.map(p => p.price).filter((v): v is number => typeof v === 'number' && !isNaN(v));
   const minPrice = numericPrices.length > 0 ? Math.min(...numericPrices) : 0;

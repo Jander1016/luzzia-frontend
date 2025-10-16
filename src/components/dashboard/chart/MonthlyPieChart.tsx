@@ -3,6 +3,8 @@ import { useResponsive } from '@/hooks/useResponsive';
 import { Pie, PieChart as RechartsPieChart, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { getLevelColor } from '@/lib/utils';
+import { generateDynamicLegend } from './legendUtils';
+import { ChartLegend } from './ChartLegend';
 
 export function MonthlyPieChart() {
   const { isMobile } = useResponsive();
@@ -26,6 +28,22 @@ export function MonthlyPieChart() {
       formattedPrice: d.avgPrice ? `${d.avgPrice.toFixed(4)} €/kWh` : 'N/A',
     };
   });
+
+  // Filtrar datos nulos antes de generar la leyenda
+  const validPrices = monthlyAverages
+    .filter(d => typeof d.avgPrice === 'number' && !isNaN(d.avgPrice) && d.avgPrice !== null && d.avgPrice > 0)
+    .map(d => ({
+      day: d.day,
+      price: Number(d.avgPrice),
+      timestamp: new Date(),
+      hour: 0 // Valor dummy, no relevante para leyenda mensual
+    }));
+
+  const legend = generateDynamicLegend(
+    validPrices,
+    'mes',
+    'bar'
+  );
 
   interface TooltipProps {
     active?: boolean;
@@ -66,6 +84,10 @@ export function MonthlyPieChart() {
             <Tooltip content={<CustomTooltip />} />
           </RechartsPieChart>
         </ResponsiveContainer>
+        {/* Leyenda de niveles */}
+        <div className="flex justify-center items-center p-3">
+          <ChartLegend legend={legend} prices={validPrices} />
+        </div>
       </CardContent>
     </Card>
   );

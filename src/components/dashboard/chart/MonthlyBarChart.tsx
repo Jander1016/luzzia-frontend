@@ -5,7 +5,7 @@ import { useResponsive } from '@/hooks/useResponsive';
 import { BarChart as RechartsBarChart, Bar, CartesianGrid, XAxis, YAxis, ResponsiveContainer, Tooltip, Cell } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { formatPrice } from './types';
-import { getLevelColor } from '@/lib/utils';
+import { chartConfig, getLevelColor } from '@/lib/utils';
 import { ChartConfig, ChartContainer } from '@/components/ui/chart';
 
 export function MonthlyBarChart() {
@@ -18,12 +18,7 @@ export function MonthlyBarChart() {
   if (isMobile || isLoading || !monthlyAverages || monthlyAverages.length === 0) {
     return null;
   }
-    const chartConfig = {
-      price: {
-        label: "Precio",
-        color: "hsl(var(--chart-1))",
-      },
-    } satisfies ChartConfig
+
 
   // Clasificar nivel para cada día usando el mismo criterio que el gráfico diario
   const pricesOnly = monthlyAverages.map(d => d.avgPrice ?? 0);
