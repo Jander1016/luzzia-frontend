@@ -7,7 +7,7 @@ import { formatPrice } from './types';
 import { useState } from 'react';
 import { useResponsive } from '@/hooks/useResponsive';
 import { Pie, PieChart as RechartsPieChart, Cell, ResponsiveContainer } from 'recharts';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 interface PieChartProps {
   prices: PriceData[];
@@ -84,7 +84,11 @@ export function PieChart({ prices, period }: PieChartProps) {
   const activeData = activeIndex !== null ? chartData[activeIndex] : null;
 
   return (
-    <Card className="w-full bg-gradient-to-br from-slate-800 via-slate-900 to-gray-900 border-slate-700/50 shadow-2xl flex items-center justify-center">
+    <Card className="w-full bg-gradient-to-br from-slate-800 via-slate-900 to-gray-900 border-slate-700/50 shadow-2xl">
+      <CardHeader>
+        <CardTitle className="text-white">Precio de la Electricidad - Hora</CardTitle>
+        <CardDescription className="text-slate-300">Precios promedio por hora del día actual</CardDescription>
+      </CardHeader>
       <CardContent className="flex w-full h-full p-0">
               <ResponsiveContainer width="100%" height={chartHeight}>
                 <RechartsPieChart>
