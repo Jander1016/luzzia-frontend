@@ -6,7 +6,7 @@ import { BarChart as RechartsBarChart, Bar, CartesianGrid, XAxis, YAxis, Respons
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { formatPrice } from './types';
 import { chartConfig, getLevelColor } from '@/lib/utils';
-import { ChartConfig, ChartContainer } from '@/components/ui/chart';
+import { ChartContainer } from '@/components/ui/chart';
 
 export function MonthlyBarChart() {
   const { isMobile } = useResponsive();
