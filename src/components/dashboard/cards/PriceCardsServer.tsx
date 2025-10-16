@@ -18,10 +18,10 @@ export function processPriceCardsData(stats: DashboardStats | null, dailyPrices:
   const nextHour = currentHour + 1;
   const nextPrice = dailyPrices.find(p => p.hour === nextHour)?.price;
   const currentPrice = dailyPrices.find(p => p.hour === currentHour)?.price ?? stats.currentPrice;
-  const minPrice = stats.minPrice;
-  const maxPrice = stats.maxPrice;
-  const minPriceHour = stats.minPriceHour;
-  const maxPriceHour = stats.maxPriceHour;
+  const minPrice = Math.min(...dailyPrices.map(p => p.price));
+  const maxPrice = Math.max(...dailyPrices.map(p => p.price));
+  const minPriceHour = stats.minPriceHour ?? dailyPrices.find(p => p.price === minPrice)?.hour ?? 0;
+  const maxPriceHour = stats.maxPriceHour ?? dailyPrices.find(p => p.price === maxPrice)?.hour ?? 0;
 
   // Calcular porcentajes
   const nextHourPercent = (nextPrice && currentPrice > 0)
