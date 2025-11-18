@@ -93,8 +93,8 @@ export default function HeaderV2() {
                 <Image
                   src="/logo.webp"
                   alt="Luzzia Logo"
-                  width={180}
-                  height={180}
+                  width={160}
+                  height={160}
                   className="inline-block dark:brightness-110"
                   priority
                   quality={75}
