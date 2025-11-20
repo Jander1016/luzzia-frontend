@@ -23,12 +23,12 @@ export interface RecommendationsResponse {
 }
 
 export interface DashboardStats {
-  currentPrice: number
-  nextHourPrice: number
-  priceChangePercentage: number
-  monthlySavings: number
-  comparisonType: string
-  lastUpdated: string
+  currentPrice: number;
+  minPrice: number;
+  minPriceHour: number;
+  maxPrice: number;
+  maxPriceHour: number;
+  lastUpdated: string;
 }
 
 // Tipos de respuesta de la API

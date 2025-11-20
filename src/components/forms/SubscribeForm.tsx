@@ -128,19 +128,21 @@ export function SubscribeForm() {
               name="name"
               render={({ field, fieldState }) => (
                 <FormItem>
-                  <FormLabel className="text-white font-medium text-sm">Nombre</FormLabel>
+                    <FormLabel htmlFor="subscribe-name" className="text-white font-medium text-sm">Nombre</FormLabel>
                   <FormControl>
                     <div className="relative">
                       <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
-                      <Input 
-                        placeholder="Tu nombre completo" 
-                        className={`pl-10 bg-slate-700/50 border-slate-600 text-white placeholder-slate-400 focus:border-emerald-400 focus:ring-emerald-400/20 transition-all duration-200 h-11 ${
-                          fieldState.error ? 'border-red-400 focus:border-red-400' : ''
-                        } ${
-                          field.value && !fieldState.error ? 'border-emerald-400' : ''
-                        }`}
-                        {...field} 
-                      />
+                        <Input 
+                          id="subscribe-name"
+                          placeholder="Tu nombre completo" 
+                          autoComplete="name"
+                          className={`pl-10 bg-slate-700/50 border-slate-600 text-white placeholder-slate-400 focus:border-emerald-400 focus:ring-emerald-400/20 transition-all duration-200 h-11 ${
+                            fieldState.error ? 'border-red-400 focus:border-red-400' : ''
+                          } ${
+                            field.value && !fieldState.error ? 'border-emerald-400' : ''
+                          }`}
+                          {...field} 
+                        />
                     </div>
                   </FormControl>
                   <FormMessage className="text-red-400 text-xs" />
@@ -150,23 +152,26 @@ export function SubscribeForm() {
             
             <FormField
               control={form.control}
+              
               name="email"
               render={({ field, fieldState }) => (
                 <FormItem>
-                  <FormLabel className="text-white font-medium text-sm">Email</FormLabel>
+                    <FormLabel htmlFor="subscribe-email" className="text-white font-medium text-sm">Email</FormLabel>
                   <FormControl>
                     <div className="relative">
                       <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
-                      <Input 
-                        type="email"
-                        placeholder="tu@email.com" 
-                        className={`pl-10 bg-slate-700/50 border-slate-600 text-white placeholder-slate-400 focus:border-emerald-400 focus:ring-emerald-400/20 transition-all duration-200 h-11 ${
-                          fieldState.error ? 'border-red-400 focus:border-red-400' : ''
-                        } ${
-                          field.value && !fieldState.error ? 'border-emerald-400' : ''
-                        }`}
-                        {...field} 
-                      />
+                        <Input 
+                          id="subscribe-email"
+                          type="email"
+                          placeholder="tu@email.com" 
+                          autoComplete="email"
+                          className={`pl-10 bg-slate-700/50 border-slate-600 text-white placeholder-slate-400 focus:border-emerald-400 focus:ring-emerald-400/20 transition-all duration-200 h-11 ${
+                            fieldState.error ? 'border-red-400 focus:border-red-400' : ''
+                          } ${
+                            field.value && !fieldState.error ? 'border-emerald-400' : ''
+                          }`}
+                          {...field} 
+                        />
                     </div>
                   </FormControl>
                   <FormMessage className="text-red-400 text-xs" />
@@ -202,6 +207,7 @@ export function SubscribeForm() {
                   : 'bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white shadow-lg hover:shadow-emerald-500/25'
               }`}
               disabled={formState === 'loading' || formState === 'success'}
+              aria-label={`${formState === 'loading' ? 'Enviando formulario de suscripción' : 'Suscribirse gratis a alertas de precios de electricidad'}`}
             >
               {getButtonContent()}
             </Button>

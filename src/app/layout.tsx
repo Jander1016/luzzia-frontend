@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import "./globals.css";
-import Header from "@/components/layout/Header";
-
-const inter = Inter({ subsets: ["latin"] });
+// import Header from "@/components/layout/Header";
+import { ThemeProvider } from "@/components/theme/ThemeProvider";
+import { CookieBanner } from "@/components/legal/CookieBanner";
+// import ClientStartupBanner from "@/components/marketing/ClientStartupBanner";
+import { ElectricityDataProvider } from "@/hooks/useElectricityDataContext";
+import HeaderV2 from "@/components/layout/HeaderV2";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: {
@@ -85,10 +88,57 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="es">
-      <body className={`${inter.className} bg-gradient-to-br from-[#09121a] via-[#1b2c62] to-[#471581] py-1 rounded-lg text-white`}>
-        <Header />
-        <main className="container mx-auto p-4 sm: max-w-full">{children}</main>
+    <html lang="es" suppressHydrationWarning>
+      <body className="font-sans min-h-screen transition-colors duration-300 bg-neutral-50 dark:bg-neutral-950">
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem
+          disableTransitionOnChange={false}
+        >
+          <ElectricityDataProvider>
+            {/* Skip to main content link for keyboard navigation */}
+            <Link
+              href="#main-content" 
+              className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-primary text-primary-foreground px-4 py-2 rounded-md z-50 transition-all"
+            >
+              Saltar al contenido principal
+            </Link>
+            
+            {/* Main Application Structure */}
+            <div 
+              className="bg-gradient-to-br from-background via-background/95 to-background dark:from-slate-950 dark:via-slate-900 dark:to-slate-800"
+              role="application"
+              aria-label="Aplicación de precios eléctricos Luzzia"
+            >
+              {/* Site Header */}
+              <HeaderV2 />
+              
+              {/* Main Content Area */}
+              <main 
+                id="main-content"
+                className="container mx-auto p-4 min-h-screen"
+                role="main"
+                aria-label="Contenido principal"
+                tabIndex={-1}
+              >
+                {children}
+              </main>
+              
+              {/* Footer placeholder for future use */}
+              <footer 
+                className="sr-only"
+                role="contentinfo"
+                aria-label="Información del sitio"
+              >
+                <p>© 2024 Luzzia - Ahorro energético inteligente</p>
+              </footer>
+            </div>
+            
+            {/* RGPD Cookie Banner */}
+            <CookieBanner />
+          </ElectricityDataProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
