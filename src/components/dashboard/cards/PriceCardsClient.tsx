@@ -32,7 +32,7 @@ export function PriceCardsClient({ serverData, dailyPrices }: PriceCardsClientPr
   const cardsData = [
     {
       id: 'current',
-      title: 'Precio actual de Hoy',
+      title: 'Precio en directo',
       price: `${currentPrice.toFixed(4)} €/kWh`,
       subtitle: `Hora actual: ${currentHour.toString().padStart(2, '0')}:00`,
       icon: <Zap className="size-7 text-cyan-500" aria-hidden="true" />,
@@ -40,7 +40,7 @@ export function PriceCardsClient({ serverData, dailyPrices }: PriceCardsClientPr
     },
     {
       id: 'lowest',
-      title: 'PRECIO MÁS BAJO DEL DÍA',
+      title: 'Precio más barato',
       price: `${serverData.lowest.price.toFixed(4)} €/kWh`,
       subtitle: `Hora: ${serverData.lowest.hour.toString().padStart(2, '0')}:00`,
       icon: <TrendingDown className="size-7 text-green-500" aria-hidden="true" />,
@@ -48,10 +48,10 @@ export function PriceCardsClient({ serverData, dailyPrices }: PriceCardsClientPr
     },
     {
       id: 'highest',
-      title: 'PRECIO MÁS ALTO DEL DÍA',
+      title: 'Precio más caro',
       price: `${serverData.highest.price.toFixed(4)} €/kWh`,
       subtitle: `Hora: ${serverData.highest.hour.toString().padStart(2, '0')}:00`,
-      icon: <TrendingUp className="size-7 text-pink-500" aria-hidden="true" />,
+      icon: <TrendingUp className="size-7 text-red-500" aria-hidden="true" />,
       percent: serverData.highestCurrentPercent
     }
   ];
@@ -81,7 +81,7 @@ export function PriceCardsClient({ serverData, dailyPrices }: PriceCardsClientPr
                 <div className={`size-14 rounded-full bg-slate-800 flex items-center justify-center mb-2 transition-transform duration-300 hover:scale-110`}>
                   {card.icon}
                 </div>
-                <h3 id={`price-card-${card.id}-title`} className={`text-2xl font-extrabold mb-2 ${titleColor}`}>{card.id === 'lowest' ? 'Precio más barato' : card.id === 'highest' ? 'Precio más caro' : card.title}</h3>
+                <h3 id={`price-card-${card.id}-title`} className={`text-2xl font-extrabold mb-2 ${titleColor}`}>{card.title}</h3>
                 <div className={`text-2xl font-bold mb-1 ${priceColor}`}>{card.price}</div>
                 {card.subtitle && <div className={`text-base text-white/80 mb-1`}>{card.subtitle}</div>}
                 {card.percent && <div className={`text-xs font-semibold text-white/60`}>{card.percent}</div>}

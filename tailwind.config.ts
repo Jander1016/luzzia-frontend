@@ -1,4 +1,4 @@
-const { designTokens } = require("./src/styles/design-system");
+import { designTokens } from "./src/styles/design-system";
 
 module.exports = {
   content: [
@@ -68,7 +68,7 @@ module.exports = {
       }
     },
     
-    fontFamily: designTokens.typography.fontFamily,
+    fontFamily: designTokens.typography.fontFamily.sans,
     fontSize: designTokens.typography.fontSize,
     fontWeight: designTokens.typography.fontWeight,
     spacing: designTokens.spacing,

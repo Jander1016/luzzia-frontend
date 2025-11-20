@@ -6,6 +6,7 @@
 
 /* Font stabilization for system fonts */
 html, body {
+  font-family: 'sans-serif';
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
