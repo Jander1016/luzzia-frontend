@@ -67,25 +67,11 @@ export default function AboutMePage() {
                 description: "Recibe notificaciones cuando los precios están bajos. ¡Perfecto para programar electrodomésticos!"
               },
               {
-                icon: "📊",
-                title: "Análisis Personalizado",
-                description: "Descubre tus patrones de consumo y recibe recomendaciones específicas para tu hogar."
-              },
-              {
                 icon: "💰",
                 title: "Calculadora de Ahorro",
                 description: "Ve exactamente cuánto puedes ahorrar cambiando tus hábitos de consumo."
               },
-              {
-                icon: "🏠",
-                title: "Smart Home Ready",
-                description: "Integración futura con dispositivos inteligentes para automatizar el ahorro."
-              },
-              {
-                icon: "📈",
-                title: "Historial Completo",
-                description: "Accede a datos históricos y tendencias para planificar mejor tu consumo."
-              }
+            
             ].map((feature, index) => (
               <div key={index} className="bg-slate-800/50 p-6 rounded-xl border border-slate-700/50 hover:border-blue-500/50 transition-all duration-300">
                 <div className="text-4xl mb-4">{feature.icon}</div>
