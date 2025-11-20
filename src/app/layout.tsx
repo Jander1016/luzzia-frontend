@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
-// import Header from "@/components/layout/Header";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import { CookieBanner } from "@/components/legal/CookieBanner";
-// import ClientStartupBanner from "@/components/marketing/ClientStartupBanner";
 import { ElectricityDataProvider } from "@/hooks/useElectricityDataContext";
 import HeaderV2 from "@/components/layout/HeaderV2";
 import Link from "next/link";
