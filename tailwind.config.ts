@@ -35,7 +35,7 @@ module.exports = {
       warning: designTokens.colors.warning,
       danger: designTokens.colors.danger,
       neutral: designTokens.colors.neutral,
-      
+
       // Semantic aliases
       background: "hsl(var(--background))",
       foreground: "hsl(var(--foreground))",
@@ -52,13 +52,13 @@ module.exports = {
         DEFAULT: "hsl(var(--card))",
         foreground: "hsl(var(--card-foreground))",
       },
-      
+
       // Legacy support
       brand: {
         DEFAULT: "#00E0FF",
         dark: "#0090A8",
       },
-      
+
       // Chart colors
       luzzia: {
         blue: '#0ea5e9',
@@ -67,8 +67,13 @@ module.exports = {
         light: '#f9fafb',
       }
     },
-    
-    fontFamily: designTokens.typography.fontFamily.sans,
+
+    fontFamily: {
+      // Opción A: Reemplaza la fuente 'sans' (más común)
+      sans: ['Montserrat', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+      // Opción B: Crea una nueva clase 'font-luzzia'
+      luzzia: ['Montserrat', 'sans-serif'],
+    },
     fontSize: designTokens.typography.fontSize,
     fontWeight: designTokens.typography.fontWeight,
     spacing: designTokens.spacing,
@@ -76,7 +81,7 @@ module.exports = {
     boxShadow: designTokens.boxShadow,
     screens: designTokens.screens,
     zIndex: designTokens.zIndex,
-    
+
     extend: {
       // Enhanced animations
       animation: {
@@ -87,7 +92,7 @@ module.exports = {
         'chart-load': 'chartLoad 0.6s ease-out',
         'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
       },
-      
+
       keyframes: {
         fadeIn: {
           '0%': { opacity: '0' },
@@ -111,24 +116,24 @@ module.exports = {
           '100%': { opacity: '1', transform: 'translateY(0)' },
         },
       },
-      
+
       // Enhanced backdrop blur
       backdropBlur: {
         '16': '16px',
         '24': '24px',
       },
-      
+
       // Custom gradients
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
         'gradient-conic': 'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
         'price-excellent': 'linear-gradient(135deg, var(--tw-gradient-stops))',
       },
-      
+
       // Enhanced transitions
       transitionDuration: designTokens.animation.duration,
       transitionTimingFunction: designTokens.animation.easing,
-      
+
       // Container improvements
       container: {
         center: true,
@@ -145,9 +150,9 @@ module.exports = {
   plugins: [
     require('tailwind-scrollbar-hide'),
     require('@tailwindcss/forms'),
-    
+
     // Custom plugin for accessibility improvements
-    function({ addUtilities }: any) {
+    function ({ addUtilities }: any) {
       addUtilities({
         '.focus-ring': {
           '@apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2': {},
