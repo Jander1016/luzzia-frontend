@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { ChartContainer } from '@/components/ui/chart'
 import { chartConfig, getLevelColor } from '@/lib/utils'
 
-type BarChartDatum = PriceData | import('@/hooks/useElectricityData.simple').DailyPriceAvg | { price: number | null; date: string };
+type BarChartDatum = PriceData | import('@/hooks/useElectricityData').DailyPriceAvg | { price: number | null; date: string };
 interface BarChartProps {
   prices: BarChartDatum[];
   period: PeriodType;

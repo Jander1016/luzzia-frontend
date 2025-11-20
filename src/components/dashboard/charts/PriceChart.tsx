@@ -3,8 +3,7 @@
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BarChart3, Zap } from "lucide-react";
-import { usePriceAnalysis } from "@/hooks/useElectricityData.simple";
-import { useWeeklyAverages, useMonthlyAverages } from "@/hooks/useElectricityData.simple";
+import { usePriceAnalysis, useWeeklyAverages, useMonthlyAverages } from "@/hooks/useElectricityData";
 import { useResponsive } from "@/hooks/useResponsive";
 import { PeriodFilter } from "../chart/PeriodFilter";
 import { BarChart } from "../chart/BarChartRecharts";

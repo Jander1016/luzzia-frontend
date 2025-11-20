@@ -35,7 +35,7 @@ export function PriceCardsClient({ serverData, dailyPrices }: PriceCardsClientPr
       title: 'Precio en directo',
       price: `${currentPrice.toFixed(4)} €/kWh`,
       subtitle: `Hora actual: ${currentHour.toString().padStart(2, '0')}:00`,
-      icon: <Zap className="size-7 text-cyan-500" aria-hidden="true" />,
+      icon: <Zap className="size-7 text-sky-400" aria-hidden="true" />,
       percent: serverData.nextHourPercent
     },
     {
@@ -64,7 +64,7 @@ export function PriceCardsClient({ serverData, dailyPrices }: PriceCardsClientPr
     <section className="space-y-8">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {cardsData.map((card) => {
-          const priceColor = card.id === 'lowest' ? "text-green-500" : card.id === 'highest' ? "text-red-500" : "text-cyan-500";
+          const priceColor = card.id === 'lowest' ? "text-emerald-500" : card.id === 'highest' ? "text-red-500" : "text-sky-400";
           return (
             <Card 
               key={card.id}

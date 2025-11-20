@@ -15,12 +15,14 @@ export default function DashboardContentClient() {
       <div className="relative z-10 text-center space-y-8">
         <div className="space-y-4">
           <h2 className="text-4xl md:text-5xl font-bold text-white">
-            ¿Quieres Ahorrar Más?
+            Suscríbete
           </h2>
           <p className="text-lg text-slate-600 dark:text-slate-300 max-w-3xl mx-auto">
-            Suscríbete a nuestra newsletter y recibe alertas personalizadas cuando
-            los precios estén en su punto más bajo. <span className="text-emerald-400 font-semibold">
-            Es completamente gratis.
+            ¿Quieres saber cuándo baja el precio de la luz?
+          </p>
+          <p className="text-lg text-slate-600 dark:text-slate-300 max-w-3xl mx-auto">
+            Recibe alertas con el precio de la luz por horas y la mejor hora para poner la lavadora. <span className="text-emerald-400 font-semibold">
+              Suscríbete gratis y ahorra en tu factura eléctrica.
             </span>
           </p>
         </div>
@@ -29,10 +31,10 @@ export default function DashboardContentClient() {
           {subscribeInView && <SubscribeForm />}
         </div>
         {/* Social proof */}
-        <div className="pt-8 border-t border-slate-700/50">
+        <div className="pt-8 text-center border-t border-slate-700/50">
           <p className="text-sm text-slate-600 dark:text-slate-300">
-            Trusted by <span className="text-emerald-400 font-semibold">1,000+ usuarios</span> •
-            Promedio de ahorro: <span className="text-emerald-400 font-semibold">25% mensual</span>
+            Trusted by <span className="text-emerald-400 font-semibold">Más de 1,000 usuarios</span> •
+            Promedio de ahorro: <span className="text-emerald-400 font-semibold">30% mensual</span>
           </p>
         </div>
       </div>

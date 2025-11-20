@@ -1,5 +1,5 @@
 import { PriceData, PeriodType, LegendItem, ChartType } from './types'
-import { DailyPriceAvg } from '@/hooks/useElectricityData.simple'
+import { DailyPriceAvg } from '@/hooks/useElectricityData'
 import { formatPrice } from './types'
 
 // Función para generar leyendas dinámicas basadas en los datos reales

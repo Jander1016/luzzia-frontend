@@ -1,7 +1,7 @@
 'use client'
 
 import { PriceData, PeriodType } from './types'
-import { DailyPriceAvg } from '@/hooks/useElectricityData.simple'
+import { DailyPriceAvg } from '@/hooks/useElectricityData'
 import { formatHour, formatPrice } from './types'
 import { useResponsive } from '@/hooks/useResponsive'
 import { Line, LineChart as RechartsLineChart, Area, AreaChart, CartesianGrid, XAxis, YAxis, ResponsiveContainer, Tooltip, ReferenceLine } from 'recharts'

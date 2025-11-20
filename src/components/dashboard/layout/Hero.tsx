@@ -1,9 +1,9 @@
 'use client'
 
-// import { PriceCards } from './PriceCards'
 import { DashboardStats } from '@/types/api'
 import  PriceCardsV2  from '../cards/PriceCardsV2'
-import { useTodayPrices } from '@/hooks/useElectricityData.simple'
+import { useTodayPrices } from '@/hooks/useElectricityData'
+import { GradientTextStyles } from '@/components/ui/gradientText'
 
 interface HeroProps {
   stats?: DashboardStats | null
@@ -17,28 +17,25 @@ export default function Hero({ stats, isLoading = false }: HeroProps) {
     <main aria-labelledby="hero-title">
       {/* Hero Section */}
       <header className="text-center mb-12">
-        <div className="min-h-[140px] flex flex-col justify-center">
           <h1 
             id="hero-title"
             className="text-5xl font-bold tracking-tight text-white mb-4 leading-tight"
           >
-            <span className="bg-gradient-to-r from-green-300 to-emerald-400 bg-clip-text text-transparent">
-              Ahorra
-            </span> en tu
+            <span className={`${GradientTextStyles}`}>
+              Precio&nbsp;
+            </span> 
+            <span className={`${GradientTextStyles}`}>
+             de la&nbsp;
+            </span> 
+            <span className={`${GradientTextStyles}`}>
+            luz hoy en España
+            </span> 
           </h1>
-          <div 
-            className="text-5xl font-bold tracking-tight text-white mb-6 leading-tight"
-            aria-label="factura eléctrica"
-          >
-            factura eléctrica
-          </div>
-        </div>
         <p 
           className="text-xl text-white/90 max-w-3xl mx-auto leading-relaxed"
           role="doc-subtitle"
         >
-          Descubre cuándo es más barato usar tus electrodomésticos con datos 
-          en tiempo real del mercado eléctrico español
+          Consulta el precio de la electricidad por horas y descubre cuándo es más barata la luz <span className={`text-[#03faae] font-bold`}>para ahorrar hasta un 30% </span> en tu factura eléctrica.
         </p>
       </header>
       
