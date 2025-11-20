@@ -37,8 +37,6 @@ const navLinks = [
 
 export default function HeaderV2() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  // const [scrolled, setScrolled] = useState(false);
-  // const [mounted, setMounted] = useState(false);
 
   const toggleMenu = useCallback(() => {
     setIsMenuOpen(prev => !prev);
@@ -47,16 +45,6 @@ export default function HeaderV2() {
   const closeMenu = useCallback(() => {
     setIsMenuOpen(false);
   }, []);
-
-  // Handle scroll effect
-  // useEffect(() => {
-  //   setMounted(true);
-  //   const handleScroll = () => {
-  //     setScrolled(window.scrollY > 10);
-  //   };
-  //   window.addEventListener('scroll', handleScroll);
-  //   return () => window.removeEventListener('scroll', handleScroll);
-  // }, []);
 
   // Handle keyboard navigation
   useEffect(() => {
@@ -210,19 +198,6 @@ export default function HeaderV2() {
           </div>
         </div>
       </div>
-
-      {/* <style jsx>{`
-        @keyframes slideInFromRight {
-          from {
-            opacity: 0;
-            transform: translateX(30px);
-          }
-          to {
-            opacity: 1;
-            transform: translateX(0);
-          }
-        }
-      `}</style> */}
     </>
   );
 }
